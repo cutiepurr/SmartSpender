@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Row, Col } from "reactstrap";
+import { Button, Form, Input } from "reactstrap";
 import TransactionTable from "./TransactionTable";
 
 const AddTransaction = () => {
@@ -13,21 +13,50 @@ const AddTransaction = () => {
       });
   }, []);
 
-  const toSQLDate = (date) => date.toISOString().slice(20);
+  const toSQLDate = (date) => date.toISOString();
 
-  const addTransaction = (e) => {
-    e.preventDefault();
-
+  const validatedInput = () => {
     var form = document.getElementById("createTransactionForm");
+    var description = form.querySelector("input[name='description']").value;
+    var amount = form.querySelector("input[name='amount']").value;
+    var timestamp = form.querySelector("input[name='date']").value;
 
-    var date = form.querySelector("input[name='date']").value;
-    var time = form.querySelector("input[name='time']").value;
+    if (
+      description === null ||
+      amount === null ||
+      timestamp === null ||
+      description === "" ||
+      amount === "" ||
+      timestamp === ""
+    ) {
+      alert("Field cannot be null");
+      return null;
+    }
+
+    timestamp = new Date(timestamp);
+    if (amount <= 0) {
+      alert("Amount must be greater than 0");
+      return null;
+    }
+
+    if (timestamp > new Date()) {
+      alert("Date and time cannot be in the future");
+      return null;
+    }
+
     var transaction = {
-      description: form.querySelector("input[name='description']").value,
-      amount: parseInt(form.querySelector("input[name='amount']").value),
-      timestamp: toSQLDate(new Date()),
+      description: description,
+      amount: parseInt(amount),
+      timestamp: toSQLDate(timestamp),
     };
-    console.log(transaction);
+
+    return transaction;
+  };
+
+  const addTransaction = () => {
+    var transaction = validatedInput();
+    if (transaction == null) return;
+
     fetch(`api/Transactions`, {
       method: "POST",
       body: JSON.stringify(transaction),
@@ -35,7 +64,8 @@ const AddTransaction = () => {
         "Content-Type": "application/json",
       },
     }).then((response) => {
-      console.log(response);
+      if (response.ok) window.location.reload();
+      else alert("Cannot add transaction");
     });
   };
 
@@ -43,13 +73,12 @@ const AddTransaction = () => {
     description: (
       <Input name="description" placeholder="Description" type="text" />
     ),
-    date: <Input name="date" placeholder="Date" type="date" />,
-    time: <Input name="time" placeholder="Time" type="time" />,
+    date: <Input name="date" placeholder="Date" type="datetime-local" />,
     amount: <Input name="amount" placeholder="Amount" type="number" />,
-    submit: <Button type="submit">+</Button>,
+    submit: <Button onClick={addTransaction}>+</Button>,
   };
   return (
-    <Form onSubmit={addTransaction} id="createTransactionForm">
+    <Form id="createTransactionForm">
       <TransactionTable transaction={inputTable} />
     </Form>
   );

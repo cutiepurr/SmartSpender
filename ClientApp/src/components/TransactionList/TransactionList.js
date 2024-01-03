@@ -18,8 +18,7 @@ const TransactionList = () => {
       key={transaction.id}
       transaction={{
         description: transaction.description,
-        date: new Date(transaction.timestamp).toLocaleDateString(),
-        time: new Date(transaction.timestamp).toLocaleTimeString(),
+        date: new Date(transaction.timestamp).toLocaleString(),
         amount: `$${transaction.amount}`,
       }}
     />
@@ -31,7 +30,6 @@ const TransactionList = () => {
         transaction={{
           description: "Description",
           date: "Date",
-          time: "Time",
           amount: "Amount",
         }}
       />

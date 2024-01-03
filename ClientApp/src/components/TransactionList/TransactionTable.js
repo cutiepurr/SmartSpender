@@ -4,14 +4,11 @@ import { Row, Col } from "reactstrap";
 const TransactionTable = ({ transaction }) => {
   return (
     <Row>
-      <Col md={5}>
+      <Col md={6}>
         <div>{transaction.description}</div>
       </Col>
-      <Col md={2}>
+      <Col md={3}>
         <div>{transaction.date}</div>
-      </Col>
-      <Col md={2}>
-        <div>{transaction.time}</div>
       </Col>
       <Col md={2}>
         <div>{transaction.amount}</div>
