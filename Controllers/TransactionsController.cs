@@ -89,6 +89,28 @@ namespace SmartSpender.Controllers
             return CreatedAtAction("GetTransaction", new { id = transaction.ID }, transaction);
         }
 
+        // POST: api/Transactions/default
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("default")]
+        public async Task<ActionResult<Transaction>> PostDefault()
+        {
+            if (_context.Transaction == null)
+            {
+                return Problem("Entity set 'AppDbContext.Transaction'  is null.");
+            }
+            var transaction = new Transaction() {
+                ID = 0,
+                Description = "Transaction 1",
+                Timestamp = DateTime.Now,
+                Amount = 100
+            };
+
+            _context.Transaction.Add(transaction);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetTransaction", new { id = transaction.ID }, transaction);
+        }
+
         // DELETE: api/Transactions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTransaction(long id)
