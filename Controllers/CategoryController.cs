@@ -7,6 +7,11 @@ namespace SmartSpender.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
+
+        private static List<string> DefaultCategories = new() {
+            "Home", "Utilities", "Groceries", "Eating out", "Shopping", "Entertainment", "Others"
+        };
+
         private readonly AppDbContext _context;
 
         public CategoryController(AppDbContext context)
@@ -18,10 +23,10 @@ namespace SmartSpender.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TransactionCategory>>> GetTransactionCategory()
         {
-          if (_context.TransactionCategory == null)
-          {
-              return NotFound();
-          }
+            if (_context.TransactionCategory == null)
+            {
+                return NotFound();
+            }
             return await _context.TransactionCategory.ToListAsync();
         }
 
@@ -29,10 +34,10 @@ namespace SmartSpender.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TransactionCategory>> GetTransactionCategory(long id)
         {
-          if (_context.TransactionCategory == null)
-          {
-              return NotFound();
-          }
+            if (_context.TransactionCategory == null)
+            {
+                return NotFound();
+            }
             var transactionCategory = await _context.TransactionCategory.FindAsync(id);
 
             if (transactionCategory == null)
@@ -79,14 +84,26 @@ namespace SmartSpender.Controllers
         [HttpPost]
         public async Task<ActionResult<TransactionCategory>> PostTransactionCategory(TransactionCategory transactionCategory)
         {
-          if (_context.TransactionCategory == null)
-          {
-              return Problem("Entity set 'AppDbContext.TransactionCategory'  is null.");
-          }
+            if (_context.TransactionCategory == null)
+            {
+                return Problem("Entity set 'AppDbContext.TransactionCategory'  is null.");
+            }
             _context.TransactionCategory.Add(transactionCategory);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetTransactionCategory", new { id = transactionCategory.ID }, transactionCategory);
+        }
+
+        // POST: api/Category/default
+        [HttpPost("default")]
+        public async Task<ActionResult<IEnumerable<TransactionCategory>>> PostDefaultCategory()
+        {
+            List<TransactionCategory> categories = new List<TransactionCategory>();
+            DefaultCategories.ForEach(async category => {
+                var temp = await PostTransactionCategory(new TransactionCategory(category));
+                if (temp.Value != null) categories.Add(temp.Value);
+            });
+            return categories;
         }
 
         // DELETE: api/Category/5
