@@ -9,5 +9,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Transaction> Transaction { get; set; } = default!;
+
+    public DbSet<TransactionCategory> TransactionCategory { get; set; } = default!;
 }
 
