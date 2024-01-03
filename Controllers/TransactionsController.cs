@@ -16,23 +16,37 @@ namespace SmartSpender.Controllers
 
         // GET: api/Transactions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Transaction>>> GetTransaction()
+        public async Task<ActionResult<IEnumerable<Transaction>>> GetTransaction(int page = 0, int count = 50)
         {
-          if (_context.Transaction == null)
-          {
-              return NotFound();
-          }
-            return await _context.Transaction.ToListAsync();
+            if (_context.Transaction == null)
+            {
+                return NotFound();
+            }
+            return await _context.Transaction
+                .OrderByDescending(transaction => transaction.Timestamp)
+                .Skip(page * count).Take(count)
+                .ToListAsync();
+        }
+
+        // GET: api/Transactions/count
+        [HttpGet("count")]
+        public async Task<ActionResult<int>> GetCountTransaction()
+        {
+            if (_context.Transaction == null)
+            {
+                return NotFound();
+            }
+            return await _context.Transaction.CountAsync();
         }
 
         // GET: api/Transactions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Transaction>> GetTransaction(long id)
         {
-          if (_context.Transaction == null)
-          {
-              return NotFound();
-          }
+            if (_context.Transaction == null)
+            {
+                return NotFound();
+            }
             var transaction = await _context.Transaction.FindAsync(id);
 
             if (transaction == null)
@@ -79,10 +93,10 @@ namespace SmartSpender.Controllers
         [HttpPost]
         public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
         {
-          if (_context.Transaction == null)
-          {
-              return Problem("Entity set 'AppDbContext.Transaction'  is null.");
-          }
+            if (_context.Transaction == null)
+            {
+                return Problem("Entity set 'AppDbContext.Transaction'  is null.");
+            }
             _context.Transaction.Add(transaction);
             await _context.SaveChangesAsync();
 
@@ -98,7 +112,8 @@ namespace SmartSpender.Controllers
             {
                 return Problem("Entity set 'AppDbContext.Transaction'  is null.");
             }
-            var transaction = new Transaction() {
+            var transaction = new Transaction()
+            {
                 ID = 0,
                 Description = "Transaction 1",
                 Timestamp = DateTime.Now,
