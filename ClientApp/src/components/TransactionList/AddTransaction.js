@@ -6,11 +6,11 @@ import { TransactionForm } from "./TransactionForm";
 const AddTransaction = ({ categories }) => {
   const formId = "createTransactionForm";
 
-  const addTransaction = (transaction) => {
-    transaction = validatedTransaction(transaction);
-    if (transaction == null) return;
+  const addTransaction = (inputTransaction) => {
+    inputTransaction = validatedTransaction(inputTransaction);
+    if (inputTransaction == null) return;
 
-    TransactionApis.postTransaction(transaction, () => {
+    TransactionApis.postTransaction(inputTransaction, () => {
       window.location.reload();
     });
   };

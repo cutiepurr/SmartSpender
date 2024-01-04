@@ -27,6 +27,15 @@ class TransactionApis extends ApiFetcher {
   static postTransaction = (transaction, callback) => {
     this.postRequest(`api/Transactions`, JSON.stringify(transaction), callback);
   };
+
+  /**
+   * PUT transaction
+   * @param {Object} transaction Must include id, description, timestamp, and amount
+   * @param {Function} callback Callback function upon successful request
+   */
+  static putTransaction = (transaction, callback) => {
+    this.putRequest(`api/Transactions/${transaction.id}`, JSON.stringify(transaction), callback);
+  };
 }
 
 export default TransactionApis;
