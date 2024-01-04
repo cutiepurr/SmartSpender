@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input } from "reactstrap";
 import TransactionTable from "./TransactionTable";
+import TransactionApis from "../../api/TransactionApis";
+import CategoryApis from "../../api/CategoryApis";
 
 const AddTransaction = () => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch(`/api/Category`)
-      .then((response) => response.json())
-      .then((data) => {
-        setCategories(data);
-      });
+    CategoryApis.getCategories((data) => {
+      setCategories(data);
+    });
   }, []);
 
   const toSQLDate = (date) => date.toUTC().toISOString();
@@ -57,15 +57,8 @@ const AddTransaction = () => {
     var transaction = validatedInput();
     if (transaction == null) return;
 
-    fetch(`api/Transactions`, {
-      method: "POST",
-      body: JSON.stringify(transaction),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((response) => {
-      if (response.ok) window.location.reload();
-      else alert("Cannot add transaction");
+    TransactionApis.postTransaction(transaction, () => {
+      window.location.reload();
     });
   };
 
