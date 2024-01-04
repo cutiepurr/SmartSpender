@@ -7,6 +7,7 @@ import { getPreviousMonth, getNextMonth } from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
 import CategoryApis from "../../api/CategoryApis";
 import NotFound from "../NotFound";
+import EditTransaction from "./EditTransaction";
 
 const TransactionList = () => {
   const { year, month } = useParams();
@@ -45,7 +46,6 @@ const TransactionList = () => {
 
     TransactionApis.getTransactions(query, (data) => {
       if (data === null) return;
-      console.log(data);
       setTransactions((transactions) => transactions.concat(data));
     });
   }, [year, month, page, perLoad]);
@@ -69,13 +69,21 @@ const TransactionList = () => {
 
     let transactionObject = {
       description: transaction.description,
-      date: transactionDate,
+      timestamp: transactionDate,
       amount: `$${transaction.amount}`,
       category: categoryName,
     };
 
     return (
-      <TransactionTable key={transaction.id} transaction={transactionObject} />
+      <div key={`view-${transaction.id}`}>
+        <TransactionTable
+          transaction={transactionObject}
+        />
+        <EditTransaction
+          transaction={transaction}
+          categories={categories}
+        />
+      </div>
     );
   });
 
@@ -84,7 +92,7 @@ const TransactionList = () => {
       <TransactionTable
         transaction={{
           description: "Description",
-          date: "Date",
+          timestamp: "Date",
           amount: "Amount",
           category: "Category",
         }}

@@ -5,7 +5,7 @@ const TransactionTable = ({ transaction }) => {
   return (
     <Row className="my-3">
       <Col md={2}>
-        <div>{transaction.date}</div>
+        <div>{transaction.timestamp}</div>
       </Col>
       <Col md={4}>
         <div>{transaction.description}</div>

@@ -25,6 +25,18 @@ const validateTransaction = (transaction) => {
   return true;
 };
 
+const validatedTransaction = (transaction) => {
+  let validation = validateTransaction(transaction);
+  if (!validation) return null;
+
+  return {
+    description: transaction.description,
+    amount: parseInt(transaction.amount),
+    timestamp: new Date(transaction.timestamp).toISOString(),
+    categoryID: parseInt(transaction.category),
+  };
+};
+
 export {
-    validateTransaction
+    validatedTransaction
 }
