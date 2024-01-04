@@ -9,6 +9,10 @@ const AppRoutes = [
   {
     path: "/transactions",
     element: <TransactionList />
+  },
+  {
+    path: "/transactions/:year/:month",
+    element: <TransactionList />
   }
 ];
 

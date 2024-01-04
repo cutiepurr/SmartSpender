@@ -13,7 +13,7 @@ const AddTransaction = () => {
       });
   }, []);
 
-  const toSQLDate = (date) => date.toISOString();
+  const toSQLDate = (date) => date.toUTC().toISOString();
 
   const validatedInput = () => {
     var form = document.getElementById("createTransactionForm");

@@ -16,27 +16,49 @@ namespace SmartSpender.Controllers
 
         // GET: api/Transactions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Transaction>>> GetTransaction(int page = 0, int count = 50)
+        public async Task<ActionResult<IEnumerable<Transaction>>> GetTransaction(int page = 0, int count = 50, int year = -1, int month = -1)
         {
             if (_context.Transaction == null)
             {
                 return NotFound();
             }
-            return await _context.Transaction
+
+            var transactions = GetTransactionByYearMonth(year, month);
+
+            var paginatedTransactions = transactions
                 .OrderByDescending(transaction => transaction.Timestamp)
-                .Skip(page * count).Take(count)
-                .ToListAsync();
+                .Skip(page * count).Take(count);
+
+            if (!paginatedTransactions.Any()) return NotFound();
+            return await paginatedTransactions.ToListAsync();
         }
 
         // GET: api/Transactions/count
         [HttpGet("count")]
-        public async Task<ActionResult<int>> GetCountTransaction()
+        public async Task<ActionResult<int>> GetCountTransaction(int year = -1, int month = -1)
         {
             if (_context.Transaction == null)
             {
                 return NotFound();
             }
-            return await _context.Transaction.CountAsync();
+
+            var transactions = GetTransactionByYearMonth(year, month);
+
+            return await transactions.CountAsync();
+        }
+
+        public IQueryable<Transaction> GetTransactionByYearMonth(int year = -1, int month = -1)
+        {
+            IQueryable<Transaction> transactions = _context.Transaction;
+            if (year != -1)
+            {
+                transactions = transactions.Where(transaction => transaction.Timestamp.Year == year);
+                if (month >= 1 && month <= 12)
+                {
+                    transactions = transactions.Where(transaction => transaction.Timestamp.Month == month);
+                }
+            }
+            return transactions;
         }
 
         // GET: api/Transactions/5
