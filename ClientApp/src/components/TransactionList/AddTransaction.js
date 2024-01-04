@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Form, Input } from "reactstrap";
 import TransactionTable from "./TransactionTable";
 import TransactionApis from "../../api/TransactionApis";
+import { validateTransaction } from "../../utils/TransactionValidation";
 
 const AddTransaction = ({ categories }) => {
   const toSQLDate = (date) => date.toISOString();
@@ -12,40 +13,22 @@ const AddTransaction = ({ categories }) => {
     var amount = form.querySelector("input[name='amount']").value;
     var timestamp = form.querySelector("input[name='date']").value;
     var category = form.querySelector("select[name='category']").value;
-    console.log(category);
-    if (
-      description === null ||
-      amount === null ||
-      timestamp === null ||
-      description === "" ||
-      amount === "" ||
-      timestamp === ""
-    ) {
-      alert("Field cannot be null");
-      return null;
-    }
 
-    timestamp = new Date(timestamp);
-    if (amount <= 0) {
-      alert("Amount must be greater than 0");
-      return null;
-    }
+    let validation = validateTransaction({
+      description: description,
+      amount: amount,
+      timestamp: timestamp,
+      category: category,
+    });
 
-    if (timestamp > new Date()) {
-      alert("Date and time cannot be in the future");
-      return null;
-    }
+    if (!validation) return null;
 
-    var transaction = {
+    return {
       description: description,
       amount: parseInt(amount),
-      timestamp: toSQLDate(timestamp),
+      timestamp: toSQLDate(new Date(timestamp)),
       categoryID: parseInt(category),
     };
-
-    console.log(transaction);
-
-    return transaction;
   };
 
   const addTransaction = () => {
@@ -75,6 +58,7 @@ const AddTransaction = ({ categories }) => {
       </Input>
     ),
   };
+  
   return (
     <Form id="createTransactionForm">
       <TransactionTable transaction={inputTable} />
