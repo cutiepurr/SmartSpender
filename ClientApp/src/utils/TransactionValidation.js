@@ -29,14 +29,15 @@ const validatedTransaction = (transaction) => {
   let validation = validateTransaction(transaction);
   if (!validation) return null;
 
+  let amount = parseInt(transaction.amount);
+  if (transaction.amountSign === "-") amount = -amount;
+
   return {
     description: transaction.description,
-    amount: parseInt(transaction.amount),
+    amount: amount,
     timestamp: new Date(transaction.timestamp).toISOString(),
     categoryID: parseInt(transaction.categoryID),
   };
 };
 
-export {
-    validatedTransaction
-}
+export { validatedTransaction };

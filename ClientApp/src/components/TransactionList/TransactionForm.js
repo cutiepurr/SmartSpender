@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import TransactionTable from "./TransactionTable";
-import { Button, Input, Form } from "reactstrap";
+import {
+  Button,
+  Input,
+  Form,
+  InputGroup,
+  InputGroupText,
+  Row,
+  Col,
+} from "reactstrap";
 import { toDatetimeLocalInputDate } from "../../utils/DateExtensions";
 
 const TransactionForm = ({
@@ -19,6 +27,7 @@ const TransactionForm = ({
     let form = document.getElementById(formId);
     let description = form.querySelector("input[name='description']").value;
     let amount = form.querySelector("input[name='amount']").value;
+    let amountSign = form.querySelector("select[name='amount-sign']").value;
     let timestamp = form.querySelector("input[name='date']").value;
     let category = form.querySelector("select[name='category']").value;
 
@@ -27,6 +36,7 @@ const TransactionForm = ({
       amount: amount,
       timestamp: timestamp,
       categoryID: category,
+      amountSign: amountSign,
     };
   };
 
@@ -37,7 +47,7 @@ const TransactionForm = ({
   };
 
   return (
-    <Form onSubmit={submit} id={formId}>
+    <Form onSubmit={submit} id={formId} className="transaction-form">
       <TransactionTable transaction={inputTable} />
     </Form>
   );
@@ -47,7 +57,7 @@ const TransactionInputTable = (transaction, categories) => {
   let defaultTimestamp =
     transaction === null
       ? null
-      : toDatetimeLocalInputDate(transaction.timestamp);
+      : toDatetimeLocalInputDate(new Date(`${transaction.timestamp}.000Z`));
   return {
     description: (
       <Input
@@ -66,12 +76,27 @@ const TransactionInputTable = (transaction, categories) => {
       />
     ),
     amount: (
-      <Input
-        name="amount"
-        placeholder="Amount"
-        type="number"
-        defaultValue={transaction === null ? null : transaction.amount}
-      />
+      <Row>
+        <Col md={4} style={{ paddingRight: 5 }}>
+          <Input name="amount-sign" type="select" defaultValue={"-"}>
+            <option value={"-"}>-</option>
+            <option value={"+"}>+</option>
+          </Input>
+        </Col>
+        <Col md={8} style={{ paddingLeft: 5 }}>
+          <InputGroup>
+            <InputGroupText>$</InputGroupText>
+            <Input
+              name="amount"
+              placeholder="Amount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              defaultValue={transaction === null ? null : transaction.amount}
+            />
+          </InputGroup>
+        </Col>
+      </Row>
     ),
     submit: <Button type="submit">+</Button>,
     category: (

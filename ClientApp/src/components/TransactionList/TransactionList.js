@@ -16,6 +16,7 @@ const TransactionList = () => {
   const [page, setPage] = useState(0); // page for loading transaction
   const [perLoad, setPerLoad] = useState(50); // number of transactions per page
   const [categories, setCategories] = useState([]);
+  const [editMode, setEditMode] = useState(-1); // id of the transaction that is currently under edit mode
 
   useEffect(() => {
     CategoryApis.getCategories((data) => {
@@ -51,11 +52,9 @@ const TransactionList = () => {
   }, [year, month, page, perLoad]);
 
   const transactionItems = transactions.map((transaction) => {
-    transaction.timestamp = new Date(
+    let transactionDate = new Date(
       `${transaction.timestamp}.000Z`
-    );
-
-    let transactionDate = transaction.timestamp.toLocaleString("en-AU", {
+    ).toLocaleString("en-AU", {
       dateStyle: "medium",
       timeStyle: "short",
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -69,22 +68,28 @@ const TransactionList = () => {
         ? "Uncategorised"
         : transactionCategory.name;
 
-    let transactionObject = {
+    let amount = transaction.amount;
+    if (amount < 0) amount = `- $${-amount}`;
+    else amount = `+ $${amount}`;
+
+    let transactionViewObject = {
       description: transaction.description,
       timestamp: transactionDate,
-      amount: `$${transaction.amount}`,
+      amount: amount,
       category: categoryName,
     };
 
     return (
       <div key={`view-${transaction.id}`}>
-        <TransactionTable
-          transaction={transactionObject}
-        />
-        <EditTransaction
-          transaction={transaction}
-          categories={categories}
-        />
+        {editMode !== transaction.id ? (
+          <TransactionTable
+            className="transaction-line"
+            transaction={transactionViewObject}
+            onClick={() => setEditMode(transaction.id)}
+          />
+        ) : (
+          <EditTransaction transaction={transaction} categories={categories} />
+        )}
       </div>
     );
   });
