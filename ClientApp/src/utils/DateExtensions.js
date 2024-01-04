@@ -14,7 +14,18 @@ const getNextMonth = (year, month) => {
   return [year, month];
 };
 
+/**
+ * Convert date to the format suitable to input type="datetime-local"
+ * @param {Date} date 
+ */
+const toDatetimeLocalInputDate = (date) => {
+  if (date.toString() === "Invalid Date") return null;
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return date.toISOString().slice(0, 16);
+}
+
 export {
     getPreviousMonth,
-    getNextMonth
+    getNextMonth,
+    toDatetimeLocalInputDate,
 };

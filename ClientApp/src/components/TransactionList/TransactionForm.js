@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import TransactionTable from "./TransactionTable";
 import { Button, Input, Form } from "reactstrap";
+import { toDatetimeLocalInputDate } from "../../utils/DateExtensions";
 
 const TransactionForm = ({
   formId,
@@ -43,6 +44,10 @@ const TransactionForm = ({
 };
 
 const TransactionInputTable = (transaction, categories) => {
+  let defaultTimestamp =
+    transaction === null
+      ? null
+      : toDatetimeLocalInputDate(transaction.timestamp);
   return {
     description: (
       <Input
@@ -57,7 +62,7 @@ const TransactionInputTable = (transaction, categories) => {
         name="date"
         placeholder="Date"
         type="datetime-local"
-        defaultValue={transaction === null ? null : transaction.timestamp}
+        defaultValue={defaultTimestamp}
       />
     ),
     amount: (

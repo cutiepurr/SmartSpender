@@ -51,9 +51,11 @@ const TransactionList = () => {
   }, [year, month, page, perLoad]);
 
   const transactionItems = transactions.map((transaction) => {
-    let transactionDate = new Date(
+    transaction.timestamp = new Date(
       `${transaction.timestamp}.000Z`
-    ).toLocaleString("en-AU", {
+    );
+
+    let transactionDate = transaction.timestamp.toLocaleString("en-AU", {
       dateStyle: "medium",
       timeStyle: "short",
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
