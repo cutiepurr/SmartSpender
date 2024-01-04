@@ -3,15 +3,18 @@ import { Row, Col } from "reactstrap";
 
 const TransactionTable = ({ transaction }) => {
   return (
-    <Row>
-      <Col md={3}>
+    <Row className="my-3">
+      <Col md={2}>
         <div>{transaction.date}</div>
       </Col>
-      <Col md={6}>
+      <Col md={4}>
         <div>{transaction.description}</div>
       </Col>
       <Col md={2}>
         <div>{transaction.amount}</div>
+      </Col>
+      <Col md={2}>
+        <div>{transaction.category}</div>
       </Col>
       <Col md={1}>
         <div>{transaction.submit}</div>

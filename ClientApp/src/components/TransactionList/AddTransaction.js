@@ -1,26 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button, Form, Input } from "reactstrap";
 import TransactionTable from "./TransactionTable";
 import TransactionApis from "../../api/TransactionApis";
-import CategoryApis from "../../api/CategoryApis";
 
-const AddTransaction = () => {
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    CategoryApis.getCategories((data) => {
-      setCategories(data);
-    });
-  }, []);
-
-  const toSQLDate = (date) => date.toUTC().toISOString();
+const AddTransaction = ({ categories }) => {
+  const toSQLDate = (date) => date.toISOString();
 
   const validatedInput = () => {
     var form = document.getElementById("createTransactionForm");
     var description = form.querySelector("input[name='description']").value;
     var amount = form.querySelector("input[name='amount']").value;
     var timestamp = form.querySelector("input[name='date']").value;
-
+    var category = form.querySelector("select[name='category']").value;
+    console.log(category);
     if (
       description === null ||
       amount === null ||
@@ -48,7 +40,10 @@ const AddTransaction = () => {
       description: description,
       amount: parseInt(amount),
       timestamp: toSQLDate(timestamp),
+      categoryID: parseInt(category),
     };
+
+    console.log(transaction);
 
     return transaction;
   };
@@ -69,6 +64,16 @@ const AddTransaction = () => {
     date: <Input name="date" placeholder="Date" type="datetime-local" />,
     amount: <Input name="amount" placeholder="Amount" type="number" />,
     submit: <Button onClick={addTransaction}>+</Button>,
+    category: (
+      <Input name="category" type="select">
+        <option value={null}> Uncategorised </option>
+        {categories.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.name}
+          </option>
+        ))}
+      </Input>
+    ),
   };
   return (
     <Form id="createTransactionForm">

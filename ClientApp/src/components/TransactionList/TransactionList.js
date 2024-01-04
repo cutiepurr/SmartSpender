@@ -5,6 +5,8 @@ import TransactionTable from "./TransactionTable";
 import { Button, Row, Col } from "reactstrap";
 import { getPreviousMonth, getNextMonth } from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
+import CategoryApis from "../../api/CategoryApis";
+import NotFound from "../NotFound";
 
 const TransactionList = () => {
   const { year, month } = useParams();
@@ -12,6 +14,13 @@ const TransactionList = () => {
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(0); // page for loading transaction
   const [perLoad, setPerLoad] = useState(50); // number of transactions per page
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    CategoryApis.getCategories((data) => {
+      setCategories(data);
+    });
+  }, []);
 
   useEffect(() => {
     let query = new URLSearchParams();
@@ -36,27 +45,39 @@ const TransactionList = () => {
 
     TransactionApis.getTransactions(query, (data) => {
       if (data === null) return;
+      console.log(data);
       setTransactions((transactions) => transactions.concat(data));
     });
   }, [year, month, page, perLoad]);
 
-  const transactionItems = transactions.map((transaction) => (
-    <TransactionTable
-      key={transaction.id}
-      transaction={{
-        description: transaction.description,
-        date: new Date(`${transaction.timestamp}.000Z`).toLocaleString(
-          "en-AU",
-          {
-            dateStyle: "medium",
-            timeStyle: "short",
-            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          }
-        ),
-        amount: `$${transaction.amount}`,
-      }}
-    />
-  ));
+  const transactionItems = transactions.map((transaction) => {
+    let transactionDate = new Date(
+      `${transaction.timestamp}.000Z`
+    ).toLocaleString("en-AU", {
+      dateStyle: "medium",
+      timeStyle: "short",
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    });
+
+    let transactionCategory = categories.find(
+      (c) => c.id === transaction.categoryID
+    );
+    let categoryName =
+      transactionCategory === undefined
+        ? "Uncategorised"
+        : transactionCategory.name;
+
+    let transactionObject = {
+      description: transaction.description,
+      date: transactionDate,
+      amount: `$${transaction.amount}`,
+      category: categoryName,
+    };
+
+    return (
+      <TransactionTable key={transaction.id} transaction={transactionObject} />
+    );
+  });
 
   const transactionColumnTitle = (
     <strong>
@@ -65,6 +86,7 @@ const TransactionList = () => {
           description: "Description",
           date: "Date",
           amount: "Amount",
+          category: "Category",
         }}
       />
     </strong>
@@ -74,20 +96,24 @@ const TransactionList = () => {
 
   return (
     <div>
-      {month == null ? (
+      {month === null ? (
         <h1>Transaction</h1>
       ) : (
         <TitleWithMonth year={year} month={month} />
       )}
 
-      <AddTransaction />
-
-      {transactionColumnTitle}
-      {transactionItems}
-
-      {count > (page + 1) * perLoad ? (
-        <Button onClick={loadMoreTransactions}>Load more</Button>
-      ) : null}
+      <AddTransaction categories={categories} />
+      {count === 0 ? (
+        <NotFound />
+      ) : (
+        <div>
+          {transactionColumnTitle}
+          {transactionItems}
+          {count > (page + 1) * perLoad ? (
+            <Button onClick={loadMoreTransactions}>Load more</Button>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 };
