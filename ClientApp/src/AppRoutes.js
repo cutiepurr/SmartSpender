@@ -1,4 +1,4 @@
-import { Home } from "./components/Home";
+import Home from "./components/Home";
 import TransactionList from "./components/TransactionList/TransactionList";
 
 const AppRoutes = [
