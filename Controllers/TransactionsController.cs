@@ -57,21 +57,80 @@ namespace SmartSpender.Controllers
             }
 
             var transactions = GetTransactionByYearMonth(year, month);
-    
+
             return await transactions.SumAsync(transaction => transaction.Amount);
         }
 
-        public IQueryable<Transaction> GetTransactionByYearMonth(int year = -1, int month = -1)
+        // GET: api/Transactions/amount/during
+        [HttpGet("amount/during")]
+        public async Task<ActionResult<List<object>>> GetAmountsFromMonthToMonth(int startYear = -1, int startMonth = -1, int endYear = -1, int endMonth = -1)
+        {
+            if (_context.Transaction == null)
+            {
+                return NotFound();
+            }
+
+            var startDate = new DateTime(startYear, startMonth, 1);
+            var endDate = new DateTime(endYear, endMonth, DateTime.DaysInMonth(endYear, endMonth));
+            var amounts = new List<object>();
+
+            var curYear = startYear;
+            var curYearList = new List<object>();
+            while (startDate.CompareTo(endDate) <= 0) {
+                if (startDate.Year != curYear) {
+                    amounts.Add(new {
+                        Year = curYear,
+                        Months = curYearList
+                    });
+
+                    curYear = startDate.Year;
+                    curYearList = new List<object>();
+                }
+
+                var amount = await GetTotalAmount(startDate.Year, startDate.Month);
+                curYearList.Add(new {
+                    Month = startDate.Month,
+                    Amount = amount.Result
+                });
+
+                startDate = startDate.AddMonths(1);
+            }
+
+            amounts.Add(new {
+                Year = curYear,
+                Months = curYearList
+            });
+
+            return amounts;
+        }
+
+        private IQueryable<Transaction> GetTransactionByYearMonth(int year = -1, int month = -1)
+        {
+            return GetTransactionDuring(year, month, year, month);
+        }
+
+        private IQueryable<Transaction> GetTransactionDuring(int startYear = -1, int startMonth = -1, int endYear = -1, int endMonth = -1)
         {
             IQueryable<Transaction> transactions = _context.Transaction;
-            if (year != -1)
-            {
-                transactions = transactions.Where(transaction => transaction.Timestamp.Year == year);
-                if (month >= 1 && month <= 12)
-                {
-                    transactions = transactions.Where(transaction => transaction.Timestamp.Month == month);
+
+            if (startYear != -1) {
+                transactions = transactions.Where(transaction => transaction.Timestamp.Year >= startYear);
+
+                if (startMonth == -1) {
+                    var startDate = new DateTime(startYear, startMonth, 1);
+                    transactions = transactions.Where(transaction => transaction.Timestamp.CompareTo(startDate) >= 0);
                 }
             }
+
+            if (endYear != -1) {
+                transactions = transactions.Where(transaction => transaction.Timestamp.Year <= endYear);
+
+                if (endMonth == -1) {
+                    var endDate = new DateTime(endYear, endMonth, DateTime.DaysInMonth(endYear, endMonth));
+                    transactions = transactions.Where(transaction => transaction.Timestamp.CompareTo(endDate) <= 0);
+                }
+            }
+
             return transactions;
         }
 

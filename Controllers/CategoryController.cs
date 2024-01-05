@@ -96,10 +96,11 @@ namespace SmartSpender.Controllers
 
         // POST: api/Category/default
         [HttpPost("default")]
-        public async Task<ActionResult<IEnumerable<TransactionCategory>>> PostDefaultCategory()
+        public ActionResult<IEnumerable<TransactionCategory>> PostDefaultCategory()
         {
             List<TransactionCategory> categories = new List<TransactionCategory>();
-            DefaultCategories.ForEach(async category => {
+            DefaultCategories.ForEach(async category =>
+            {
                 var temp = await PostTransactionCategory(new TransactionCategory(category));
                 if (temp.Value != null) categories.Add(temp.Value);
             });

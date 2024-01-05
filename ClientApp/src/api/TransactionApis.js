@@ -20,12 +20,21 @@ class TransactionApis extends ApiFetcher {
   };
 
   /**
-   * GET the number of transactions
+   * GET the total amount for the certain month of the year.
    * @param {URLSearchParams} query Params for the API's URL
    * @param {Function} callback Callback function upon successful request
    */
   static getTransactionTotalAmount = (query, callback) => {
     this.getRequest(`/api/Transactions/amount?${query.toString()}`, callback);
+  };
+
+  /**
+   * GET the total amount for each month of the specified period
+   * @param {URLSearchParams} query Params for the API's URL
+   * @param {Function} callback Callback function upon successful request
+   */
+  static getMonthlyTransactionsAmounts = (query, callback) => {
+    this.getRequest(`/api/Transactions/amount/during?${query.toString()}`, callback);
   };
 
   /**
