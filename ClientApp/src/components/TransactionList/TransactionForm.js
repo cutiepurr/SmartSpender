@@ -92,7 +92,7 @@ const TransactionInputTable = (transaction, categories) => {
               type="number"
               min="0.01"
               step="0.01"
-              defaultValue={transaction === null ? null : transaction.amount}
+              defaultValue={transaction === null ? null : Math.abs(transaction.amount)}
             />
           </InputGroup>
         </Col>

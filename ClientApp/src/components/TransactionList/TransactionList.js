@@ -23,7 +23,7 @@ const TransactionList = () => {
   useEffect(() => {
     CategoryApis.getCategories((data) => {
       setCategories(data);
-      console.log(data)
+      console.log(data);
     });
   }, []);
 
@@ -36,7 +36,9 @@ const TransactionList = () => {
 
     TransactionApis.getTransactionCounts(query, (data) => setCount(data));
 
-    TransactionApis.getTransactionTotalAmount(query, (data) => setTotalAmount(data));
+    TransactionApis.getTransactionTotalAmount(query, (data) =>
+      setTotalAmount(data)
+    );
   }, [year, month]);
 
   useEffect(() => {
@@ -110,10 +112,10 @@ const TransactionList = () => {
   );
 
   const totalAmountElement = (
-    <Container className="fixed-bottom bg-white border-top p-3">
+    <Container className="fixed-bottom bg-white border-top p-3" style={{ width: 1200 }}>
       <h4>
         <div className="float-end">{formatMoneyAmount(totalAmount)}</div>
-      <div>Total</div>
+        <div>Total</div>
       </h4>
     </Container>
   );
@@ -128,19 +130,23 @@ const TransactionList = () => {
         <TitleWithMonth year={year} month={month} />
       )}
 
-      <AddTransaction categories={categories} />
-      {count === 0 ? (
-        <NotFound />
-      ) : (
-        <div className="bg-white">
-          {transactionColumnTitle}
-          {totalAmountElement}
-          {transactionItems}
-          {count > (page + 1) * perLoad ? (
-            <Button onClick={loadMoreTransactions}>Load more</Button>
-          ) : null}
+      <div style={{ width: "100%", height: "75vh", overflowX: "scroll" }}>
+        <div style={{ width: 1200 }} className="mx-auto">
+        <AddTransaction categories={categories} />
+        {count === 0 ? (
+          <NotFound />
+        ) : (
+          <div className="bg-white">
+            {transactionColumnTitle}
+            {totalAmountElement}
+            {transactionItems}
+            {count > (page + 1) * perLoad ? (
+              <Button onClick={loadMoreTransactions}>Load more</Button>
+            ) : null}
+          </div>
+        )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

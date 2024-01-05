@@ -5,20 +5,20 @@ const TransactionTable = (prop) => {
   const { transaction, className, onClick } = prop;
   return (
     <div className={className} onClick={onClick}>
-      <Row className="my-1 p-2 ">
-        <Col md={2}>
+      <Row className="m-1 p-2">
+        <Col xs={2}>
           <div>{transaction.timestamp}</div>
         </Col>
-        <Col md={3}>
+        <Col xs={4}>
           <div>{transaction.description}</div>
         </Col>
-        <Col md={3}>
+        <Col xs={3}>
           <div>{transaction.amount}</div>
         </Col>
-        <Col md={2}>
+        <Col xs={2}>
           <div>{transaction.category}</div>
         </Col>
-        <Col md={1}>
+        <Col xs={1}>
           <div>{transaction.submit}</div>
         </Col>
       </Row>
