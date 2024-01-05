@@ -5,23 +5,25 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
-  ReferenceLine,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import {
+    getDateNextMonth,
   getDatePreviousMonth,
-  getPreviousMonth,
+  getNextMonth,
 } from "../../utils/DateExtensions";
 
 const MonthlyExpenseBarGraph = () => {
   const [graphData, setGraphData] = useState([]);
+  const [wantData, setWantData] = useState([]);
+  const [needData, setNeedData] = useState([]);
   const [endDate, setEndDate] = useState(
     new Date(new Date().getFullYear(), new Date().getMonth())
   );
   const [startDate, setStartDate] = useState(
-    new Date(endDate.getFullYear() - 1, endDate.getMonth())
+    new Date(endDate.getFullYear() - 1, endDate.getMonth()-1)
   );
 
   useEffect(() => {
@@ -31,32 +33,58 @@ const MonthlyExpenseBarGraph = () => {
     query.set("endYear", endDate.getFullYear());
     query.set("endMonth", endDate.getMonth() + 1);
 
+    query.set("type", 0);
     TransactionApis.getMonthlyTransactionsAmounts(query, (data) => {
-      console.log(sanitizeData(data));
-      setGraphData(sanitizeData(data));
+      // console.log(data)
+      setWantData(data);
+    });
+
+    query.set("type", 1);
+    TransactionApis.getMonthlyTransactionsAmounts(query, (data) => {
+      // console.log(data)
+      setNeedData(data);
     });
   }, []);
 
-  const sanitizeData = (data) => {
+  useEffect(() => {
+    setGraphData(sanitizeData());
+  }, [wantData, needData]);
+
+  const sanitizeData = () => {
     let sanitizedData = [];
-    let datamap = {};
-    data.forEach((item) => {
-      datamap[new Date(item.year, item.month - 1)] = item.amount;
+
+    let wantDatamap = {};
+    let needDatamap = {};
+
+    wantData.forEach((item) => {
+      wantDatamap[new Date(item.year, item.month - 1)] = item.amount;
     });
 
-    var curDate = endDate;
+    needData.forEach((item) => {
+      needDatamap[new Date(item.year, item.month - 1)] = item.amount;
+    });
+
+    var curDate = startDate;
+    
     while (
-      curDate.getMonth() != startDate.getMonth() ||
-      curDate.getFullYear() != startDate.getFullYear()
+      curDate.getMonth() != endDate.getMonth() ||
+      curDate.getFullYear() != endDate.getFullYear()
     ) {
+      curDate = getDateNextMonth(curDate);
       sanitizedData.push({
         name: curDate.toLocaleDateString("en-GB", {
-          month: "2-digit",
+          month: "short",
           year: "2-digit",
         }),
-        Spending: Math.max(-datamap[curDate], 0),
+        Wants:
+          wantDatamap[curDate] == undefined
+            ? 0
+            : Math.max(-wantDatamap[curDate], 0),
+        Needs:
+          needDatamap[curDate] == undefined
+            ? 0
+            : Math.max(-needDatamap[curDate], 0),
       });
-      curDate = getDatePreviousMonth(curDate);
     }
 
     return sanitizedData;
@@ -66,11 +94,12 @@ const MonthlyExpenseBarGraph = () => {
     <div>
       <BarChart data={graphData} width={730} height={250}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
+        <XAxis dataKey="name" interval={1} />
+        <YAxis unit="$" />
+        <Tooltip formatter={(value, name, props) => [`$${value}`, name]} />
         <Legend />
-        <Bar dataKey="Spending" fill="#8884d8" />
+        <Bar dataKey="Wants" fill="#8884d8" stackId={1} />
+        <Bar dataKey="Needs" fill="#82ca9d" stackId={1} />
       </BarChart>
     </div>
   );

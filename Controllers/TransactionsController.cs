@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace SmartSpender.Controllers
 {
@@ -63,7 +64,7 @@ namespace SmartSpender.Controllers
 
         // GET: api/Transactions/amount/during
         [HttpGet("amount/during")]
-        public async Task<ActionResult<IEnumerable<object>>> GetAmountsFromMonthToMonth(int startYear = -1, int startMonth = -1, int endYear = -1, int endMonth = -1)
+        public async Task<ActionResult<IEnumerable<object>>> GetAmountsFromMonthToMonth(CategoryType type, int startYear = -1, int startMonth = -1, int endYear = -1, int endMonth = -1)
         {
             if (_context.Transaction == null)
             {
@@ -71,14 +72,33 @@ namespace SmartSpender.Controllers
             }
 
             var transactions = GetTransactionDuring(startYear, startMonth, endYear, endMonth);
+            var categoryTypeMap = new Dictionary<double, CategoryType>();
+            foreach (var category in _context.TransactionCategory) {
+                categoryTypeMap.Add(category.ID, category.CategoryType);
+            }
 
-            return await transactions
-            .GroupBy(item => new {item.Timestamp.Month, item.Timestamp.Year})
-            .Select(i2 => new{ 
-                Month = i2.Key.Month,
-                Year = i2.Key.Year,
-                Amount = i2.Sum(i3 => i3.Amount)
-            }).ToListAsync();
+            // return await transactions
+            // .LeftJoin(_context.TransactionCategory, (item => item.CategoryID), (item => item.ID), (item => {
+                
+            // }))
+            // // .Where(item => categoryTypeMap.GetValueOrDefault(item.CategoryID ?? 1) == type)
+            // .GroupBy(item => new {item.Timestamp.Month, item.Timestamp.Year})
+            // .Select(i2 => new{ 
+            //     Month = i2.Key.Month,
+            //     Year = i2.Key.Year,
+            //     Amount = i2.Sum(i3 => i3.Amount)
+            // }).ToListAsync();
+            var result = from transaction in transactions
+            join category in _context.TransactionCategory on transaction.CategoryID equals category.ID
+            where category.CategoryType == type
+            group transaction by new {transaction.Timestamp.Month, transaction.Timestamp.Year} into grouped
+            select new {
+                grouped.Key.Month,
+                grouped.Key.Year,
+                Amount = grouped.Sum(i3 => i3.Amount)
+            };
+
+            return await result.ToListAsync();
         }
 
         private IQueryable<Transaction> GetTransactionByYearMonth(int year = -1, int month = -1)

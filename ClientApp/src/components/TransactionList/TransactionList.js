@@ -23,6 +23,7 @@ const TransactionList = () => {
   useEffect(() => {
     CategoryApis.getCategories((data) => {
       setCategories(data);
+      console.log(data)
     });
   }, []);
 
