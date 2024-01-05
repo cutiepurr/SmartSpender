@@ -14,6 +14,22 @@ const getNextMonth = (year, month) => {
   return [year, month];
 };
 
+const getDatePreviousMonth = (date) => {
+  var month = date.getMonth();
+  var year = date.getFullYear();
+
+  [year, month] = getPreviousMonth(year, month+1);
+  return new Date(year, month-1);
+};
+
+const getDateNextMonth = (date) => {
+  var month = date.getMonth();
+  var year = date.getFullYear();
+
+  [year, month] = getNextMonth(year, month+1);
+  return new Date(year, month-1);
+};
+
 /**
  * Convert date to the format suitable to input type="datetime-local"
  * @param {Date} date 
@@ -28,4 +44,6 @@ export {
     getPreviousMonth,
     getNextMonth,
     toDatetimeLocalInputDate,
+    getDatePreviousMonth,
+    getDateNextMonth,
 };

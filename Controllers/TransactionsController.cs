@@ -63,45 +63,22 @@ namespace SmartSpender.Controllers
 
         // GET: api/Transactions/amount/during
         [HttpGet("amount/during")]
-        public async Task<ActionResult<List<object>>> GetAmountsFromMonthToMonth(int startYear = -1, int startMonth = -1, int endYear = -1, int endMonth = -1)
+        public async Task<ActionResult<IEnumerable<object>>> GetAmountsFromMonthToMonth(int startYear = -1, int startMonth = -1, int endYear = -1, int endMonth = -1)
         {
             if (_context.Transaction == null)
             {
                 return NotFound();
             }
 
-            var startDate = new DateTime(startYear, startMonth, 1);
-            var endDate = new DateTime(endYear, endMonth, DateTime.DaysInMonth(endYear, endMonth));
-            var amounts = new List<object>();
+            var transactions = GetTransactionDuring(startYear, startMonth, endYear, endMonth);
 
-            var curYear = startYear;
-            var curYearList = new List<object>();
-            while (startDate.CompareTo(endDate) <= 0) {
-                if (startDate.Year != curYear) {
-                    amounts.Add(new {
-                        Year = curYear,
-                        Months = curYearList
-                    });
-
-                    curYear = startDate.Year;
-                    curYearList = new List<object>();
-                }
-
-                var amount = await GetTotalAmount(startDate.Year, startDate.Month);
-                curYearList.Add(new {
-                    Month = startDate.Month,
-                    Amount = amount.Result
-                });
-
-                startDate = startDate.AddMonths(1);
-            }
-
-            amounts.Add(new {
-                Year = curYear,
-                Months = curYearList
-            });
-
-            return amounts;
+            return await transactions
+            .GroupBy(item => new {item.Timestamp.Month, item.Timestamp.Year})
+            .Select(i2 => new{ 
+                Month = i2.Key.Month,
+                Year = i2.Key.Year,
+                Amount = i2.Sum(i3 => i3.Amount)
+            }).ToListAsync();
         }
 
         private IQueryable<Transaction> GetTransactionByYearMonth(int year = -1, int month = -1)
