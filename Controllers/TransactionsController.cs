@@ -47,6 +47,20 @@ namespace SmartSpender.Controllers
             return await transactions.CountAsync();
         }
 
+        // GET: api/Transactions/amount
+        [HttpGet("amount")]
+        public async Task<ActionResult<double>> GetTotalAmount(int year = -1, int month = -1)
+        {
+            if (_context.Transaction == null)
+            {
+                return NotFound();
+            }
+
+            var transactions = GetTransactionByYearMonth(year, month);
+    
+            return await transactions.SumAsync(transaction => transaction.Amount);
+        }
+
         public IQueryable<Transaction> GetTransactionByYearMonth(int year = -1, int month = -1)
         {
             IQueryable<Transaction> transactions = _context.Transaction;

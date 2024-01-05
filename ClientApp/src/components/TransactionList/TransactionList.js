@@ -2,17 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AddTransaction from "./AddTransaction";
 import TransactionTable from "./TransactionTable";
-import { Button, Row, Col } from "reactstrap";
+import { Button, Row, Col, Container } from "reactstrap";
 import { getPreviousMonth, getNextMonth } from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
 import CategoryApis from "../../api/CategoryApis";
 import NotFound from "../NotFound";
 import EditTransaction from "./EditTransaction";
+import { formatMoneyAmount } from "../../utils/MoneyExtensions";
 
 const TransactionList = () => {
   const { year, month } = useParams();
   const [transactions, setTransactions] = useState([]);
   const [count, setCount] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
   const [page, setPage] = useState(0); // page for loading transaction
   const [perLoad, setPerLoad] = useState(50); // number of transactions per page
   const [categories, setCategories] = useState([]);
@@ -31,9 +33,9 @@ const TransactionList = () => {
       if (month != null) query.set("month", month);
     }
 
-    TransactionApis.getTransactionCounts(query, (data) => {
-      setCount(data);
-    });
+    TransactionApis.getTransactionCounts(query, (data) => setCount(data));
+
+    TransactionApis.getTransactionTotalAmount(query, (data) => setTotalAmount(data));
   }, [year, month]);
 
   useEffect(() => {
@@ -68,9 +70,7 @@ const TransactionList = () => {
         ? "Uncategorised"
         : transactionCategory.name;
 
-    let amount = transaction.amount;
-    if (amount < 0) amount = `- $${-amount}`;
-    else amount = `+ $${amount}`;
+    let amount = formatMoneyAmount(transaction.amount);
 
     let transactionViewObject = {
       description: transaction.description,
@@ -95,8 +95,9 @@ const TransactionList = () => {
   });
 
   const transactionColumnTitle = (
-    <strong>
+    <strong className="sticky-top">
       <TransactionTable
+        className="bg-white border-bottom"
         transaction={{
           description: "Description",
           timestamp: "Date",
@@ -105,6 +106,15 @@ const TransactionList = () => {
         }}
       />
     </strong>
+  );
+
+  const totalAmountElement = (
+    <Container className="fixed-bottom bg-white border-top p-3">
+      <h4>
+        <div className="float-end">{formatMoneyAmount(totalAmount)}</div>
+      <div>Total</div>
+      </h4>
+    </Container>
   );
 
   const loadMoreTransactions = () => setPage((tmp) => (tmp = page + 1));
@@ -121,8 +131,9 @@ const TransactionList = () => {
       {count === 0 ? (
         <NotFound />
       ) : (
-        <div>
+        <div className="bg-white">
           {transactionColumnTitle}
+          {totalAmountElement}
           {transactionItems}
           {count > (page + 1) * perLoad ? (
             <Button onClick={loadMoreTransactions}>Load more</Button>

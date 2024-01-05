@@ -20,6 +20,15 @@ class TransactionApis extends ApiFetcher {
   };
 
   /**
+   * GET the number of transactions
+   * @param {URLSearchParams} query Params for the API's URL
+   * @param {Function} callback Callback function upon successful request
+   */
+  static getTransactionTotalAmount = (query, callback) => {
+    this.getRequest(`/api/Transactions/amount?${query.toString()}`, callback);
+  };
+
+  /**
    * POST transaction
    * @param {Object} transaction Must include description, timestamp, and amount
    * @param {Function} callback Callback function upon successful request
