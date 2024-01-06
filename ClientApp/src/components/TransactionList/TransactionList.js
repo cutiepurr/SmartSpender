@@ -9,6 +9,7 @@ import CategoryApis from "../../api/CategoryApis";
 import NotFound from "../NotFound";
 import EditTransaction from "./EditTransaction";
 import { formatMoneyAmount } from "../../utils/MoneyExtensions";
+import Ribbon from "./Ribbon";
 
 const TransactionList = () => {
   const { year, month } = useParams();
@@ -155,6 +156,7 @@ const TransactionList = () => {
           <NotFound />
         ) : (
           <div className="bg-white">
+            <Ribbon selectedItems={selectedItems} />
             {transactionColumnTitle}
             {totalAmountElement}
             {transactionItems}

@@ -6,7 +6,7 @@ class TransactionApis extends ApiFetcher {
    * @param {URLSearchParams} query Params for the API's URL
    * @param {Function} callback Callback function upon successful request
    */
-  static getTransactions = (query, callback) => {
+  static getTransactions = (query, callback=null) => {
     this.getRequest(`/api/Transactions?${query.toString()}`, callback);
   };
 
@@ -15,7 +15,7 @@ class TransactionApis extends ApiFetcher {
    * @param {URLSearchParams} query Params for the API's URL
    * @param {Function} callback Callback function upon successful request
    */
-  static getTransactionCounts = (query, callback) => {
+  static getTransactionCounts = (query, callback=null) => {
     this.getRequest(`/api/Transactions/count?${query.toString()}`, callback);
   };
 
@@ -24,7 +24,7 @@ class TransactionApis extends ApiFetcher {
    * @param {URLSearchParams} query Params for the API's URL
    * @param {Function} callback Callback function upon successful request
    */
-  static getTransactionTotalAmount = (query, callback) => {
+  static getTransactionTotalAmount = (query, callback=null) => {
     this.getRequest(`/api/Transactions/amount?${query.toString()}`, callback);
   };
 
@@ -33,7 +33,7 @@ class TransactionApis extends ApiFetcher {
    * @param {URLSearchParams} query Params for the API's URL
    * @param {Function} callback Callback function upon successful request
    */
-  static getMonthlyTransactionsAmounts = (query, callback) => {
+  static getMonthlyTransactionsAmounts = (query, callback=null) => {
     this.getRequest(`/api/Transactions/amount/during?${query.toString()}`, callback);
   };
 
@@ -42,7 +42,7 @@ class TransactionApis extends ApiFetcher {
    * @param {Object} transaction Must include description, timestamp, and amount
    * @param {Function} callback Callback function upon successful request
    */
-  static postTransaction = (transaction, callback) => {
+  static postTransaction = (transaction, callback=null) => {
     this.postRequest(`api/Transactions`, JSON.stringify(transaction), callback);
   };
 
@@ -51,8 +51,26 @@ class TransactionApis extends ApiFetcher {
    * @param {Object} transaction Must include id, description, timestamp, and amount
    * @param {Function} callback Callback function upon successful request
    */
-  static putTransaction = (transaction, callback) => {
+  static putTransaction = (transaction, callback=null) => {
     this.putRequest(`api/Transactions/${transaction.id}`, JSON.stringify(transaction), callback);
+  };
+
+  /**
+   * DELETE transaction
+   * @param {long} transactionId
+   * @param {Function} callback Callback function upon successful request
+   */
+  static deleteTransaction = (transactionId, callback=null) => {
+    this.deleteRequest(`api/Transactions/${transactionId}`, null, callback);
+  };
+
+  /**
+   * DELETE transaction
+   * @param {Array} idArray
+   * @param {Function} callback Callback function upon successful request
+   */
+  static deleteTransactions = (idArray, callback=null) => {
+    this.deleteRequest(`api/Transactions`, idArray, callback);
   };
 }
 

@@ -2,7 +2,9 @@ class ApiFetcher {
   static getRequest = (url, callback) => {
     fetch(url)
       .then((response) => response.json())
-      .then((data) => callback(data));
+      .then((data) => {
+        if (callback !== null) callback(data);
+      });
   };
 
   static postRequest = (url, body, callback) => {
@@ -13,8 +15,8 @@ class ApiFetcher {
         "Content-Type": "application/json",
       },
     }).then((response) => {
-      if (response.ok) callback();
-      else alert("Cannot add transaction");
+      if (response.ok && callback !== null) callback();
+      else alert("Cannot add");
     });
   };
 
@@ -26,9 +28,22 @@ class ApiFetcher {
         "Content-Type": "application/json",
       },
     }).then((response) => {
+      if (response.ok && callback !== null) callback();
+      else alert("Cannot edit");
+    });
+  };
+
+  static deleteRequest = (url, body, callback) => {
+    fetch(url, {
+      method: "DELETE",
+      body: body,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((response) => {
       console.log(response);
-      if (response.ok) callback();
-      else alert("Cannot add transaction");
+      if (response.ok && callback !== null) callback();
+      else alert("Cannot delete");
     });
   };
 }

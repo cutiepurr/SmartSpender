@@ -230,6 +230,28 @@ namespace SmartSpender.Controllers
             return NoContent();
         }
 
+        // DELETE: api/Transactions
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTransactions(IEnumerable<long> idList)
+        {
+            if (_context.Transaction == null)
+            {
+                return NotFound();
+            }
+
+            var transaction = _context.Transaction.Where(item => idList.Contains(item.ID));
+
+            if (transaction == null)
+            {
+                return NotFound();
+            }
+
+            _context.Transaction.RemoveRange(transaction);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private bool TransactionExists(long id)
         {
             return (_context.Transaction?.Any(e => e.ID == id)).GetValueOrDefault();
