@@ -46,3 +46,8 @@ code {
   height: 75vh;
   width: .75rem;
 }
+
+.sticky-left {
+  position: sticky;
+  left: 0;
+}
