@@ -10,6 +10,7 @@ import {
   Col,
 } from "reactstrap";
 import { toDatetimeLocalInputDate } from "../../utils/DateExtensions";
+import { validatedTransaction } from "../../utils/TransactionValidation";
 
 const TransactionForm = ({
   formId,
@@ -17,103 +18,111 @@ const TransactionForm = ({
   categories,
   submitCallback,
 }) => {
-  const [inputTable, setInputTable] = useState({});
+  const [formData, setFormData] = useState({
+    description: "",
+    amount: "",
+    amountSign: "-",
+    category: undefined,
+    timestamp: toDatetimeLocalInputDate(new Date()),
+  });
 
   useEffect(() => {
-    setInputTable(TransactionInputTable(transaction, categories));
+    if (transaction !== null) {
+      setFormData({
+        description: transaction.description,
+        amount: Math.abs(transaction.amount),
+        amountSign: transaction.amount >= 0 ? "+" : "-",
+        category: transaction.categoryID,
+        timestamp: toDatetimeLocalInputDate(
+          new Date(`${transaction.timestamp}.000Z`)
+        ),
+      });
+    }
   }, [transaction, categories]);
 
-  const getTransactionFromInputs = () => {
-    let form = document.getElementById(formId);
-    let description = form.querySelector("input[name='description']").value;
-    let amount = form.querySelector("input[name='amount']").value;
-    let amountSign = form.querySelector("select[name='amount-sign']").value;
-    let timestamp = form.querySelector("input[name='date']").value;
-    let category = form.querySelector("select[name='category']").value;
-
-    return {
-      description: description,
-      amount: amount,
-      timestamp: timestamp,
-      categoryID: category,
-      amountSign: amountSign,
-    };
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((data) => ({ ...data, [name]: value }));
   };
 
-  const submit = (e) => {
-    e.preventDefault();
-    let transaction = getTransactionFromInputs();
+  const submit = (event) => {
+    event.preventDefault();
+    let transaction = validatedTransaction(formData);
     submitCallback(transaction);
   };
 
+  const FormInput = (props) => (
+    <Input
+      {...props}
+      defaultValue={formData[props.name]}
+      onChange={handleChange}
+    />
+  );
+
+  const SelectFormInput = (props) => (
+    <Input
+      {...props}
+      type="select"
+      value={formData[props.name]}
+      onChange={handleChange}
+    >
+      {props.children}
+    </Input>
+  );
+
+  const description = (
+    <FormInput name="description" placeholder="Description" type="text" />
+  );
+
+  const timestamp = <FormInput name="timestamp" type="datetime-local" />;
+
+  const amount = (
+    <Row>
+      <Col xs={4} style={{ paddingRight: 5 }}>
+        <SelectFormInput name="amountSign">
+          <option value={"-"}>-</option>
+          <option value={"+"}>+</option>
+        </SelectFormInput>
+      </Col>
+      <Col xs={8} style={{ paddingLeft: 5 }}>
+        <InputGroup>
+          <InputGroupText>$</InputGroupText>
+          <FormInput
+            name="amount"
+            placeholder="Amount"
+            type="number"
+            min="0.01"
+            step="0.01"
+          />
+        </InputGroup>
+      </Col>
+    </Row>
+  );
+
+  const category = (
+    <SelectFormInput name="category">
+      <option value={null}> Uncategorised </option>
+      {categories.map((c) => (
+        <option key={c.id} value={c.id}>
+          {c.name}
+        </option>
+      ))}
+    </SelectFormInput>
+  );
+
   return (
     <Form onSubmit={submit} id={formId} className="transaction-form">
-      <TransactionTable transaction={inputTable} />
+      <TransactionTable
+        transaction={{
+          description: description,
+          timestamp: timestamp,
+          amount: amount,
+          category: category,
+          submit: <Button type="submit">+</Button>,
+        }}
+      />
     </Form>
   );
-};
-
-const TransactionInputTable = (transaction, categories) => {
-  let defaultTimestamp =
-    transaction === null
-      ? null
-      : toDatetimeLocalInputDate(new Date(`${transaction.timestamp}.000Z`));
-  return {
-    description: (
-      <Input
-        name="description"
-        placeholder="Description"
-        type="text"
-        defaultValue={transaction === null ? null : transaction.description}
-      />
-    ),
-    timestamp: (
-      <Input
-        name="date"
-        placeholder="Date"
-        type="datetime-local"
-        defaultValue={defaultTimestamp}
-      />
-    ),
-    amount: (
-      <Row>
-        <Col md={4} style={{ paddingRight: 5 }}>
-          <Input name="amount-sign" type="select" defaultValue={"-"}>
-            <option value={"-"}>-</option>
-            <option value={"+"}>+</option>
-          </Input>
-        </Col>
-        <Col md={8} style={{ paddingLeft: 5 }}>
-          <InputGroup>
-            <InputGroupText>$</InputGroupText>
-            <Input
-              name="amount"
-              placeholder="Amount"
-              type="number"
-              min="0.01"
-              step="0.01"
-              defaultValue={transaction === null ? null : Math.abs(transaction.amount)}
-            />
-          </InputGroup>
-        </Col>
-      </Row>
-    ),
-    submit: <Button type="submit">+</Button>,
-    category: (
-      <Input
-        name="category"
-        type="select"
-        defaultValue={transaction === null ? null : transaction.categoryID}
-      >
-        <option value={null}> Uncategorised </option>
-        {categories.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}
-          </option>
-        ))}
-      </Input>
-    ),
-  };
 };
 
 export { TransactionForm };

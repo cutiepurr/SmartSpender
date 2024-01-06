@@ -36,7 +36,7 @@ const validatedTransaction = (transaction) => {
     description: transaction.description,
     amount: amount,
     timestamp: new Date(transaction.timestamp).toISOString(),
-    categoryID: parseInt(transaction.categoryID),
+    categoryID: parseInt(transaction.category),
   };
 };
 
