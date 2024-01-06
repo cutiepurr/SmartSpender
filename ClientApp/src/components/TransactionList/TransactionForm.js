@@ -8,9 +8,13 @@ import {
   InputGroupText,
   Row,
   Col,
+  FormFeedback,
 } from "reactstrap";
 import { toDatetimeLocalInputDate } from "../../utils/DateExtensions";
-import { validatedTransaction } from "../../utils/TransactionValidation";
+import {
+  Validation,
+  validatedTransaction,
+} from "../../utils/TransactionValidation";
 import { Formik, useField } from "formik";
 
 const TransactionForm = ({ transaction, categories, submitCallback }) => {
@@ -45,10 +49,17 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
     isSubmitting,
   }) => {
     const description = (
-      <FormInput type="text" name="description" placeholder="Description" />
+      <FormInput
+        type="text"
+        name="description"
+        placeholder="Description"
+        validate={Validation.description}
+      />
     );
 
-    const timestamp = <FormInput type="datetime-local" name="timestamp" />;
+    const timestamp = (
+      <FormInput type="datetime-local" name="timestamp" validate={Validation.date} />
+    );
 
     const category = (
       <FormInput name="category" as="select" type="select">
@@ -72,12 +83,13 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
         <Col xs={7} style={{ paddingLeft: 5 }}>
           <InputGroup size="sm">
             <InputGroupText>$</InputGroupText>
-            <FormInput
+            <UngroupedFormInput
               name="amount"
               placeholder="Amount"
               type="number"
               min="0.01"
               step="0.01"
+              validate={Validation.amount}
             />
           </InputGroup>
         </Col>
@@ -123,9 +135,32 @@ const FormInput = ({ label, ...props }) => {
   const [field, meta, helpers] = useField(props);
   return (
     <>
-      <Input bsSize="sm" {...field} {...props} />
+      <InputGroup>
+        {
+          UngroupedFormInput({
+            label: label,
+            ...props
+          })
+        }
+      </InputGroup>
+    </>
+  );
+};
+
+const UngroupedFormInput = ({ label, ...props }) => {
+  const [field, meta, helpers] = useField(props);
+  return (
+    <>
+      <Input
+        bsSize="sm"
+        {...field}
+        {...props}
+        invalid={meta.touched && meta.error}
+      />
       {meta.touched && meta.error ? (
-        <div className="error">{meta.error}</div>
+        <FormFeedback style={{ zIndex: 1 }} className="error">
+          {meta.error}
+        </FormFeedback>
       ) : null}
     </>
   );

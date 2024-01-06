@@ -25,6 +25,14 @@ const validateTransaction = (transaction) => {
   return true;
 };
 
+const emptyMessage = "Cannot be empty";
+
+const validateDescription = (value) => {
+  let error;
+  if (value == "") error = emptyMessage;
+  return error;
+};
+
 const validatedTransaction = (transaction) => {
   let validation = validateTransaction(transaction);
   if (!validation) return null;
@@ -40,4 +48,31 @@ const validatedTransaction = (transaction) => {
   };
 };
 
-export { validatedTransaction };
+class Validation {
+  static emptyMessage = "Cannot be empty";
+
+  static description = (value) => {
+    let error;
+    if (value == "") error = emptyMessage;
+    return error;
+  };
+
+  static amount = (value) => {
+    let error;
+    if (value == "") error = emptyMessage;
+    else if (value < 0) error = "Must be greater than 0";
+    return error;
+  };
+
+  static date = (value) => {
+    let error;
+    if (value == "") return emptyMessage;
+    
+    let today = new Date();
+    today.setDate(today.getDate());
+    if (new Date(value) >= today) error = "Can't be in the future";
+    return error;
+  };
+}
+
+export { validatedTransaction, validateDescription, Validation };

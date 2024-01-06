@@ -8,7 +8,7 @@ const TransactionTable = (prop) => {
     onClick,
   } = prop;
   return (
-    <div className={`${className}`} style={{ height: 50 }}>
+    <div className={`${className}`} style={{ minHeight: 50 }}>
       <div className="py-2">
         <div onClick={onClick}>
           <Row>
