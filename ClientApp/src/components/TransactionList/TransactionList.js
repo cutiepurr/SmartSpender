@@ -113,31 +113,6 @@ const TransactionList = () => {
     );
   });
 
-  const transactionColumnTitle = (
-    <strong>
-      <TransactionTable
-        transaction={{
-          description: "Description",
-          timestamp: "Date",
-          amount: "Amount",
-          category: "Category",
-        }}
-      />
-    </strong>
-  );
-
-  const totalAmountElement = (
-    <Container
-      className="fixed-bottom bg-white border-top p-3"
-      style={{ width: 1200 }}
-    >
-      <h4>
-        <div className="float-end">{formatMoneyAmount(totalAmount)}</div>
-        <div>Total</div>
-      </h4>
-    </Container>
-  );
-
   const loadMoreTransactions = () => setPage((tmp) => (tmp = page + 1));
 
   return (
@@ -147,6 +122,7 @@ const TransactionList = () => {
       ) : (
         <TitleWithMonth year={year} month={month} />
       )}
+      <Ribbon selectedItems={selectedItems} />
       <div style={{ width: "100%", position: "relative" }}>
         <div className="shadow-inset-right"></div>
         <div style={{ height: "75vh", overflowX: "scroll" }}>
@@ -156,11 +132,8 @@ const TransactionList = () => {
               <NotFound />
             ) : (
               <div className="bg-white">
-                <div className="sticky-top bg-white border-bottom shadow-bottom">
-                  <Ribbon selectedItems={selectedItems} />
-                  {transactionColumnTitle}
-                </div>
-                {totalAmountElement}
+                <TransactionListHeader/>
+                <TransactionTotalAmount amount={totalAmount} />
                 {transactionItems}
                 {count > (page + 1) * perLoad ? (
                   <Button onClick={loadMoreTransactions}>Load more</Button>
@@ -209,5 +182,40 @@ const TitleWithMonth = ({ year, month }) => {
     </Row>
   );
 };
+
+const TransactionListHeader = () => (
+  <strong>
+    <TransactionTable
+    className="sticky-top bg-white border-bottom shadow-bottom"
+      transaction={{
+        description: "Description",
+        timestamp: "Date",
+        amount: "Amount",
+        category: "Category",
+      }}
+    />
+  </strong>
+);
+
+const TransactionTotalAmount = ({ amount }) => (
+  <Container
+    className="fixed-bottom bg-white border-top p-3"
+    style={{ width: 1200 }}
+  >
+    <h4>
+      <div className="float-end">{formatMoneyAmount(amount)}</div>
+      <div>Total</div>
+    </h4>
+  </Container>
+);
+
+const SquareStickyLeftContainer = (props) => (
+  <div
+    className="float-start px-2 bg-white border-end sticky-left"
+    {...props}
+  >
+    {props.children}
+  </div>
+);
 
 export default TransactionList;

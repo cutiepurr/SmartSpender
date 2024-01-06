@@ -13,8 +13,8 @@ const TransactionTable = (prop) => {
     <div className={`${className}`} style={{ height: 50 }}>
       <div className="py-2">
         <div
-          className="float-start px-2 bg-white border-end"
-          style={{ position: "sticky", left: 0, height: 50 }}
+          className="float-start px-2 bg-white border-end sticky-left"
+          style={{ height: 50 }}
         >
           <Input
             type="checkbox"
