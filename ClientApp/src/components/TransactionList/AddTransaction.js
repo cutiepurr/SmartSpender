@@ -19,6 +19,7 @@ const AddTransaction = ({ categories }) => {
       transaction={null}
       categories={categories}
       submitCallback={addTransaction}
+      isSelectable={false}
     />
   );
 };

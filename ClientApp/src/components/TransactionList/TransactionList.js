@@ -19,6 +19,7 @@ const TransactionList = () => {
   const [perLoad, setPerLoad] = useState(50); // number of transactions per page
   const [categories, setCategories] = useState([]);
   const [editMode, setEditMode] = useState(-1); // id of the transaction that is currently under edit mode
+  const [selectedItems, setSelectedItems] = useState({});
 
   useEffect(() => {
     CategoryApis.getCategories((data) => {
@@ -26,6 +27,10 @@ const TransactionList = () => {
       console.log(data);
     });
   }, []);
+
+  useEffect(() => {
+
+  }, [selectedItems]);
 
   useEffect(() => {
     let query = new URLSearchParams();
@@ -56,7 +61,7 @@ const TransactionList = () => {
     });
   }, [year, month, page, perLoad]);
 
-  const transactionItems = transactions.map((transaction) => {
+  const sanitizeTransaction = (transaction) => {
     let transactionDate = new Date(
       `${transaction.timestamp}.000Z`
     ).toLocaleString("en-AU", {
@@ -75,12 +80,24 @@ const TransactionList = () => {
 
     let amount = formatMoneyAmount(transaction.amount);
 
-    let transactionViewObject = {
+    return {
+      id: transaction.id,
       description: transaction.description,
       timestamp: transactionDate,
       amount: amount,
       category: categoryName,
     };
+  };
+
+  const onSelected = (event) => {
+    // console.log(event.target.value);
+    var id = event.target.name;
+    var isSelected = event.target.checked;
+    setSelectedItems(items => ({...items, [id]: isSelected}));
+  }
+
+  const transactionItems = transactions.map((transaction) => {
+    let transactionViewObject = sanitizeTransaction(transaction);
 
     return (
       <div key={`view-${transaction.id}`}>
@@ -89,6 +106,7 @@ const TransactionList = () => {
             className="transaction-line"
             transaction={transactionViewObject}
             onClick={() => setEditMode(transaction.id)}
+            onSelected={onSelected}
           />
         ) : (
           <EditTransaction transaction={transaction} categories={categories} />

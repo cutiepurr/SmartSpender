@@ -20,6 +20,7 @@ const EditTransaction = ({ transaction, categories }) => {
       transaction={transaction}
       categories={categories}
       submitCallback={editTransaction}
+      isSelectable={true}
     />
   );
 };

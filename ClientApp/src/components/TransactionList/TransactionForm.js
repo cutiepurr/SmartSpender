@@ -17,6 +17,7 @@ const TransactionForm = ({
   transaction,
   categories,
   submitCallback,
+  isSelectable,
 }) => {
   const [formData, setFormData] = useState({
     description: "",
@@ -113,6 +114,7 @@ const TransactionForm = ({
   return (
     <Form onSubmit={submit} id={formId} className="transaction-form">
       <TransactionTable
+        isSelectable={isSelectable}
         transaction={{
           description: description,
           timestamp: timestamp,
