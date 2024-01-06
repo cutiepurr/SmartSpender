@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AddTransaction from "./AddTransaction";
 import TransactionTable from "./TransactionTable";
-import { Button, Row, Col, Container } from "reactstrap";
+import { Button, Row, Col, Container, Input } from "reactstrap";
 import { getPreviousMonth, getNextMonth } from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
 import CategoryApis from "../../api/CategoryApis";
@@ -94,11 +94,18 @@ const TransactionList = () => {
     setSelectedItems((items) => ({ ...items, [id]: isSelected }));
   };
 
+  const SelectedBox = ({ id }) => (
+    <SquareStickyLeftContainer>
+      <Input type="checkbox" name={id} onChange={onSelected} />
+    </SquareStickyLeftContainer>
+  );
+
   const transactionItems = transactions.map((transaction) => {
     let transactionViewObject = sanitizeTransaction(transaction);
 
     return (
       <div key={`view-${transaction.id}`}>
+        <SelectedBox id={transaction.id} />
         {editMode !== transaction.id ? (
           <TransactionTable
             className="transaction-line"
@@ -127,12 +134,13 @@ const TransactionList = () => {
         <div className="shadow-inset-right"></div>
         <div style={{ height: "75vh", overflowX: "scroll" }}>
           <div style={{ width: 1200 }} className="mx-auto">
+            <SquareStickyLeftContainer />
             <AddTransaction categories={categories} />
             {count === 0 ? (
               <NotFound />
             ) : (
               <div className="bg-white">
-                <TransactionListHeader/>
+                <TransactionListHeader />
                 <TransactionTotalAmount amount={totalAmount} />
                 {transactionItems}
                 {count > (page + 1) * perLoad ? (
@@ -185,8 +193,9 @@ const TitleWithMonth = ({ year, month }) => {
 
 const TransactionListHeader = () => (
   <strong>
+    <SquareStickyLeftContainer />
     <TransactionTable
-    className="sticky-top bg-white border-bottom shadow-bottom"
+      className="sticky-top bg-white border-bottom shadow-bottom"
       transaction={{
         description: "Description",
         timestamp: "Date",
@@ -213,6 +222,7 @@ const SquareStickyLeftContainer = (props) => (
   <div
     className="float-start px-2 bg-white border-end sticky-left"
     {...props}
+    style={{ width: 50, height: 50 }}
   >
     {props.children}
   </div>
