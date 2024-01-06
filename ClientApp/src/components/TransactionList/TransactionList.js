@@ -20,7 +20,7 @@ const TransactionList = () => {
   const [perLoad, setPerLoad] = useState(50); // number of transactions per page
   const [categories, setCategories] = useState([]);
   const [editMode, setEditMode] = useState(-1); // id of the transaction that is currently under edit mode
-  const [selectedItems, setSelectedItems] = useState({});
+  const [selectedItems, setSelectedItems] = useState([]);
 
   useEffect(() => {
     CategoryApis.getCategories((data) => {
@@ -29,7 +29,9 @@ const TransactionList = () => {
     });
   }, []);
 
-  useEffect(() => {}, [selectedItems]);
+  useEffect(() => {
+    console.log(selectedItems);
+  }, [selectedItems]);
 
   useEffect(() => {
     let query = new URLSearchParams();
@@ -89,29 +91,29 @@ const TransactionList = () => {
   };
 
   const onSelected = (event) => {
-    var id = event.target.name;
+    var id = parseInt(event.target.name);
     var isSelected = event.target.checked;
-    setSelectedItems((items) => ({ ...items, [id]: isSelected }));
+    if (isSelected) setSelectedItems((items) => [...items, id]);
+    else
+      setSelectedItems((items) => {
+        items.splice(items.indexOf(id), 1);
+        return [...items];
+      });
   };
-
-  const SelectedBox = ({ id }) => (
-    <SquareStickyLeftContainer>
-      <Input type="checkbox" name={id} onChange={onSelected} />
-    </SquareStickyLeftContainer>
-  );
 
   const transactionItems = transactions.map((transaction) => {
     let transactionViewObject = sanitizeTransaction(transaction);
 
     return (
       <div key={`view-${transaction.id}`}>
-        <SelectedBox id={transaction.id} />
+        <SquareStickyLeftContainer>
+          <Input type="checkbox" name={transaction.id} onChange={onSelected} />
+        </SquareStickyLeftContainer>
         {editMode !== transaction.id ? (
           <TransactionTable
             className="transaction-line"
             transaction={transactionViewObject}
             onClick={() => setEditMode(transaction.id)}
-            onSelected={onSelected}
           />
         ) : (
           <EditTransaction transaction={transaction} categories={categories} />
@@ -221,7 +223,7 @@ const TransactionTotalAmount = ({ amount }) => (
 const SquareStickyLeftContainer = (props) => (
   <div
     className="float-start px-2 bg-white border-end sticky-left"
-    {...props}
+    // {...props}
     style={{ width: 50, height: 50 }}
   >
     {props.children}

@@ -122,7 +122,7 @@ const TransactionForm = ({
           timestamp: timestamp,
           amount: amount,
           category: category,
-          submit: <Button type="submit" size="sm" outline><i class="fa-solid fa-floppy-disk"></i></Button>,
+          submit: <Button type="submit" size="sm" outline><i className="fa-solid fa-floppy-disk"></i></Button>,
         }}
       />
     </Form>
