@@ -25,3 +25,24 @@ code {
   background-color: rgb(241, 241, 241);
   border-radius: 10px;
 }
+
+.shadow-bottom {
+  box-shadow: 0px 20px .75rem -15px rgba(0, 0, 0, .05);
+}
+
+.shadow-inset-bottom {
+  box-shadow: 0px -20px .75rem -20px rgba(0, 0, 0, .05) inset;
+  height: .75rem;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+.shadow-inset-right {
+  position: absolute;
+  right: 0;
+  z-index: 2;
+  box-shadow: -20px 0px .75rem -20px rgba(0, 0, 0, .05) inset;
+  height: 75vh;
+  width: .75rem;
+}

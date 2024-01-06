@@ -29,9 +29,7 @@ const TransactionList = () => {
     });
   }, []);
 
-  useEffect(() => {
-
-  }, [selectedItems]);
+  useEffect(() => {}, [selectedItems]);
 
   useEffect(() => {
     let query = new URLSearchParams();
@@ -93,8 +91,8 @@ const TransactionList = () => {
   const onSelected = (event) => {
     var id = event.target.name;
     var isSelected = event.target.checked;
-    setSelectedItems(items => ({...items, [id]: isSelected}));
-  }
+    setSelectedItems((items) => ({ ...items, [id]: isSelected }));
+  };
 
   const transactionItems = transactions.map((transaction) => {
     let transactionViewObject = sanitizeTransaction(transaction);
@@ -129,7 +127,10 @@ const TransactionList = () => {
   );
 
   const totalAmountElement = (
-    <Container className="fixed-bottom bg-white border-top p-3" style={{ width: 1200 }}>
+    <Container
+      className="fixed-bottom bg-white border-top p-3"
+      style={{ width: 1200 }}
+    >
       <h4>
         <div className="float-end">{formatMoneyAmount(totalAmount)}</div>
         <div>Total</div>
@@ -146,26 +147,29 @@ const TransactionList = () => {
       ) : (
         <TitleWithMonth year={year} month={month} />
       )}
-
-      <div style={{ width: "100%", height: "75vh", overflowX: "scroll" }}>
-        <div style={{ width: 1200 }} className="mx-auto">
-        <AddTransaction categories={categories} />
-        {count === 0 ? (
-          <NotFound />
-        ) : (
-          <div className="bg-white">
-            <div className="sticky-top bg-white border-bottom" >
-              <Ribbon selectedItems={selectedItems} />
-              {transactionColumnTitle}
-            </div>
-            {totalAmountElement}
-            {transactionItems}
-            {count > (page + 1) * perLoad ? (
-              <Button onClick={loadMoreTransactions}>Load more</Button>
-            ) : null}
+      <div style={{ width: "100%", position: "relative" }}>
+        <div className="shadow-inset-right"></div>
+        <div style={{ height: "75vh", overflowX: "scroll" }}>
+          <div style={{ width: 1200 }} className="mx-auto">
+            <AddTransaction categories={categories} />
+            {count === 0 ? (
+              <NotFound />
+            ) : (
+              <div className="bg-white">
+                <div className="sticky-top bg-white border-bottom shadow-bottom">
+                  <Ribbon selectedItems={selectedItems} />
+                  {transactionColumnTitle}
+                </div>
+                {totalAmountElement}
+                {transactionItems}
+                {count > (page + 1) * perLoad ? (
+                  <Button onClick={loadMoreTransactions}>Load more</Button>
+                ) : null}
+              </div>
+            )}
           </div>
-        )}
         </div>
+        <div className="shadow-inset-bottom"></div>
       </div>
     </div>
   );
@@ -185,7 +189,9 @@ const TitleWithMonth = ({ year, month }) => {
   return (
     <Row style={{ textAlign: "center" }}>
       <Col>
-        <Button onClick={onPrevButtonClicked}>Prev</Button>
+        <Button color="link" onClick={onPrevButtonClicked}>
+          Prev
+        </Button>
       </Col>
       <Col>
         <h1>
@@ -196,7 +202,9 @@ const TitleWithMonth = ({ year, month }) => {
         </h1>
       </Col>
       <Col>
-        <Button onClick={onNextButtonClicked}>Next</Button>
+        <Button color="link" onClick={onNextButtonClicked}>
+          Next
+        </Button>
       </Col>
     </Row>
   );
