@@ -24,8 +24,10 @@ const Ribbon = ({ selectedItems, className }) => {
   };
 
   return (
-    <div className={className}>
-      <Button onClick={deleteTransactions}>Delete</Button>
+    <div className={`${className} p-3 border-bottom`}>
+        <Button color="danger" onClick={deleteTransactions}>
+          <i className="fa-solid fa-trash"></i>
+        </Button>
     </div>
   );
 };

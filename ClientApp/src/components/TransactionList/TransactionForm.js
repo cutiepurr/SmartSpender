@@ -57,6 +57,7 @@ const TransactionForm = ({
       {...props}
       defaultValue={formData[props.name]}
       onChange={handleChange}
+      bsSize="sm"
     />
   );
 
@@ -66,6 +67,7 @@ const TransactionForm = ({
       type="select"
       value={formData[props.name]}
       onChange={handleChange}
+      bsSize="sm"
     >
       {props.children}
     </Input>
@@ -79,14 +81,14 @@ const TransactionForm = ({
 
   const amount = (
     <Row>
-      <Col xs={4} style={{ paddingRight: 5 }}>
+      <Col xs={5} style={{ paddingRight: 5 }}>
         <SelectFormInput name="amountSign">
           <option value={"-"}>-</option>
           <option value={"+"}>+</option>
         </SelectFormInput>
       </Col>
-      <Col xs={8} style={{ paddingLeft: 5 }}>
-        <InputGroup>
+      <Col xs={7} style={{ paddingLeft: 5 }}>
+        <InputGroup size="sm">
           <InputGroupText>$</InputGroupText>
           <FormInput
             name="amount"
@@ -120,7 +122,7 @@ const TransactionForm = ({
           timestamp: timestamp,
           amount: amount,
           category: category,
-          submit: <Button type="submit">+</Button>,
+          submit: <Button type="submit" size="sm" outline><i class="fa-solid fa-floppy-disk"></i></Button>,
         }}
       />
     </Form>

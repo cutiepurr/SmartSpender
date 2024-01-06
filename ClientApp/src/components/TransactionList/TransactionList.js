@@ -91,7 +91,6 @@ const TransactionList = () => {
   };
 
   const onSelected = (event) => {
-    // console.log(event.target.value);
     var id = event.target.name;
     var isSelected = event.target.checked;
     setSelectedItems(items => ({...items, [id]: isSelected}));
@@ -117,9 +116,8 @@ const TransactionList = () => {
   });
 
   const transactionColumnTitle = (
-    <strong className="sticky-top">
+    <strong>
       <TransactionTable
-        className="bg-white border-bottom"
         transaction={{
           description: "Description",
           timestamp: "Date",
@@ -156,8 +154,10 @@ const TransactionList = () => {
           <NotFound />
         ) : (
           <div className="bg-white">
-            <Ribbon selectedItems={selectedItems} />
-            {transactionColumnTitle}
+            <div className="sticky-top bg-white border-bottom" >
+              <Ribbon selectedItems={selectedItems} />
+              {transactionColumnTitle}
+            </div>
             {totalAmountElement}
             {transactionItems}
             {count > (page + 1) * perLoad ? (
