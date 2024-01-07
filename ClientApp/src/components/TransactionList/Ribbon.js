@@ -1,6 +1,7 @@
 import React from "react";
-import { Button } from "reactstrap";
+import { Button, Input } from "reactstrap";
 import TransactionApis from "../../api/TransactionApis";
+import ImportTransactions from "./ImportTransactions";
 
 const Ribbon = ({ selectedItems, className }) => {
   const deleteTransactions = () => {
@@ -17,6 +18,7 @@ const Ribbon = ({ selectedItems, className }) => {
         <Button color="danger" onClick={deleteTransactions}>
           <i className="fa-solid fa-trash"></i>
         </Button>
+        <ImportTransactions />
     </div>
   );
 };

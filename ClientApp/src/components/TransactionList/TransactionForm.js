@@ -40,14 +40,7 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
     }
   }, [transaction, categories]);
 
-  const formik = ({
-    values,
-    errors,
-    handleChange,
-    handleSubmit,
-    handleBlur,
-    isSubmitting,
-  }) => {
+  const formik = ({ handleSubmit, isSubmitting }) => {
     const description = (
       <FormInput
         type="text"
@@ -58,7 +51,11 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
     );
 
     const timestamp = (
-      <FormInput type="datetime-local" name="timestamp" validate={Validation.date} />
+      <FormInput
+        type="datetime-local"
+        name="timestamp"
+        validate={Validation.date}
+      />
     );
 
     const category = (
@@ -136,12 +133,10 @@ const FormInput = ({ label, ...props }) => {
   return (
     <>
       <InputGroup>
-        {
-          UngroupedFormInput({
-            label: label,
-            ...props
-          })
-        }
+        {UngroupedFormInput({
+          label: label,
+          ...props,
+        })}
       </InputGroup>
     </>
   );

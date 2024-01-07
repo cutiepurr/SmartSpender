@@ -13,6 +13,8 @@ import Ribbon from "./Ribbon";
 
 const TransactionList = () => {
   const { year, month } = useParams();
+
+  // States
   const [transactions, setTransactions] = useState([]);
   const [count, setCount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
@@ -23,21 +25,14 @@ const TransactionList = () => {
   const [selectedItems, setSelectedItems] = useState([]);
 
   useEffect(() => {
-    CategoryApis.getCategories((data) => {
-      setCategories(data);
-      console.log(data);
-    });
+    CategoryApis.getCategories((data) => setCategories(data));
   }, []);
 
   useEffect(() => {
-    console.log(selectedItems);
-  }, [selectedItems]);
-
-  useEffect(() => {
     let query = new URLSearchParams();
-    if (year != null) {
+    if (year != undefined) {
       query.set("year", year);
-      if (month != null) query.set("month", month);
+      if (month != undefined) query.set("month", month);
     }
 
     TransactionApis.getTransactionCounts(query, (data) => setCount(data));
@@ -62,7 +57,7 @@ const TransactionList = () => {
     });
   }, [year, month, page, perLoad]);
 
-  const sanitizeTransaction = (transaction) => {
+  const formatTransactionForView = (transaction) => {
     let transactionDate = new Date(
       `${transaction.timestamp}.000Z`
     ).toLocaleString("en-AU", {
@@ -102,7 +97,7 @@ const TransactionList = () => {
   };
 
   const transactionItems = transactions.map((transaction) => {
-    let transactionViewObject = sanitizeTransaction(transaction);
+    let transactionViewObject = formatTransactionForView(transaction);
 
     return (
       <div key={`view-${transaction.id}`}>
@@ -126,7 +121,7 @@ const TransactionList = () => {
 
   return (
     <div>
-      {year==undefined && month === undefined ? (
+      {year == undefined && month === undefined ? (
         <h1>Transaction</h1>
       ) : (
         <TitleWithMonth year={year} month={month} />

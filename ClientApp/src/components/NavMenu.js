@@ -21,10 +21,9 @@ const NavMenu = () => {
       path: `/transactions/${today.getFullYear()}/${today.getMonth()+1}`,
     },
   ];
+
   const [show, setShow] = useState(true);
-  const toggle = () => {
-    setShow(!show);
-  };
+  const toggle = () => setShow(!show);
 
   return (
     <header>
@@ -38,8 +37,8 @@ const NavMenu = () => {
 
         <Collapse isOpen={show} className="mt-3">
           <Nav vertical>
-            {links.map((link) => (
-              <NavItem>
+            {links.map((link, index) => (
+              <NavItem key={index}>
                 <NavLink tag={Link} to={link.path} className="nav-tab">
                   {link.name}
                 </NavLink>

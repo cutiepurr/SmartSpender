@@ -9,13 +9,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import {
-    getDateNextMonth,
-  getDatePreviousMonth,
-  getNextMonth,
-} from "../../utils/DateExtensions";
+import { getDateNextMonth } from "../../utils/DateExtensions";
 
 const MonthlyExpenseBarGraph = () => {
+  // States
   const [graphData, setGraphData] = useState([]);
   const [wantData, setWantData] = useState([]);
   const [needData, setNeedData] = useState([]);
@@ -23,9 +20,10 @@ const MonthlyExpenseBarGraph = () => {
     new Date(new Date().getFullYear(), new Date().getMonth())
   );
   const [startDate, setStartDate] = useState(
-    new Date(endDate.getFullYear() - 1, endDate.getMonth()-1)
+    new Date(endDate.getFullYear() - 1, endDate.getMonth() - 1)
   );
 
+  // On state change
   useEffect(() => {
     var query = new URLSearchParams();
     query.set("startYear", startDate.getFullYear());
@@ -35,13 +33,11 @@ const MonthlyExpenseBarGraph = () => {
 
     query.set("type", 0);
     TransactionApis.getMonthlyTransactionsAmounts(query, (data) => {
-      // console.log(data)
       setWantData(data);
     });
 
     query.set("type", 1);
     TransactionApis.getMonthlyTransactionsAmounts(query, (data) => {
-      // console.log(data)
       setNeedData(data);
     });
   }, []);
@@ -65,7 +61,7 @@ const MonthlyExpenseBarGraph = () => {
     });
 
     var curDate = startDate;
-    
+
     while (
       curDate.getMonth() != endDate.getMonth() ||
       curDate.getFullYear() != endDate.getFullYear()
