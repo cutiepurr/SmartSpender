@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import AddTransaction from "./AddTransaction";
+import AddTransaction from "./Forms/AddTransaction";
 import TransactionTable from "./TransactionTable";
 import { Button, Row, Col, Container, Input } from "reactstrap";
 import { getPreviousMonth, getNextMonth } from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
 import CategoryApis from "../../api/CategoryApis";
 import NotFound from "../NotFound";
-import EditTransaction from "./EditTransaction";
+import EditTransaction from "./Forms/EditTransaction";
 import { formatMoneyAmount } from "../../utils/MoneyExtensions";
 import Ribbon from "./Ribbon";
 

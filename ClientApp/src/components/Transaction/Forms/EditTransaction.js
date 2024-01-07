@@ -1,6 +1,6 @@
 import React from "react";
 import { TransactionForm } from "./TransactionForm";
-import TransactionApis from "../../api/TransactionApis";
+import TransactionApis from "../../../api/TransactionApis";
 
 const EditTransaction = ({ transaction, categories }) => {
   const formId = `editTransactionForm-${transaction.id}`;

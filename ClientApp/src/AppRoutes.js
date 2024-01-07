@@ -1,5 +1,5 @@
 import Home from "./components/Home";
-import TransactionList from "./components/TransactionList/TransactionList";
+import TransactionList from "./components/Transaction/TransactionList";
 
 const AppRoutes = [
   {

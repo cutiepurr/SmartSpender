@@ -1,5 +1,5 @@
 import React from "react";
-import TransactionApis from "../../api/TransactionApis";
+import TransactionApis from "../../../api/TransactionApis";
 import { TransactionForm } from "./TransactionForm";
 
 const AddTransaction = ({ categories }) => {
