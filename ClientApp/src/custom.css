@@ -3,6 +3,16 @@ a {
   color: #0366d6;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  padding: 0px !important;
+  margin: 0px !important;
+  overflow-x: hidden;
+}
+
 .btn:focus,
 .btn:active:focus,
 .btn-link.nav-link:focus,
@@ -50,4 +60,14 @@ code {
 .sticky-left {
   position: sticky;
   left: 0;
+}
+
+.nav-tab {
+  color: white;
+  border-radius: 10px;
+}
+
+.nav-tab:hover {
+  background-color: gold;
+  color: black;
 }

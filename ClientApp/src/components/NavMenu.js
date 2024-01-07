@@ -1,44 +1,55 @@
-import React, { Component } from 'react';
-import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
-import { Link } from 'react-router-dom';
-import './NavMenu.css';
+import React, { useState } from "react";
+import {
+  Button,
+  Collapse,
+  Nav,
+  NavItem,
+  NavLink,
+} from "reactstrap";
+import { Link } from "react-router-dom";
+import "./NavMenu.css";
 
-export class NavMenu extends Component {
-  static displayName = NavMenu.name;
+const NavMenu = () => {
+  const today = new Date();
+  const links = [
+    {
+      name: "Home",
+      path: "/",
+    },
+    {
+      name: "Transactions",
+      path: `/transactions/${today.getFullYear()}/${today.getMonth()+1}`,
+    },
+  ];
+  const [show, setShow] = useState(true);
+  const toggle = () => {
+    setShow(!show);
+  };
 
-  constructor (props) {
-    super(props);
+  return (
+    <header>
+      <nav className="p-3">
+        <Button onClick={toggle} className="float-end" color="light">
+          <i className="fa-solid fa-bars"></i>
+        </Button>
+        <div>
+          <a href="/" className="nav-link"><h1>Smart Spender</h1></a>
+        </div>
 
-    this.toggleNavbar = this.toggleNavbar.bind(this);
-    this.state = {
-      collapsed: true
-    };
-  }
-
-  toggleNavbar () {
-    this.setState({
-      collapsed: !this.state.collapsed
-    });
-  }
-
-  render() {
-    return (
-      <header>
-        <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
-          <NavbarBrand tag={Link} to="/">SmartSpender</NavbarBrand>
-          <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
-          <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
-            <ul className="navbar-nav flex-grow">
+        <Collapse isOpen={show} className="mt-3">
+          <Nav vertical>
+            {links.map((link) => (
               <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
+                <NavLink tag={Link} to={link.path} className="nav-tab">
+                  {link.name}
+                </NavLink>
               </NavItem>
-              <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/transactions">Transactions</NavLink>
-              </NavItem>
-            </ul>
-          </Collapse>
-        </Navbar>
-      </header>
-    );
-  }
-}
+            ))}
+          </Nav>
+        </Collapse>
+      </nav>
+    </header>
+  );
+};
+
+export { NavMenu };

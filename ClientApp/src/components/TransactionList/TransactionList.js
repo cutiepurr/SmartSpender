@@ -126,15 +126,15 @@ const TransactionList = () => {
 
   return (
     <div>
-      {month === null ? (
+      {year==undefined && month === undefined ? (
         <h1>Transaction</h1>
       ) : (
         <TitleWithMonth year={year} month={month} />
       )}
       <Ribbon selectedItems={selectedItems} />
-      <div style={{ width: "100%", position: "relative" }}>
+      <div className="position-relative w-100">
         <div className="shadow-inset-right"></div>
-        <div style={{ height: "75vh", overflowX: "scroll" }}>
+        <div style={{ height: "80vh" }} className="overflow-auto">
           <div style={{ width: 1200 }} className="mx-auto">
             <SquareStickyLeftContainer />
             <AddTransaction categories={categories} />
@@ -143,7 +143,6 @@ const TransactionList = () => {
             ) : (
               <div className="bg-white">
                 <TransactionListHeader />
-                <TransactionTotalAmount amount={totalAmount} />
                 {transactionItems}
                 {count > (page + 1) * perLoad ? (
                   <Button onClick={loadMoreTransactions}>Load more</Button>
@@ -153,6 +152,7 @@ const TransactionList = () => {
           </div>
         </div>
         <div className="shadow-inset-bottom"></div>
+        <TransactionTotalAmount amount={totalAmount} />
       </div>
     </div>
   );
@@ -170,7 +170,7 @@ const TitleWithMonth = ({ year, month }) => {
   const onNextButtonClicked = () => (window.location.href = nextMonthLink);
 
   return (
-    <Row style={{ textAlign: "center" }}>
+    <Row className="text-center">
       <Col>
         <Button color="link" onClick={onPrevButtonClicked}>
           Prev
@@ -210,8 +210,8 @@ const TransactionListHeader = () => (
 
 const TransactionTotalAmount = ({ amount }) => (
   <Container
-    className="fixed-bottom bg-white border-top p-3"
-    style={{ width: 1200 }}
+    className="bg-white border-top p-3 position-absolute bottom-0"
+    style={{ width: "100%", zIndex: 3, height: 50 }}
   >
     <h4>
       <div className="float-end">{formatMoneyAmount(amount)}</div>
@@ -223,7 +223,7 @@ const TransactionTotalAmount = ({ amount }) => (
 const SquareStickyLeftContainer = (props) => (
   <div
     className="float-start px-2 bg-white border-end sticky-left"
-    // {...props}
+    {...props}
     style={{ width: 50, height: 50, zIndex: 2 }}
   >
     {props.children}
