@@ -25,6 +25,9 @@ namespace SmartSpender.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("REAL");
 
+                    b.Property<double?>("CategoryID")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -41,6 +44,9 @@ namespace SmartSpender.Migrations
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CategoryType")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
