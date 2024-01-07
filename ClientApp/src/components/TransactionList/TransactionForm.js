@@ -71,14 +71,14 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
 
     const amount = (
       <Row>
-        <Col xs={5} style={{ paddingRight: 5 }}>
+        <Col xs={4} style={{ paddingRight: 5 }}>
           <FormInput name="amountSign" as="select" type="select">
             <option value={"-"}>-</option>
             <option value={"+"}>+</option>
           </FormInput>
         </Col>
-        <Col xs={7} style={{ paddingLeft: 5 }}>
-          <InputGroup size="sm">
+        <Col xs={8} style={{ paddingLeft: 5 }}>
+          <InputGroup>
             <InputGroupText>$</InputGroupText>
             <UngroupedFormInput
               name="amount"
@@ -147,7 +147,7 @@ const UngroupedFormInput = ({ label, ...props }) => {
   return (
     <>
       <Input
-        bsSize="sm"
+        // bsSize="sm"
         {...field}
         {...props}
         invalid={meta.touched && meta.error}

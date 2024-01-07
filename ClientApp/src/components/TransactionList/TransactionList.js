@@ -88,7 +88,10 @@ const TransactionList = () => {
   const onSelected = (event) => {
     var id = parseInt(event.target.name);
     var isSelected = event.target.checked;
-    if (isSelected) setSelectedItems((items) => [...items, id]);
+    if (isSelected) {
+      setSelectedItems((items) => [...items, id]);
+      setEditMode(-1);
+    }
     else
       setSelectedItems((items) => {
         items.splice(items.indexOf(id), 1);
@@ -131,8 +134,11 @@ const TransactionList = () => {
         <div className="shadow-inset-right"></div>
         <div style={{ height: "80vh" }} className="overflow-auto">
           <div style={{ width: 1200 }} className="mx-auto">
+            <h4 className="m-2">Add Transaction</h4>
             <SquareStickyLeftContainer />
             <AddTransaction categories={categories} />
+            <h4 className="m-2">History</h4>
+          
             {count === 0 ? (
               <NotFound />
             ) : (

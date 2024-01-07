@@ -15,10 +15,10 @@ const TransactionTable = (prop) => {
             <Col xs={3}>
               <div>{transaction.timestamp}</div>
             </Col>
-            <Col xs={4}>
+            <Col xs={3}>
               <div>{transaction.description}</div>
             </Col>
-            <Col xs={2}>
+            <Col xs={3}>
               <div>{transaction.amount}</div>
             </Col>
             <Col xs={2}>

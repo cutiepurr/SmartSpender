@@ -14,11 +14,11 @@ const Ribbon = ({ selectedItems, className }) => {
   };
 
   return (
-    <div className={`${className} p-3 border-bottom`}>
-        <Button color="danger" onClick={deleteTransactions}>
-          <i className="fa-solid fa-trash"></i>
+    <div className={`${className} p-3 border-bottom d-flex flex-row-reverse`}>
+        <Button color="danger" onClick={deleteTransactions} className="ms-3">
+          <i className="fa-solid fa-trash"></i> Delete
         </Button>
-        <ImportTransactions />
+        <ImportTransactions className="ms-3" />
     </div>
   );
 };
