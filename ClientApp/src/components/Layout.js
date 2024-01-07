@@ -7,8 +7,8 @@ export class Layout extends Component {
 
   render() {
     return (
-      <Row className="vh-100">
-        <Col lg={2} className="bg-dark text-light">
+      <Row>
+        <Col lg={2}>
           <NavMenu />
         </Col>
         <Col lg={10}>

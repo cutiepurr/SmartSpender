@@ -5,6 +5,7 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
+  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -87,8 +88,9 @@ const MonthlyExpenseBarGraph = () => {
   };
 
   return (
-    <div>
-      <BarChart data={graphData} width={730} height={250}>
+    <ResponsiveContainer width="100%" height={300}>
+      <h3>Monthly Spendings</h3>
+      <BarChart data={graphData}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" interval={1} />
         <YAxis unit="$" />
@@ -97,7 +99,7 @@ const MonthlyExpenseBarGraph = () => {
         <Bar dataKey="Wants" fill="#8884d8" stackId={1} />
         <Bar dataKey="Needs" fill="#82ca9d" stackId={1} />
       </BarChart>
-    </div>
+    </ResponsiveContainer>
   );
 };
 
