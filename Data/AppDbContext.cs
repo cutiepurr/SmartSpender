@@ -12,5 +12,7 @@ public class AppDbContext : DbContext
 
     public DbSet<TransactionCategory> TransactionCategory { get; set; } = default!;
 
+    public DbSet<SmartSpender.Account> Account { get; set; } = default!;
+
 }
 

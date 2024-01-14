@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace SmartSpender
 {
     public class Transaction
@@ -6,6 +8,7 @@ namespace SmartSpender
 
         public DateTime Timestamp { get; set; } = DateTime.Now;
 
+        [MaxLength(255)]
         public string Description { get; set; } = "";
 
         public double Amount { get; set; }
