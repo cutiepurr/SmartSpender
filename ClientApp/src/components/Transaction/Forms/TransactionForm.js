@@ -46,7 +46,7 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
         type="text"
         name="description"
         placeholder="Description"
-        validate={Validation.description}
+        // validate={Validation.description}
       />
     );
 
@@ -54,7 +54,7 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
       <FormInput
         type="datetime-local"
         name="timestamp"
-        validate={Validation.date}
+        // validate={Validation.date}
       />
     );
 
@@ -86,7 +86,7 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
               type="number"
               min="0.01"
               step="0.01"
-              validate={Validation.amount}
+              // validate={Validation.amount}
             />
           </InputGroup>
         </Col>

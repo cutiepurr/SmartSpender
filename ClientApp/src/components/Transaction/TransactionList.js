@@ -10,6 +10,8 @@ import NotFound from "../NotFound";
 import EditTransaction from "./Forms/EditTransaction";
 import { formatMoneyAmount } from "../../utils/MoneyExtensions";
 import Ribbon from "./Ribbon";
+import SquareStickyLeftContainer from "../SquareStickyLeftContainer";
+import { formatTransactionApiToView } from "../../utils/TransactionExtensions";
 
 const TransactionList = () => {
   const { year, month } = useParams();
@@ -57,34 +59,6 @@ const TransactionList = () => {
     });
   }, [year, month, page, perLoad]);
 
-  const formatTransactionForView = (transaction) => {
-    let transactionDate = new Date(
-      `${transaction.timestamp}.000Z`
-    ).toLocaleString("en-AU", {
-      dateStyle: "medium",
-      timeStyle: "short",
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    });
-
-    let transactionCategory = categories.find(
-      (c) => c.id === transaction.categoryID
-    );
-    let categoryName =
-      transactionCategory === undefined
-        ? "Uncategorised"
-        : transactionCategory.name;
-
-    let amount = formatMoneyAmount(transaction.amount);
-
-    return {
-      id: transaction.id,
-      description: transaction.description,
-      timestamp: transactionDate,
-      amount: amount,
-      category: categoryName,
-    };
-  };
-
   const onSelected = (event) => {
     var id = parseInt(event.target.name);
     var isSelected = event.target.checked;
@@ -100,7 +74,7 @@ const TransactionList = () => {
   };
 
   const transactionItems = transactions.map((transaction) => {
-    let transactionViewObject = formatTransactionForView(transaction);
+    let transactionViewObject = formatTransactionApiToView(transaction, categories);
 
     return (
       <div key={`view-${transaction.id}`}>
@@ -219,16 +193,6 @@ const TransactionTotalAmount = ({ amount }) => (
       <div>Total</div>
     </h4>
   </Container>
-);
-
-const SquareStickyLeftContainer = (props) => (
-  <div
-    className="float-start px-2 bg-white border-end sticky-left"
-    {...props}
-    style={{ width: 50, height: 50, zIndex: 2 }}
-  >
-    {props.children}
-  </div>
 );
 
 export default TransactionList;
