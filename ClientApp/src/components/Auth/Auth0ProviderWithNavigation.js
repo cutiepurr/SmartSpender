@@ -1,6 +1,7 @@
 import React from "react";
 import { Auth0Provider } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
+import AccountApis from "../../api/AccountApis";
 
 const Auth0ProviderWithNavigation = ({ children }) => {
   const domain = "linh-nguyen.au.auth0.com";
@@ -8,7 +9,12 @@ const Auth0ProviderWithNavigation = ({ children }) => {
   const audience = "smart-spender";
 
   const navigate = useNavigate();
-  const onRedirectCallback = (appState) => {
+  const onRedirectCallback = (appState, user) => {
+    AccountApis.postAccount(JSON.stringify({
+      firstName: user.given_name,
+      lastName: user.family_name,
+      email: user.email,
+    }));
     navigate(appState?.returnTo || window.location.pathname);
   };
 

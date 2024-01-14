@@ -19,6 +19,7 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<IEnumerable<Account>>> GetAccount()
     {
         if (_context.Account == null) return NotFound();
+        
         return await _context.Account.ToListAsync();
     }
 
@@ -27,6 +28,7 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<Account>> GetAccount(long id)
     {
         if (_context.Account == null) return NotFound();
+        
         var account = await _context.Account.FindAsync(id);
 
         if (account == null) return NotFound();
@@ -63,6 +65,9 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<Account>> PostAccount(Account account)
     {
         if (_context.Account == null) return Problem("Entity set 'AppDbContext.Account'  is null.");
+        var existing = _context.Account.Any(item => item.Email == account.Email);
+        if (existing) return BadRequest();
+        
         _context.Account.Add(account);
         await _context.SaveChangesAsync();
 
