@@ -5,24 +5,18 @@ import {BrowserRouter} from 'react-router-dom';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
-import {Auth0Provider} from '@auth0/auth0-react';
+import Auth0ProviderWithNavigation from "./components/Auth/Auth0ProviderWithNavigation";
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
 root.render(
-  <Auth0Provider
-    domain="linh-nguyen.au.auth0.com"
-    clientId="0a7jLwUh1nOgOQk9ogJHodR9AQBPZ9n3"
-    authorizationParams={{
-      redirect_uri: window.location.origin
-    }}
-  >
-    <BrowserRouter basename={baseUrl}>
+  <BrowserRouter basename={baseUrl}>
+    <Auth0ProviderWithNavigation>
       <App/>
-    </BrowserRouter>
-  </Auth0Provider>
+    </Auth0ProviderWithNavigation>
+  </BrowserRouter>
 );
 
 // If you want your app to work offline and load faster, you can change

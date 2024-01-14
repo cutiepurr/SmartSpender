@@ -235,3 +235,5 @@ Migrations
 *.db
 *.db-shm
 *.db-wal
+
+.idea
