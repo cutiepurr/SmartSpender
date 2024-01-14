@@ -1,19 +1,29 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import {createRoot} from 'react-dom/client';
+import {BrowserRouter} from 'react-router-dom';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+import {Auth0Provider} from '@auth0/auth0-react';
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
 root.render(
-  <BrowserRouter basename={baseUrl}>
-    <App />
-  </BrowserRouter>);
+  <Auth0Provider
+    domain="linh-nguyen.au.auth0.com"
+    clientId="0a7jLwUh1nOgOQk9ogJHodR9AQBPZ9n3"
+    authorizationParams={{
+      redirect_uri: window.location.origin
+    }}
+  >
+    <BrowserRouter basename={baseUrl}>
+      <App/>
+    </BrowserRouter>
+  </Auth0Provider>
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

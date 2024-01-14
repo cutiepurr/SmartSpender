@@ -1,15 +1,13 @@
-import React, { useState } from "react";
-import {
-  Button,
-  Collapse,
-  Nav,
-  NavItem,
-  NavLink,
-} from "reactstrap";
-import { Link } from "react-router-dom";
+import React, {useState} from "react";
+import {Button, Collapse, Nav, NavItem, NavLink,} from "reactstrap";
+import {Link} from "react-router-dom";
 import "./NavMenu.css";
+import LoginButton from "./Auth/LoginButton";
+import {useAuth0} from "@auth0/auth0-react";
+import LogoutButton from "./Auth/LogoutButton";
 
 const NavMenu = () => {
+  const {isAuthenticated} = useAuth0();
   const today = new Date();
   const links = [
     {
@@ -18,7 +16,7 @@ const NavMenu = () => {
     },
     {
       name: "Transactions",
-      path: `/transactions/${today.getFullYear()}/${today.getMonth()+1}`,
+      path: `/transactions/${today.getFullYear()}/${today.getMonth() + 1}`,
     },
   ];
 
@@ -37,13 +35,26 @@ const NavMenu = () => {
 
         <Collapse isOpen={show} className="mt-3">
           <Nav vertical>
-            {links.map((link, index) => (
-              <NavItem key={index}>
-                <NavLink tag={Link} to={link.path} className="nav-tab">
-                  {link.name}
-                </NavLink>
-              </NavItem>
-            ))}
+            {
+              isAuthenticated ?
+                <>
+                  {links.map((link, index) => (
+                    <NavItem key={index}>
+                      <NavLink tag={Link} to={link.path} className="nav-tab">
+                        {link.name}
+                      </NavLink>
+                    </NavItem>
+                  ))}
+                  <NavItem>
+                    <LogoutButton/>
+                  </NavItem>
+                </>
+                : <>
+                  <NavItem>
+                    <LoginButton/>
+                  </NavItem>
+                </>
+            }
           </Nav>
         </Collapse>
       </nav>
@@ -51,4 +62,4 @@ const NavMenu = () => {
   );
 };
 
-export { NavMenu };
+export {NavMenu};
