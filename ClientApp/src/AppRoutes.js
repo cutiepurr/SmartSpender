@@ -1,18 +1,19 @@
 import Home from "./components/Home";
 import TransactionList from "./components/Transaction/TransactionList";
+import AuthenticationGuard from "./components/Auth/AuthenticationGuard";
 
 const AppRoutes = [
   {
     index: true,
-    element: <Home />
+    element: <Home/>
   },
   {
     path: "/transactions",
-    element: <TransactionList />
+    element: <AuthenticationGuard component={TransactionList} />
   },
   {
     path: "/transactions/:year/:month",
-    element: <TransactionList />
+    element: <AuthenticationGuard component={TransactionList} />
   }
 ];
 
