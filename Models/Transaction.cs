@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace SmartSpender
 {
     public class Transaction
@@ -12,6 +10,6 @@ namespace SmartSpender
 
         public double Amount { get; set; }
 
-        public double? CategoryID { get; set; }
+        public int CategoryID { get; set; } = DefaultCategory.Needs.IndexOf("Other needs");
     }
 }

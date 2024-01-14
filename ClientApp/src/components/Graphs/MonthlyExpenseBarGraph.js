@@ -88,18 +88,20 @@ const MonthlyExpenseBarGraph = () => {
   };
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <div>
       <h3>Monthly Spendings</h3>
-      <BarChart data={graphData}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" interval={1} />
-        <YAxis unit="$" />
-        <Tooltip formatter={(value, name, props) => [`$${value}`, name]} />
-        <Legend />
-        <Bar dataKey="Wants" fill="#8884d8" stackId={1} />
-        <Bar dataKey="Needs" fill="#82ca9d" stackId={1} />
-      </BarChart>
-    </ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={graphData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" interval={1} />
+          <YAxis unit="$" />
+          <Tooltip formatter={(value, name, props) => [`$${value}`, name]} />
+          <Legend />
+          <Bar dataKey="Wants" fill="#8884d8" stackId={1} />
+          <Bar dataKey="Needs" fill="#82ca9d" stackId={1} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 

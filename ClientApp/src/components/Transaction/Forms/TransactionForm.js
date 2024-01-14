@@ -60,7 +60,7 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
 
     const category = (
       <FormInput name="category" as="select" type="select">
-        <option value={null}> Uncategorised </option>
+        <option value={null} disabled> Uncategorised </option>
         {categories.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}

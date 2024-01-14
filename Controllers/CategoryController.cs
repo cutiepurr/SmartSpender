@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SmartSpender.Controllers
 {
@@ -7,11 +7,6 @@ namespace SmartSpender.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-
-        private static List<string> DefaultCategories = new() {
-            "Home", "Utilities", "Groceries", "Eating out", "Shopping", "Entertainment", "Others"
-        };
-
         private readonly AppDbContext _context;
 
         public CategoryController(AppDbContext context)
@@ -21,68 +16,24 @@ namespace SmartSpender.Controllers
 
         // GET: api/Category
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TransactionCategory>>> GetTransactionCategory()
+        public ActionResult<IEnumerable<TransactionCategory>> GetTransactionCategory()
         {
-            if (_context.TransactionCategory == null)
-            {
-                return NotFound();
-            }
-            return await _context.TransactionCategory.ToListAsync();
+            if (_context.TransactionCategory.IsNullOrEmpty()) PostDefaultCategory();
+            return DefaultCategory.Categories;
         }
 
         // GET: api/Category/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TransactionCategory>> GetTransactionCategory(long id)
+        public ActionResult<TransactionCategory> GetTransactionCategory(int id)
         {
-            if (_context.TransactionCategory == null)
-            {
-                return NotFound();
-            }
-            var transactionCategory = await _context.TransactionCategory.FindAsync(id);
-
-            if (transactionCategory == null)
-            {
-                return NotFound();
-            }
-
-            return transactionCategory;
-        }
-
-        // PUT: api/Category/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTransactionCategory(long id, TransactionCategory transactionCategory)
-        {
-            if (id != transactionCategory.ID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(transactionCategory).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TransactionCategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            if (_context.TransactionCategory.IsNullOrEmpty()) PostDefaultCategory();
+            return DefaultCategory.Categories[id];
         }
 
         // POST: api/Category
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TransactionCategory>> PostTransactionCategory(TransactionCategory transactionCategory)
+        private async Task<ActionResult<TransactionCategory>> PostTransactionCategory(TransactionCategory transactionCategory)
         {
             if (_context.TransactionCategory == null)
             {
@@ -94,14 +45,12 @@ namespace SmartSpender.Controllers
             return CreatedAtAction("GetTransactionCategory", new { id = transactionCategory.ID }, transactionCategory);
         }
 
-        // POST: api/Category/default
-        [HttpPost("default")]
-        public ActionResult<IEnumerable<TransactionCategory>> PostDefaultCategory()
+        private ActionResult<IEnumerable<TransactionCategory>> PostDefaultCategory()
         {
-            List<TransactionCategory> categories = new List<TransactionCategory>();
-            DefaultCategories.ForEach(async category =>
+            var categories = new List<TransactionCategory>();
+            DefaultCategory.Categories.ForEach(async category =>
             {
-                var temp = await PostTransactionCategory(new TransactionCategory(category));
+                var temp = await PostTransactionCategory(category);
                 if (temp.Value != null) categories.Add(temp.Value);
             });
             return categories;
@@ -127,9 +76,18 @@ namespace SmartSpender.Controllers
             return NoContent();
         }
 
-        private bool TransactionCategoryExists(long id)
-        {
-            return (_context.TransactionCategory?.Any(e => e.ID == id)).GetValueOrDefault();
+        // DELETE: api/Category
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAllCategories() {
+            if (_context.TransactionCategory == null)
+            {
+                return NotFound();
+            }
+
+            _context.TransactionCategory.RemoveRange(_context.TransactionCategory);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
