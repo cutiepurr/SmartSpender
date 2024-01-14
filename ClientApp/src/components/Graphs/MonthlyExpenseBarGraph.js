@@ -32,12 +32,12 @@ const MonthlyExpenseBarGraph = () => {
     query.set("endYear", endDate.getFullYear());
     query.set("endMonth", endDate.getMonth() + 1);
 
-    query.set("type", 0);
+    query.set("categoryType", 0);
     TransactionApis.getMonthlyTransactionsAmounts(query, (data) => {
       setWantData(data);
     });
 
-    query.set("type", 1);
+    query.set("categoryType", 1);
     TransactionApis.getMonthlyTransactionsAmounts(query, (data) => {
       setNeedData(data);
     });

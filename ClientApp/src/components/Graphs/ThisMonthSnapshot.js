@@ -15,9 +15,9 @@ const ThisMonthSnapshot = () => {
         query.set("year", year);
         query.set("month", month);
 
-        query.set("type", 0);
+        query.set("categoryType", 0);
         TransactionApis.getTransactionTotalAmount(query, (data) => setWantAmount(data));
-        query.set("type", 1);
+        query.set("categoryType", 1);
         TransactionApis.getTransactionTotalAmount(query, (data) => setNeedAmount(data));
     }, []);
 
