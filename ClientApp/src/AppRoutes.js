@@ -1,5 +1,5 @@
 import Home from "./components/Home";
-import TransactionList from "./components/Transaction/TransactionList";
+import TransactionList from "./components/Transaction/TransactionList.tsx";
 import AuthenticationGuard from "./components/Auth/AuthenticationGuard";
 
 const AppRoutes = [

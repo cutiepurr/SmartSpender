@@ -1,48 +1,49 @@
-import { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import TransactionTable from "../TransactionTable";
+import {Button, Col, Form, FormFeedback, Input, InputGroup, InputGroupText, Row,} from "reactstrap";
+import {toDatetimeLocalInputDate} from "../../../utils/DateExtensions";
+import {validatedTransaction,} from "../../../utils/TransactionValidation";
+import {Formik, useField} from "formik";
 import {
-  Button,
-  Input,
-  Form,
-  InputGroup,
-  InputGroupText,
-  Row,
-  Col,
-  FormFeedback,
-} from "reactstrap";
-import { toDatetimeLocalInputDate } from "../../../utils/DateExtensions";
-import {
-  Validation,
-  validatedTransaction,
-} from "../../../utils/TransactionValidation";
-import { Formik, useField } from "formik";
+  apiToFormTransaction,
+  ApiTransaction,
+  formToApiTransaction,
+  FormTransaction
+} from "../../../utils/Transaction.ts";
+import {useAuth0} from "@auth0/auth0-react";
 
-const TransactionForm = ({ transaction, categories, submitCallback }) => {
-  const [formData, setFormData] = useState({
+interface props {
+  transaction: ApiTransaction,
+  categories: Array<object>,
+  submitCallback: Function,
+}
+
+const TransactionForm: React.FC<props> = ({transaction, categories, submitCallback}) => {
+  const {user} = useAuth0();
+
+  const blankFormTransaction: FormTransaction = {
+    email: user == undefined ? "" : user.email,
     description: "",
-    amount: "",
+    amount: undefined,
     amountSign: "-",
     category: undefined,
     timestamp: toDatetimeLocalInputDate(new Date()),
-  });
+  };
+
+  const [formData, setFormData] = useState(blankFormTransaction);
 
   useEffect(() => {
-    if (transaction !== null) {
-      setFormData({
-        description: transaction.description,
-        amount: Math.abs(transaction.amount),
-        amountSign: transaction.amount >= 0 ? "+" : "-",
-        category: transaction.categoryID,
-        timestamp: toDatetimeLocalInputDate(
-          new Date(`${transaction.timestamp}.000Z`)
-        ),
-      });
-    }
+    if (transaction == null) return;
+
+    let formTransaction = apiToFormTransaction(transaction);
+    setFormData(formTransaction);
+
   }, [transaction, categories]);
 
-  const formik = ({ handleSubmit, isSubmitting }) => {
+  const formik = ({handleSubmit, isSubmitting}) => {
     const description = (
       <FormInput
+        label="description"
         type="text"
         name="description"
         placeholder="Description"
@@ -52,6 +53,7 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
 
     const timestamp = (
       <FormInput
+        label="timestamp"
         type="datetime-local"
         name="timestamp"
         // validate={Validation.date}
@@ -59,8 +61,8 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
     );
 
     const category = (
-      <FormInput name="category" as="select" type="select">
-        <option value={null} disabled> Uncategorised </option>
+      <FormInput label="category" name="category" as="select" type="select">
+        <option value={null} disabled> Uncategorised</option>
         {categories.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}
@@ -71,16 +73,17 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
 
     const amount = (
       <Row>
-        <Col xs={4} style={{ paddingRight: 5 }}>
-          <FormInput name="amountSign" as="select" type="select">
+        <Col xs={4} style={{paddingRight: 5}}>
+          <FormInput label="amountSign" name="amountSign" as="select" type="select">
             <option value={"-"}>-</option>
             <option value={"+"}>+</option>
           </FormInput>
         </Col>
-        <Col xs={8} style={{ paddingLeft: 5 }}>
+        <Col xs={8} style={{paddingLeft: 5}}>
           <InputGroup>
             <InputGroupText>$</InputGroupText>
             <UngroupedFormInput
+              label="amount"
               name="amount"
               placeholder="Amount"
               type="number"
@@ -116,11 +119,14 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
     <Formik
       enableReinitialize
       initialValues={formData}
-      onSubmit={(values, { setSubmitting }) => {
-        console.log(values);
+      onSubmit={(values, {setSubmitting}) => {
         setSubmitting(false);
         let transaction = validatedTransaction(values);
-        submitCallback(transaction);
+        if (transaction == null) return;
+
+        let apiTransaction = formToApiTransaction(transaction);
+        console.log(apiTransaction);
+        submitCallback(apiTransaction);
       }}
     >
       {formik}
@@ -128,7 +134,7 @@ const TransactionForm = ({ transaction, categories, submitCallback }) => {
   );
 };
 
-const FormInput = ({ label, ...props }) => {
+const FormInput = ({label, ...props}) => {
   const [field, meta, helpers] = useField(props);
   return (
     <>
@@ -142,7 +148,7 @@ const FormInput = ({ label, ...props }) => {
   );
 };
 
-const UngroupedFormInput = ({ label, ...props }) => {
+const UngroupedFormInput = ({label, ...props}) => {
   const [field, meta, helpers] = useField(props);
   return (
     <>
@@ -153,7 +159,7 @@ const UngroupedFormInput = ({ label, ...props }) => {
         invalid={meta.touched && meta.error}
       />
       {meta.touched && meta.error ? (
-        <FormFeedback style={{ zIndex: 1 }} className="error">
+        <FormFeedback style={{zIndex: 1}} className="error">
           {meta.error}
         </FormFeedback>
       ) : null}
@@ -161,4 +167,4 @@ const UngroupedFormInput = ({ label, ...props }) => {
   );
 };
 
-export { TransactionForm };
+export {TransactionForm};

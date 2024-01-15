@@ -7,13 +7,13 @@ import { getPreviousMonth, getNextMonth } from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
 import CategoryApis from "../../api/CategoryApis";
 import NotFound from "../NotFound";
-import EditTransaction from "./Forms/EditTransaction";
+import EditTransaction from "./Forms/EditTransaction.tsx";
 import { formatMoneyAmount } from "../../utils/MoneyExtensions";
 import Ribbon from "./Ribbon";
 import SquareStickyLeftContainer from "../SquareStickyLeftContainer";
 import { formatTransactionApiToView } from "../../utils/TransactionExtensions";
 import {useAuth0} from "@auth0/auth0-react";
-import AccountApis from "../../api/AccountApis";
+import {ApiTransaction} from "../../utils/Transaction";
 
 const TransactionList = () => {
   const { year, month } = useParams();
@@ -21,7 +21,7 @@ const TransactionList = () => {
 
   // States
   const [token, setToken] = useState("");
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState<Array<ApiTransaction>>([]);
   const [count, setCount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
   const [page, setPage] = useState(0); // page for loading transaction

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import TransactionApis from "../../../api/TransactionApis";
-import { TransactionForm } from "./TransactionForm";
+import { TransactionForm } from "./TransactionForm.tsx";
 import {useAuth0} from "@auth0/auth0-react";
 
 const AddTransaction = ({ categories }) => {

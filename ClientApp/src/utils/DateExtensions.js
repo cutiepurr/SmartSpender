@@ -35,7 +35,7 @@ const getDateNextMonth = (date) => {
  * @param {Date} date 
  */
 const toDatetimeLocalInputDate = (date) => {
-  if (date.toString() === "Invalid Date") return null;
+  if (date.toString() === "Invalid Date") return "";
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
   return date.toISOString().slice(0, 16);
 }

@@ -37,15 +37,19 @@ const validatedTransaction = (transaction) => {
   let validation = validateTransaction(transaction);
   if (!validation) return null;
 
-  let amount = parseInt(transaction.amount);
-  if (transaction.amountSign === "-") amount = -amount;
-
-  return {
-    description: transaction.description,
-    amount: amount,
-    timestamp: new Date(transaction.timestamp).toISOString(),
-    categoryID: parseInt(transaction.category),
-  };
+  // transaction.amount = parseInt(transaction.amount);
+  // transaction.category = parseInt(transaction.category);
+  
+  return transaction;
+  // let amount = parseInt(transaction.amount);
+  // if (transaction.amountSign === "-") amount = -amount;
+  //
+  // return {
+  //   description: transaction.description,
+  //   amount: amount,
+  //   timestamp: new Date(transaction.timestamp).toISOString(),
+  //   categoryID: parseInt(transaction.category),
+  // };
 };
 
 class Validation {
