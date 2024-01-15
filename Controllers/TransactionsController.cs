@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SmartSpender.Controllers;
 
@@ -164,7 +165,11 @@ public class TransactionsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutTransaction(long id, Transaction transaction)
     {
+        var email = await GetUserEmailFromToken();
+        if (email == null) return NotFound();
+
         if (id != transaction.ID) return BadRequest();
+        if (transaction.Email != email) return Unauthorized();
 
         _context.Entry(transaction).State = EntityState.Modified;
 
@@ -188,6 +193,10 @@ public class TransactionsController : ControllerBase
     public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
     {
         if (_context.Transaction == null) return Problem("Entity set 'AppDbContext.Transaction'  is null.");
+        var email = await GetUserEmailFromToken();
+        if (email == null) return NotFound();
+        if (transaction.Email != email) return Unauthorized();
+
         _context.Transaction.Add(transaction);
         await _context.SaveChangesAsync();
 
@@ -202,6 +211,10 @@ public class TransactionsController : ControllerBase
         var transaction = await _context.Transaction.FindAsync(id);
         if (transaction == null) return NotFound();
 
+        var email = await GetUserEmailFromToken();
+        if (email == null) return NotFound();
+        if (transaction.Email != email) return Unauthorized();
+
         _context.Transaction.Remove(transaction);
         await _context.SaveChangesAsync();
 
@@ -213,12 +226,15 @@ public class TransactionsController : ControllerBase
     public async Task<IActionResult> DeleteTransactions(IEnumerable<long> idList)
     {
         if (_context.Transaction == null) return NotFound();
+        var email = await GetUserEmailFromToken();
+        if (email == null) return NotFound();
 
-        var transaction = _context.Transaction.Where(item => idList.Contains(item.ID));
+        var transactions = _context.Transaction.Where(item => idList.Contains(item.ID));
 
-        if (transaction == null) return NotFound();
+        if (transactions.IsNullOrEmpty()) return NotFound();
+        if (transactions.Any(item => item.Email != email)) return Unauthorized();
 
-        _context.Transaction.RemoveRange(transaction);
+        _context.Transaction.RemoveRange(transactions);
         await _context.SaveChangesAsync();
 
         return NoContent();
