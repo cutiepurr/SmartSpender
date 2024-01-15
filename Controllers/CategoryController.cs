@@ -58,7 +58,7 @@ namespace SmartSpender.Controllers
 
         // DELETE: api/Category/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTransactionCategory(long id)
+        private async Task<IActionResult> DeleteTransactionCategory(long id)
         {
             if (_context.TransactionCategory == null)
             {
@@ -78,7 +78,7 @@ namespace SmartSpender.Controllers
 
         // DELETE: api/Category
         [HttpDelete]
-        public async Task<IActionResult> DeleteAllCategories() {
+        private async Task<IActionResult> DeleteAllCategories() {
             if (_context.TransactionCategory == null)
             {
                 return NotFound();
