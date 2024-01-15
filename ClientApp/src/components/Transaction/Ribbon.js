@@ -18,7 +18,7 @@ const Ribbon = ({ selectedItems, className }) => {
         <Button color="danger" onClick={deleteTransactions} className="ms-3">
           <i className="fa-solid fa-trash"></i> Delete
         </Button>
-        <ImportTransactions className="ms-3" />
+        {/*<ImportTransactions className="ms-3" />*/}
     </div>
   );
 };

@@ -127,7 +127,7 @@ public class TransactionsController : ControllerBase
         {
             transactions = transactions.Where(transaction => transaction.Timestamp.Year >= startYear);
 
-            if (startMonth == -1)
+            if (startMonth != -1)
             {
                 var startDate = new DateTime(startYear, startMonth, 1);
                 transactions = transactions.Where(transaction => transaction.Timestamp.CompareTo(startDate) >= 0);
@@ -138,7 +138,7 @@ public class TransactionsController : ControllerBase
         {
             transactions = transactions.Where(transaction => transaction.Timestamp.Year <= endYear);
 
-            if (endMonth == -1)
+            if (endMonth != -1)
             {
                 var endDate = new DateTime(endYear, endMonth, DateTime.DaysInMonth(endYear, endMonth));
                 transactions = transactions.Where(transaction => transaction.Timestamp.CompareTo(endDate) <= 0);
