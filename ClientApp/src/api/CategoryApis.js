@@ -6,7 +6,7 @@ class CategoryApis extends ApiFetcher {
    * @param {Function} callback Callback function upon successful request
    */
   static getCategories = (callback) => {
-    this.getRequest(`/api/Category`, callback);
+    this.getRequest(`/api/Category`, null, callback);
   };
 }
 

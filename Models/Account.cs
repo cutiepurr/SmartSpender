@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace SmartSpender;
 
@@ -6,12 +7,12 @@ public class Account
 {
     public long Id { get; set; }
     
-    [MaxLength(50)]
-    public required string FirstName { get; set; }
-    
-    [MaxLength(50)]
-    public required string LastName { get; set; }
-    
-    [MaxLength(50)]
+    [property: JsonPropertyName("given_name")]
+    public string GivenName { get; set; } = null!;
+
+    [property: JsonPropertyName("family_name")]
+    public string FamilyName { get; set; } = null!;
+
+    [property: JsonPropertyName("email")]
     public required string Email { get; set; }
 }

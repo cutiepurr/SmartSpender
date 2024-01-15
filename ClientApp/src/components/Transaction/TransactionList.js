@@ -12,11 +12,15 @@ import { formatMoneyAmount } from "../../utils/MoneyExtensions";
 import Ribbon from "./Ribbon";
 import SquareStickyLeftContainer from "../SquareStickyLeftContainer";
 import { formatTransactionApiToView } from "../../utils/TransactionExtensions";
+import {useAuth0} from "@auth0/auth0-react";
+import AccountApis from "../../api/AccountApis";
 
 const TransactionList = () => {
   const { year, month } = useParams();
+  const { getAccessTokenSilently} = useAuth0();
 
   // States
+  const [token, setToken] = useState("");
   const [transactions, setTransactions] = useState([]);
   const [count, setCount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
@@ -28,23 +32,28 @@ const TransactionList = () => {
 
   useEffect(() => {
     CategoryApis.getCategories((data) => setCategories(data));
+    getAccessTokenSilently().then(data => setToken(data));
   }, []);
 
   useEffect(() => {
+    if (token === "") return;
+    
     let query = new URLSearchParams();
     if (year != undefined) {
       query.set("year", year);
       if (month != undefined) query.set("month", month);
     }
 
-    TransactionApis.getTransactionCounts(query, (data) => setCount(data));
+    TransactionApis.getTransactionCounts(query, token, (data) => setCount(data));
 
-    TransactionApis.getTransactionTotalAmount(query, (data) =>
+    TransactionApis.getTransactionTotalAmount(query, token, (data) =>
       setTotalAmount(data)
     );
-  }, [year, month]);
+  }, [year, month, token]);
 
   useEffect(() => {
+    if (token === "") return;
+    
     let query = new URLSearchParams();
     query.set("page", page);
     query.set("count", perLoad);
@@ -53,11 +62,11 @@ const TransactionList = () => {
       if (month != null) query.set("month", month);
     }
 
-    TransactionApis.getTransactions(query, (data) => {
+    TransactionApis.getTransactions(query, token, (data) => {
       if (data === null) return;
       setTransactions((transactions) => transactions.concat(data));
     });
-  }, [year, month, page, perLoad]);
+  }, [year, month, page, perLoad, token]);
 
   const onSelected = (event) => {
     var id = parseInt(event.target.name);

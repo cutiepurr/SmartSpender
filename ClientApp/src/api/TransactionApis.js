@@ -6,8 +6,8 @@ class TransactionApis extends ApiFetcher {
    * @param {URLSearchParams} query Params for the API's URL
    * @param {Function} callback Callback function upon successful request
    */
-  static getTransactions = (query, callback=null) => {
-    this.getRequest(`/api/Transactions?${query.toString()}`, callback);
+  static getTransactions = (query, token, callback = null) => {
+    this.getRequest(`/api/Transactions?${query.toString()}`, token, callback);
   };
 
   /**
@@ -15,8 +15,8 @@ class TransactionApis extends ApiFetcher {
    * @param {URLSearchParams} query Params for the API's URL
    * @param {Function} callback Callback function upon successful request
    */
-  static getTransactionCounts = (query, callback=null) => {
-    this.getRequest(`/api/Transactions/count?${query.toString()}`, callback);
+  static getTransactionCounts = (query, token, callback = null) => {
+    this.getRequest(`/api/Transactions/count?${query.toString()}`, token, callback);
   };
 
   /**
@@ -24,8 +24,8 @@ class TransactionApis extends ApiFetcher {
    * @param {URLSearchParams} query Params for the API's URL
    * @param {Function} callback Callback function upon successful request
    */
-  static getTransactionTotalAmount = (query, callback=null) => {
-    this.getRequest(`/api/Transactions/amount?${query.toString()}`, callback);
+  static getTransactionTotalAmount = (query, token, callback = null) => {
+    this.getRequest(`/api/Transactions/amount?${query.toString()}`, token, callback);
   };
 
   /**
@@ -33,8 +33,8 @@ class TransactionApis extends ApiFetcher {
    * @param {URLSearchParams} query Params for the API's URL
    * @param {Function} callback Callback function upon successful request
    */
-  static getMonthlyTransactionsAmounts = (query, callback=null) => {
-    this.getRequest(`/api/Transactions/amount/during?${query.toString()}`, callback);
+  static getMonthlyTransactionsAmounts = (query, token, callback = null) => {
+    this.getRequest(`/api/Transactions/amount/during?${query.toString()}`, token, callback);
   };
 
   /**
@@ -42,8 +42,8 @@ class TransactionApis extends ApiFetcher {
    * @param {Object} transaction Must include description, timestamp, and amount
    * @param {Function} callback Callback function upon successful request
    */
-  static postTransaction = (transaction, callback=null) => {
-    this.postRequest(`api/Transactions`, JSON.stringify(transaction), callback);
+  static postTransaction = (transaction, token, callback = null) => {
+    this.postRequest(`api/Transactions`, JSON.stringify(transaction), token, callback);
   };
 
   /**
@@ -51,8 +51,8 @@ class TransactionApis extends ApiFetcher {
    * @param {Object} transaction Must include id, description, timestamp, and amount
    * @param {Function} callback Callback function upon successful request
    */
-  static putTransaction = (transaction, callback=null) => {
-    this.putRequest(`api/Transactions/${transaction.id}`, JSON.stringify(transaction), callback);
+  static putTransaction = (transaction, token, callback = null) => {
+    this.putRequest(`api/Transactions/${transaction.id}`, JSON.stringify(transaction), token, callback);
   };
 
   /**
@@ -60,8 +60,8 @@ class TransactionApis extends ApiFetcher {
    * @param {long} transactionId
    * @param {Function} callback Callback function upon successful request
    */
-  static deleteTransaction = (transactionId, callback=null) => {
-    this.deleteRequest(`api/Transactions/${transactionId}`, null, callback);
+  static deleteTransaction = (transactionId, token, callback = null) => {
+    this.deleteRequest(`api/Transactions/${transactionId}`, token, null, callback);
   };
 
   /**
@@ -69,8 +69,8 @@ class TransactionApis extends ApiFetcher {
    * @param {Array} idArray
    * @param {Function} callback Callback function upon successful request
    */
-  static deleteTransactions = (idArray, callback=null) => {
-    this.deleteRequest(`api/Transactions`, idArray, callback);
+  static deleteTransactions = (idArray, token, callback = null) => {
+    this.deleteRequest(`api/Transactions`, idArray, token, callback);
   };
 }
 
