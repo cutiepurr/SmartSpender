@@ -3,9 +3,9 @@ interface FormTransaction {
     id?: number,
     email: string;
     description: string;
-    amount: number;
+    amount: number | undefined;
     amountSign: string;
-    category: number;
+    category: number | undefined;
     timestamp: string; // for datetime-local input
 }
 
@@ -18,7 +18,7 @@ interface ApiTransaction {
     description: string;
     amount: number;
     timestamp: string;
-    categoryID: number;
+    categoryID: number | undefined;
 }
 
 const apiToFormTransaction = (transaction: ApiTransaction) => {
@@ -39,13 +39,13 @@ const apiToFormTransaction = (transaction: ApiTransaction) => {
 
 const formToApiTransaction = (transaction: FormTransaction) => {
     let amount = transaction.amount;
-    if (transaction.amountSign === "-") amount = -amount;
+    if (amount != undefined && transaction.amountSign === "-") amount = -amount;
     
     const apiTransaction: ApiTransaction = {
         id: transaction.id,
         email: transaction.email,
         description: transaction.description,
-        amount: amount,
+        amount: amount ?? 0,
         timestamp: new Date(transaction.timestamp).toISOString(),
         categoryID: transaction.category,
     };
@@ -54,8 +54,8 @@ const formToApiTransaction = (transaction: FormTransaction) => {
 }
 
 export {
-    FormTransaction,
-    ApiTransaction,
+    type FormTransaction,
+    type ApiTransaction,
     apiToFormTransaction,
     formToApiTransaction
 }

@@ -23,7 +23,6 @@ const AddTransaction = ({ categories }) => {
 
   return (
     <TransactionForm
-      formId={formId}
       transaction={null}
       categories={categories}
       submitCallback={addTransaction}

@@ -7,7 +7,7 @@ import { getPreviousMonth, getNextMonth } from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
 import CategoryApis from "../../api/CategoryApis";
 import NotFound from "../NotFound";
-import EditTransaction from "./Forms/EditTransaction.tsx";
+import EditTransaction from "./Forms/EditTransaction";
 import { formatMoneyAmount } from "../../utils/MoneyExtensions";
 import Ribbon from "./Ribbon";
 import SquareStickyLeftContainer from "../SquareStickyLeftContainer";
@@ -28,7 +28,7 @@ const TransactionList = () => {
   const [perLoad, setPerLoad] = useState(50); // number of transactions per page
   const [categories, setCategories] = useState([]);
   const [editMode, setEditMode] = useState(-1); // id of the transaction that is currently under edit mode
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState<Array<number>>([]);
 
   useEffect(() => {
     CategoryApis.getCategories((data) => setCategories(data));
@@ -55,8 +55,8 @@ const TransactionList = () => {
     if (token === "") return;
     
     let query = new URLSearchParams();
-    query.set("page", page);
-    query.set("count", perLoad);
+    query.set("page", page.toString());
+    query.set("count", perLoad.toString());
     if (year != null) {
       query.set("year", year);
       if (month != null) query.set("month", month);
@@ -69,8 +69,8 @@ const TransactionList = () => {
   }, [year, month, page, perLoad, token]);
 
   const onSelected = (event) => {
-    var id = parseInt(event.target.name);
-    var isSelected = event.target.checked;
+    let id = parseInt(event.target.name);
+    let isSelected = event.target.checked;
     if (isSelected) {
       setSelectedItems((items) => [...items, id]);
       setEditMode(-1);
@@ -88,13 +88,13 @@ const TransactionList = () => {
     return (
       <div key={`view-${transaction.id}`}>
         <SquareStickyLeftContainer>
-          <Input type="checkbox" name={transaction.id} onChange={onSelected} />
+          <Input type="checkbox" name={transaction.id?.toString()} onChange={onSelected} />
         </SquareStickyLeftContainer>
         {editMode !== transaction.id ? (
           <TransactionTable
             className="transaction-line"
             transaction={transactionViewObject}
-            onClick={() => setEditMode(transaction.id)}
+            onClick={() => setEditMode(transaction.id ?? -1)}
           />
         ) : (
           <EditTransaction transaction={transaction} categories={categories} />

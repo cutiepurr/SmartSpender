@@ -9,12 +9,13 @@ import {
   ApiTransaction,
   formToApiTransaction,
   FormTransaction
-} from "../../../utils/Transaction.ts";
+} from "../../../utils/Transaction";
 import {useAuth0} from "@auth0/auth0-react";
+import {categoryItem} from "@/utils/Category";
 
 interface props {
   transaction: ApiTransaction,
-  categories: Array<object>,
+  categories: Array<categoryItem>,
   submitCallback: Function,
 }
 
@@ -22,7 +23,7 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
   const {user} = useAuth0();
 
   const blankFormTransaction: FormTransaction = {
-    email: user == undefined ? "" : user.email,
+    email: user?.email ?? "",
     description: "",
     amount: undefined,
     amountSign: "-",
@@ -62,7 +63,7 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
 
     const category = (
       <FormInput label="category" name="category" as="select" type="select">
-        <option value={null} disabled> Uncategorised</option>
+        <option value={undefined} disabled> Uncategorised</option>
         {categories.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}
@@ -135,6 +136,7 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
 };
 
 const FormInput = ({label, ...props}) => {
+  // @ts-ignore
   const [field, meta, helpers] = useField(props);
   return (
     <>
@@ -149,6 +151,7 @@ const FormInput = ({label, ...props}) => {
 };
 
 const UngroupedFormInput = ({label, ...props}) => {
+  // @ts-ignore
   const [field, meta, helpers] = useField(props);
   return (
     <>
@@ -156,6 +159,7 @@ const UngroupedFormInput = ({label, ...props}) => {
         // bsSize="sm"
         {...field}
         {...props}
+        // @ts-ignore
         invalid={meta.touched && meta.error}
       />
       {meta.touched && meta.error ? (

@@ -3,9 +3,15 @@ import { Button, Input } from "reactstrap";
 import TransactionApis from "../../api/TransactionApis";
 import ImportTransactions from "./ImportTransactions";
 
-const Ribbon = ({ selectedItems, className }) => {
+interface props {
+  selectedItems: Array<Number>;
+  className?: string;
+}
+
+const Ribbon: React.FC<props> = ({ selectedItems, className }) => {
   const deleteTransactions = () => {
     TransactionApis.deleteTransactions(
+      // @ts-ignore
       JSON.stringify(selectedItems),
       () => {
         window.location.reload();
