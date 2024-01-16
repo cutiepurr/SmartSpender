@@ -1,5 +1,5 @@
 import Home from "./components/Home";
-import TransactionList from "./components/Transaction/TransactionList.tsx";
+import TransactionListPage from "./components/Transaction/TransactionListPage";
 import AuthenticationGuard from "./components/Auth/AuthenticationGuard";
 
 const AppRoutes = [
@@ -9,11 +9,11 @@ const AppRoutes = [
   },
   {
     path: "/transactions",
-    element: <AuthenticationGuard component={TransactionList} />
+    element: <AuthenticationGuard component={TransactionListPage} />
   },
   {
     path: "/transactions/:year/:month",
-    element: <AuthenticationGuard component={TransactionList} />
+    element: <AuthenticationGuard component={TransactionListPage} />
   }
 ];
 
