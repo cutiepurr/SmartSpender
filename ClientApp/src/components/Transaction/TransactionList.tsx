@@ -1,47 +1,56 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
 import AddTransaction from "./Forms/AddTransaction";
 import TransactionTable from "./TransactionTable";
-import { Button, Row, Col, Container, Input } from "reactstrap";
-import { getPreviousMonth, getNextMonth } from "../../utils/DateExtensions";
+import {Button, Col, Container, Input, Row} from "reactstrap";
+import {getNextMonth, getPreviousMonth} from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
 import CategoryApis from "../../api/CategoryApis";
 import NotFound from "../NotFound";
 import EditTransaction from "./Forms/EditTransaction";
-import { formatMoneyAmount } from "../../utils/MoneyExtensions";
+import {formatMoneyAmount} from "../../utils/MoneyExtensions";
 import Ribbon from "./Ribbon";
 import SquareStickyLeftContainer from "../SquareStickyLeftContainer";
-import { formatTransactionApiToView } from "../../utils/TransactionExtensions";
+import {formatTransactionApiToView} from "../../utils/TransactionExtensions";
 import {useAuth0} from "@auth0/auth0-react";
-import {ApiTransaction} from "../../utils/Transaction";
+import {ApiTransaction} from "@/utils/Transaction";
+import {categoryItem} from "@/utils/Category";
 
 const TransactionList = () => {
-  const { year, month } = useParams();
-  const { getAccessTokenSilently} = useAuth0();
+  const {year, month} = useParams();
+  const {getAccessTokenSilently} = useAuth0();
 
   // States
   const [token, setToken] = useState("");
+
   const [transactions, setTransactions] = useState<Array<ApiTransaction>>([]);
+  const [categories, setCategories] = useState<Array<categoryItem>>([]);
+
   const [count, setCount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
   const [page, setPage] = useState(0); // page for loading transaction
-  const [perLoad, setPerLoad] = useState(50); // number of transactions per page
-  const [categories, setCategories] = useState([]);
+  const [perLoad] = useState(50); // number of transactions per page
   const [editMode, setEditMode] = useState(-1); // id of the transaction that is currently under edit mode
   const [selectedItems, setSelectedItems] = useState<Array<number>>([]);
 
+  // GET categories
   useEffect(() => {
     CategoryApis.getCategories((data) => setCategories(data));
-    getAccessTokenSilently().then(data => setToken(data));
   }, []);
 
+  // Get access token
+  useEffect(() => {
+    getAccessTokenSilently().then(data => setToken(data));
+  }, [getAccessTokenSilently]);
+
+  // GET transaction counts and total amount
   useEffect(() => {
     if (token === "") return;
-    
+
     let query = new URLSearchParams();
-    if (year != undefined) {
+    if (year !== undefined) {
       query.set("year", year);
-      if (month != undefined) query.set("month", month);
+      if (month !== undefined) query.set("month", month);
     }
 
     TransactionApis.getTransactionCounts(query, token, (data) => setCount(data));
@@ -51,9 +60,10 @@ const TransactionList = () => {
     );
   }, [year, month, token]);
 
+  // GET all transactions
   useEffect(() => {
     if (token === "") return;
-    
+
     let query = new URLSearchParams();
     query.set("page", page.toString());
     query.set("count", perLoad.toString());
@@ -74,8 +84,7 @@ const TransactionList = () => {
     if (isSelected) {
       setSelectedItems((items) => [...items, id]);
       setEditMode(-1);
-    }
-    else
+    } else
       setSelectedItems((items) => {
         items.splice(items.indexOf(id), 1);
         return [...items];
@@ -88,7 +97,7 @@ const TransactionList = () => {
     return (
       <div key={`view-${transaction.id}`}>
         <SquareStickyLeftContainer>
-          <Input type="checkbox" name={transaction.id?.toString()} onChange={onSelected} />
+          <Input type="checkbox" name={transaction.id?.toString()} onChange={onSelected}/>
         </SquareStickyLeftContainer>
         {editMode !== transaction.id ? (
           <TransactionTable
@@ -97,7 +106,7 @@ const TransactionList = () => {
             onClick={() => setEditMode(transaction.id ?? -1)}
           />
         ) : (
-          <EditTransaction transaction={transaction} categories={categories} />
+          <EditTransaction transaction={transaction} categories={categories}/>
         )}
       </div>
     );
@@ -107,26 +116,26 @@ const TransactionList = () => {
 
   return (
     <div>
-      {year == undefined && month === undefined ? (
+      {year === undefined && month === undefined ? (
         <h1>Transaction</h1>
       ) : (
-        <TitleWithMonth year={year} month={month} />
+        <TitleWithMonth year={year} month={month}/>
       )}
-      <Ribbon selectedItems={selectedItems} />
+      <Ribbon selectedItems={selectedItems}/>
       <div className="position-relative w-100">
         <div className="shadow-inset-right"></div>
-        <div style={{ height: "80vh" }} className="overflow-auto">
-          <div style={{ width: 1200 }} className="mx-auto">
+        <div style={{height: "80vh"}} className="overflow-auto">
+          <div style={{width: 1200}} className="mx-auto">
             <h4 className="m-2">Add Transaction</h4>
-            <SquareStickyLeftContainer />
-            <AddTransaction categories={categories} />
+            <SquareStickyLeftContainer/>
+            <AddTransaction categories={categories}/>
             <h4 className="m-2">History</h4>
-          
+
             {count === 0 ? (
-              <NotFound />
+              <NotFound/>
             ) : (
               <div className="bg-white">
-                <TransactionListHeader />
+                <TransactionListHeader/>
                 {transactionItems}
                 {count > (page + 1) * perLoad ? (
                   <Button onClick={loadMoreTransactions}>Load more</Button>
@@ -136,15 +145,15 @@ const TransactionList = () => {
           </div>
         </div>
         <div className="shadow-inset-bottom"></div>
-        <TransactionTotalAmount amount={totalAmount} />
+        <TransactionTotalAmount amount={totalAmount}/>
       </div>
     </div>
   );
 };
 
-const TitleWithMonth = ({ year, month }) => {
-  let [prevYear, prevMonth] = getPreviousMonth(year, month);
-  let [nextYear, nextMonth] = getNextMonth(year, month);
+const TitleWithMonth = ({year, month}) => {
+  let [prevYear, prevMonth] = getPreviousMonth(parseInt(year), parseInt(month));
+  let [nextYear, nextMonth] = getNextMonth(parseInt(year), parseInt(month));
 
   let prevMonthLink = `/transactions/${prevYear}/${prevMonth}`;
   let nextMonthLink = `/transactions/${nextYear}/${nextMonth}`;
@@ -157,7 +166,7 @@ const TitleWithMonth = ({ year, month }) => {
     <Row className="text-center">
       <Col>
         <Button color="link" onClick={onPrevButtonClicked}>
-          Prev
+          &lt;
         </Button>
       </Col>
       <Col>
@@ -170,7 +179,7 @@ const TitleWithMonth = ({ year, month }) => {
       </Col>
       <Col>
         <Button color="link" onClick={onNextButtonClicked}>
-          Next
+          &gt;
         </Button>
       </Col>
     </Row>
@@ -179,7 +188,7 @@ const TitleWithMonth = ({ year, month }) => {
 
 const TransactionListHeader = () => (
   <strong>
-    <SquareStickyLeftContainer />
+    <SquareStickyLeftContainer/>
     <TransactionTable
       className="sticky-top bg-white border-bottom shadow-bottom"
       transaction={{
@@ -192,10 +201,10 @@ const TransactionListHeader = () => (
   </strong>
 );
 
-const TransactionTotalAmount = ({ amount }) => (
+const TransactionTotalAmount = ({amount}) => (
   <Container
     className="bg-white border-top p-3 position-absolute bottom-0"
-    style={{ width: "100%", zIndex: 3, height: 50 }}
+    style={{width: "100%", zIndex: 3, height: 50}}
   >
     <h4>
       <div className="float-end">{formatMoneyAmount(amount)}</div>

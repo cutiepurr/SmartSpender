@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import { TransactionForm } from "./TransactionForm";
 import TransactionApis from "../../../api/TransactionApis";
 import {useAuth0} from "@auth0/auth0-react";
-import {ApiTransaction} from "../../../utils/Transaction";
+import {ApiTransaction} from "@/utils/Transaction";
 import {categoryItem} from "@/utils/Category";
 
 interface props {
@@ -10,13 +10,12 @@ interface props {
   categories: Array<categoryItem>,
 }
 const EditTransaction: React.FC<props> = ({ transaction, categories }) => {
-  const formId = `editTransactionForm-${transaction.id}`;
   const { getAccessTokenSilently} = useAuth0();
   const [token, setToken] = useState("");
 
   useEffect(() => {
     getAccessTokenSilently().then(data => setToken(data));
-  }, []);
+  }, [getAccessTokenSilently]);
 
   const editTransaction = (inputTransaction: ApiTransaction) => {
     if (inputTransaction == null) return;

@@ -29,27 +29,15 @@ const emptyMessage = "Cannot be empty";
 
 const validateDescription = (value) => {
   let error;
-  if (value == "") error = emptyMessage;
+  if (value === "") error = emptyMessage;
   return error;
 };
 
 const validatedTransaction = (transaction) => {
   let validation = validateTransaction(transaction);
   if (!validation) return null;
-
-  // transaction.amount = parseInt(transaction.amount);
-  // transaction.category = parseInt(transaction.category);
   
   return transaction;
-  // let amount = parseInt(transaction.amount);
-  // if (transaction.amountSign === "-") amount = -amount;
-  //
-  // return {
-  //   description: transaction.description,
-  //   amount: amount,
-  //   timestamp: new Date(transaction.timestamp).toISOString(),
-  //   categoryID: parseInt(transaction.category),
-  // };
 };
 
 class Validation {
@@ -57,20 +45,20 @@ class Validation {
 
   static description = (value) => {
     let error;
-    if (value == "") error = emptyMessage;
+    if (value === "") error = emptyMessage;
     return error;
   };
 
   static amount = (value) => {
     let error;
-    if (value == "") error = emptyMessage;
+    if (value === "") error = emptyMessage;
     else if (value < 0) error = "Must be greater than 0";
     return error;
   };
 
   static date = (value) => {
     let error;
-    if (value == "") return emptyMessage;
+    if (value === "") return emptyMessage;
     
     let today = new Date();
     today.setDate(today.getDate());

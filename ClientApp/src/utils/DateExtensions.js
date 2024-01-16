@@ -1,5 +1,5 @@
 const getPreviousMonth = (year, month) => {
-  if (month == 1) {
+  if (month === 1) {
     month = 12;
     year--;
   } else month--;
@@ -7,7 +7,7 @@ const getPreviousMonth = (year, month) => {
 };
 
 const getNextMonth = (year, month) => {
-  if (month == 12) {
+  if (month === 12) {
     month = 1;
     year++;
   } else month++;

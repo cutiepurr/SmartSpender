@@ -4,12 +4,7 @@ import {Button, Col, Form, FormFeedback, Input, InputGroup, InputGroupText, Row,
 import {toDatetimeLocalInputDate} from "../../../utils/DateExtensions";
 import {validatedTransaction,} from "../../../utils/TransactionValidation";
 import {Formik, useField} from "formik";
-import {
-  apiToFormTransaction,
-  ApiTransaction,
-  formToApiTransaction,
-  FormTransaction
-} from "../../../utils/Transaction";
+import {apiToFormTransaction, ApiTransaction, formToApiTransaction, FormTransaction} from "../../../utils/Transaction";
 import {useAuth0} from "@auth0/auth0-react";
 import {categoryItem} from "@/utils/Category";
 
@@ -34,11 +29,10 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
   const [formData, setFormData] = useState(blankFormTransaction);
 
   useEffect(() => {
-    if (transaction == null) return;
+    if (transaction === null) return;
 
     let formTransaction = apiToFormTransaction(transaction);
     setFormData(formTransaction);
-
   }, [transaction, categories]);
 
   const formik = ({handleSubmit, isSubmitting}) => {
@@ -126,7 +120,6 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
         if (transaction == null) return;
 
         let apiTransaction = formToApiTransaction(transaction);
-        console.log(apiTransaction);
         submitCallback(apiTransaction);
       }}
     >
@@ -136,8 +129,6 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
 };
 
 const FormInput = ({label, ...props}) => {
-  // @ts-ignore
-  const [field, meta, helpers] = useField(props);
   return (
     <>
       <InputGroup>
@@ -152,11 +143,10 @@ const FormInput = ({label, ...props}) => {
 
 const UngroupedFormInput = ({label, ...props}) => {
   // @ts-ignore
-  const [field, meta, helpers] = useField(props);
+  const [field, meta] = useField(props);
   return (
     <>
       <Input
-        // bsSize="sm"
         {...field}
         {...props}
         // @ts-ignore

@@ -4,13 +4,12 @@ import { TransactionForm } from "./TransactionForm.tsx";
 import {useAuth0} from "@auth0/auth0-react";
 
 const AddTransaction = ({ categories }) => {
-  const formId = "createTransactionForm";
   const { getAccessTokenSilently, user } = useAuth0();
   const [token, setToken] = useState("");
 
   useEffect(() => {
     getAccessTokenSilently().then(data => setToken(data));
-  }, []);
+  }, [getAccessTokenSilently]);
 
   const addTransaction = (inputTransaction) => {
     if (inputTransaction == null) return;
