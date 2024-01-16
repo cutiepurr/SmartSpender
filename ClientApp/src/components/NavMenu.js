@@ -1,30 +1,37 @@
 import React, {useState} from "react";
-import {Button, Collapse, Nav, NavItem, NavLink,} from "reactstrap";
-import {Link} from "react-router-dom";
+import {Button, Offcanvas, OffcanvasBody, OffcanvasHeader,} from "reactstrap";
 import "./NavMenu.css";
 import LoginButton from "./Auth/LoginButton";
 import {useAuth0} from "@auth0/auth0-react";
 import LogoutButton from "./Auth/LogoutButton";
 
 const NavMenu = ({className}) => {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
   const toggle = () => setShow(!show);
 
   return (
     <header className={className}>
-      <nav className="p-3">
-        <Button onClick={toggle} className="float-end d-lg-none" color="light">
-          <i className="fa-solid fa-bars"></i>
-        </Button>
-        <div>
-          <a href="/" className="nav-link"><h1>Smart Spender</h1></a>
+      <div className="h-100 d-flex flex-column">
+        <div className="p-3">
+          <Button onClick={toggle} className="float-end d-lg-none" color="light">
+            <i className="fa-solid fa-bars"></i>
+          </Button>
+          <div>
+            <a href="/" className="nav-link"><h1>Smart Spender</h1></a>
+          </div>
         </div>
+        
+        {/* Offcanvas when the screen is smaller than lg */}
+        <Offcanvas isOpen={show} toggle={toggle} className="d-lg-none">
+          <OffcanvasHeader toggle={toggle}></OffcanvasHeader>
+          <OffcanvasBody>
+            <NavContent className="bg-white"/>
+          </OffcanvasBody>
+        </Offcanvas>
 
-        <Collapse isOpen={show} className="mt-3 d-lg-none">
-          <NavContent/>
-        </Collapse>
-        <NavContent className="d-none d-lg-block" style={{ width: 250 }}/>
-      </nav>
+        {/* Sidebar when the screen is larger than lg */}
+        <NavContent className="d-none d-lg-block" style={{width: 250}}/>
+      </div>
     </header>
   );
 };
@@ -44,28 +51,26 @@ const NavContent = (props) => {
   ];
 
   return (
-    <Nav vertical {...props}>
-      {
-        isAuthenticated ?
-          <>
-            {links.map((link, index) => (
-              <NavItem key={index}>
-                <NavLink tag={Link} to={link.path} className="nav-tab">
-                  {link.name}
-                </NavLink>
-              </NavItem>
-            ))}
-            <NavItem>
-              <LogoutButton/>
-            </NavItem>
-          </>
-          : <>
-            <NavItem>
-              <LoginButton/>
-            </NavItem>
-          </>
-      }
-    </Nav>
+
+    <div {...props} className={`${props.className} h-100 p-3 position-relative`}>
+      <div className="pb-3">
+        {
+          isAuthenticated ?
+            <>
+              {links.map((link, index) => (
+                <div key={index} className="py-1">
+                  <a href={link.path} className="nav-tab p-2 d-block">
+                    {link.name}
+                  </a>
+                </div>
+              ))}
+            </> : null
+        }
+      </div>
+      <div className="border-top py-3 position-absolute bottom-0">
+        {isAuthenticated ? <LogoutButton/> : <LoginButton/>}
+      </div>
+    </div>
   );
 }
 

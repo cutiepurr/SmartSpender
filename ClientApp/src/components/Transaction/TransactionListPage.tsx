@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import AddTransaction from "./Forms/AddTransaction";
-import {Button, Col, Container, Row} from "reactstrap";
+import {Col, Container, Row} from "reactstrap";
 import {getNextMonth, getPreviousMonth} from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
 import CategoryApis from "../../api/CategoryApis";
@@ -103,16 +103,10 @@ const TitleWithMonth = ({year, month}) => {
   let prevMonthLink = `/transactions/${prevYear}/${prevMonth}`;
   let nextMonthLink = `/transactions/${nextYear}/${nextMonth}`;
 
-  const onPrevButtonClicked = () => (window.location.href = prevMonthLink);
-
-  const onNextButtonClicked = () => (window.location.href = nextMonthLink);
-
   return (
     <Row className="text-center">
       <Col>
-        <Button color="link" onClick={onPrevButtonClicked}>
-          &lt;
-        </Button>
+        <a href={prevMonthLink}> <i className="fa-solid fa-chevron-left"></i> </a>
       </Col>
       <Col>
         <h1>
@@ -123,9 +117,7 @@ const TitleWithMonth = ({year, month}) => {
         </h1>
       </Col>
       <Col>
-        <Button color="link" onClick={onNextButtonClicked}>
-          &gt;
-        </Button>
+        <a href={nextMonthLink}> <i className="fa-solid fa-chevron-right"></i> </a>
       </Col>
     </Row>
   );
