@@ -7,14 +7,10 @@ export class Layout extends Component {
 
   render() {
     return (
-      <Row>
-        <Col lg={2}>
-          <NavMenu />
-        </Col>
-        <Col lg={10}>
+      <div className="w-100 vh-100 d-flex flex-column flex-lg-row">
+          <NavMenu className="bg-light" />
           <Container tag="main" className="pt-3">{this.props.children}</Container>
-        </Col>
-      </Row>
+      </div>
     );
   }
 }
