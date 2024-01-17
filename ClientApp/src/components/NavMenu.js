@@ -17,7 +17,10 @@ const NavMenu = ({className}) => {
             <i className="fa-solid fa-bars"></i>
           </Button>
           <div>
-            <a href="/" className="nav-link"><h1>Smart Spender</h1></a>
+            <a href="/" className="nav-link">
+              <img className="float-start" src="/favicon/piggy-bank.png" alt="logo" style={{ maxHeight: 40 }} />
+              <h1>Smart<br/>Spender</h1>
+            </a>
           </div>
         </div>
         
