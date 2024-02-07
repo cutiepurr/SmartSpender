@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import AddTransaction from "./Forms/AddTransaction";
-import {Col, Container, Row} from "reactstrap";
+import {Container} from "reactstrap";
 import {getNextMonth, getPreviousMonth} from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
 import CategoryApis from "../../api/CategoryApis";
@@ -64,34 +64,29 @@ const TransactionListPage = () => {
   };
 
   return (
-    <div>
+    <div className="relative md:h-screen p-3">
       {year === undefined && month === undefined ? (
         <h1>Transaction</h1>
       ) : (
         <TitleWithMonth year={year} month={month}/>
       )}
       <Ribbon selectedItems={selectedItems}/>
-      <div className="position-relative w-100">
-        <div className="shadow-inset-right"></div>
-
-        <div style={{height: "80vh"}} className="overflow-auto">
-          <div style={{width: 1200}} className="mx-auto">
-            <div>
-              <h4 className="m-2">Add Transaction</h4>
-              <SquareStickyLeftContainer/>
-              <AddTransaction categories={categories}/>
-            </div>
-            <div>
-              <h4 className="m-2">History</h4>
-              <TransactionList year={year} month={month} categories={categories} onSelected={onSelected}
-                               editId={editMode}
-                               onEdit={setEditMode}/>
-            </div>
+      <div className="relative w-full">
+        <div className="mx-auto">
+          <div>
+            <h4 className="m-2">Add Transaction</h4>
+            <SquareStickyLeftContainer/>
+            <AddTransaction categories={categories}/>
+          </div>
+          <div>
+            <h4 className="m-2">History</h4>
+            <TransactionList year={year} month={month} categories={categories} onSelected={onSelected}
+                             editId={editMode}
+                             onEdit={setEditMode}/>
           </div>
         </div>
-        <div className="shadow-inset-bottom"></div>
-        <TransactionTotalAmount amount={totalAmount}/>
       </div>
+      <TransactionTotalAmount amount={totalAmount}/>
     </div>
   );
 };
@@ -104,35 +99,29 @@ const TitleWithMonth = ({year, month}) => {
   let nextMonthLink = `/transactions/${nextYear}/${nextMonth}`;
 
   return (
-    <Row className="text-center">
-      <Col>
-        <a href={prevMonthLink}> <i className="fa-solid fa-chevron-left"></i> </a>
-      </Col>
-      <Col>
+    <div className="grid grid-cols-3 text-center">
+      <div><a href={prevMonthLink}><i className="fa-solid fa-chevron-left"></i></a></div>
+      <div>
         <h1>
-          {new Date(year, month - 1).toLocaleDateString("en-GB", {
-            month: "long",
-            year: "numeric",
-          })}
+          {new Date(year, month - 1)
+            .toLocaleDateString("en-GB", {month: "long", year: "numeric",})}
         </h1>
-      </Col>
-      <Col>
-        <a href={nextMonthLink}> <i className="fa-solid fa-chevron-right"></i> </a>
-      </Col>
-    </Row>
+      </div>
+      <div><a href={nextMonthLink}><i className="fa-solid fa-chevron-right"></i></a></div>
+    </div>
   );
 };
 
 const TransactionTotalAmount = ({amount}) => (
-  <Container
-    className="bg-white border-top p-3 position-absolute bottom-0"
-    style={{width: "100%", zIndex: 3, height: 50}}
+  <div
+    className="container bg-white border-t p-3 bottom-0 w-full lg:absolute fixed"
+    style={{zIndex: 3, height: 50}}
   >
     <h4>
       <div className="float-end">{formatMoneyAmount(amount)}</div>
       <div>Total</div>
     </h4>
-  </Container>
+  </div>
 );
 
 export default TransactionListPage;

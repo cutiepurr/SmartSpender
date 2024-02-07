@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import TransactionTable from "../TransactionTable";
-import {Button, Col, Form, FormFeedback, Input, InputGroup, InputGroupText, Row,} from "reactstrap";
 import {toDatetimeLocalInputDate} from "../../../utils/DateExtensions";
 import {validatedTransaction,} from "../../../utils/TransactionValidation";
 import {Formik, useField} from "formik";
@@ -56,43 +55,37 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
     );
 
     const category = (
-      <FormInput label="category" name="category" as="select" type="select">
+      <FormSelect label="category" name="category">
         <option value={undefined} disabled> Uncategorised</option>
         {categories.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}
           </option>
         ))}
-      </FormInput>
+      </FormSelect>
     );
 
     const amount = (
-      <Row>
-        <Col xs={4} style={{paddingRight: 5}}>
-          <FormInput label="amountSign" name="amountSign" as="select" type="select">
-            <option value={"-"}>-</option>
-            <option value={"+"}>+</option>
-          </FormInput>
-        </Col>
-        <Col xs={8} style={{paddingLeft: 5}}>
-          <InputGroup>
-            <InputGroupText>$</InputGroupText>
-            <UngroupedFormInput
-              label="amount"
-              name="amount"
-              placeholder="Amount"
-              type="number"
-              min="0.01"
-              step="0.01"
-              // validate={Validation.amount}
-            />
-          </InputGroup>
-        </Col>
-      </Row>
+      <div className="w-full flex flex-row">
+        <FormSelect label="amountSign" name="amountSign">
+          <option value={"-"}>-</option>
+          <option value={"+"}>+</option>
+        </FormSelect>
+        <div>$</div>
+        <FormInput
+          label="amount"
+          name="amount"
+          placeholder="Amount"
+          type="number"
+          min="0.01"
+          step="0.01"
+          // validate={Validation.amount}
+        />
+      </div>
     );
 
     return (
-      <Form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <TransactionTable
           transaction={{
             description: description,
@@ -100,13 +93,13 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
             amount: amount,
             category: category,
             submit: (
-              <Button type="submit" size="sm" outline disabled={isSubmitting}>
+              <button type="submit" disabled={isSubmitting}>
                 <i className="fa-solid fa-floppy-disk"></i>
-              </Button>
+              </button>
             ),
           }}
         />
-      </Form>
+      </form>
     );
   };
 
@@ -128,34 +121,42 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
   );
 };
 
-const FormInput = ({label, ...props}) => {
-  return (
-    <>
-      <InputGroup>
-        {UngroupedFormInput({
-          label: label,
-          ...props,
-        })}
-      </InputGroup>
-    </>
-  );
-};
-
-const UngroupedFormInput = ({label, ...props}) => {
+const FormSelect = ({label, ...props}) => {
   // @ts-ignore
   const [field, meta] = useField(props);
   return (
     <>
-      <Input
+      <select
+        {...field}
+        {...props}
+        // @ts-ignore
+        invalid={meta.touched && meta.error}
+      ></select>
+      {meta.touched && meta.error ? (
+        <div style={{zIndex: 1}} className="error">
+          {meta.error}
+        </div>
+      ) : null}
+    </>
+  );
+};
+
+const FormInput = ({label, ...props}) => {
+  // @ts-ignore
+  const [field, meta] = useField(props);
+  return (
+    <>
+      <input
+        className="w-full"
         {...field}
         {...props}
         // @ts-ignore
         invalid={meta.touched && meta.error}
       />
       {meta.touched && meta.error ? (
-        <FormFeedback style={{zIndex: 1}} className="error">
+        <div style={{zIndex: 1}} className="error">
           {meta.error}
-        </FormFeedback>
+        </div>
       ) : null}
     </>
   );

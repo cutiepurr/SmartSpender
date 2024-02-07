@@ -29,9 +29,7 @@ const apiToFormTransaction = (transaction: ApiTransaction) => {
         amount: Math.abs(transaction.amount),
         amountSign: transaction.amount >= 0 ? "+" : "-",
         category: transaction.categoryID,
-        timestamp: toDatetimeLocalInputDate(
-            new Date(`${transaction.timestamp}.000Z`)
-        )
+        timestamp: toDatetimeLocalInputDate(new Date(transaction.timestamp))
     }
     
     return formTransaction;
@@ -46,9 +44,11 @@ const formToApiTransaction = (transaction: FormTransaction) => {
         email: transaction.email,
         description: transaction.description,
         amount: amount ?? 0,
-        timestamp: new Date(transaction.timestamp).toISOString(),
+        timestamp: new Date(transaction.timestamp).toLocaleString("sv").replace(" ", "T"),
         categoryID: transaction.category,
     };
+    
+    console.log(apiTransaction.timestamp)
     
     return apiTransaction;
 }

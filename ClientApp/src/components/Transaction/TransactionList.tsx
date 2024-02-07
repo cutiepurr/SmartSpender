@@ -64,6 +64,7 @@ const TransactionList: React.FC<props> = ({year, month, categories, onSelected, 
     TransactionApis.getTransactions(query, token, (data) => {
       if (data === null) return;
       setTransactions((transactions) => transactions.concat(data));
+      console.log(data)
     });
   }, [year, month, page, perLoad, token]);
 
@@ -90,10 +91,12 @@ const TransactionList: React.FC<props> = ({year, month, categories, onSelected, 
 
   const loadMoreTransactions = () => setPage((_) => _ = page + 1);
 
-  if (count === 0) return <NotFound/>
+  if (count === 0) return <>
+    <TransactionListHeader/><NotFound/>
+  </>
 
   return (
-    <div className="bg-white">
+    <div>
       <TransactionListHeader/>
       {transactionItems}
       {count > (page + 1) * perLoad ? (
@@ -104,10 +107,10 @@ const TransactionList: React.FC<props> = ({year, month, categories, onSelected, 
 };
 
 const TransactionListHeader = () => (
-  <strong>
+  <strong className="hidden md:block">
     <SquareStickyLeftContainer/>
     <TransactionTable
-      className="sticky-top bg-white border-bottom shadow-bottom"
+      className="sticky top-0 border-b drop-shadow"
       transaction={{
         description: "Description",
         timestamp: "Date",
