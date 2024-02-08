@@ -29,8 +29,8 @@ public class TransactionsController : ControllerBase
         var email = await GetUserEmailFromToken();
         if (email == null) return NotFound();
 
-        var transactions = GetTransactionByEmail(_context.Transaction, email);
-        transactions = GetTransactionByYearMonth(transactions, year, month);
+        var transactions = new TransactionFilter(_context.Transaction, _context.TransactionCategory)
+            .ByEmail(email).FromDate(year, month).ToDate(year, month).Apply();
 
         var paginatedTransactions = transactions
             .OrderByDescending(transaction => transaction.Timestamp)
@@ -49,8 +49,8 @@ public class TransactionsController : ControllerBase
         var email = await GetUserEmailFromToken();
         if (email == null) return NotFound();
 
-        var transactions = GetTransactionByEmail(_context.Transaction, email);
-        transactions = GetTransactionByYearMonth(transactions, year, month);
+        var transactions = new TransactionFilter(_context.Transaction, _context.TransactionCategory)
+            .ByEmail(email).FromDate(year, month).ToDate(year, month).Apply();
 
         return await transactions.CountAsync();
     }
@@ -65,9 +65,8 @@ public class TransactionsController : ControllerBase
         var email = await GetUserEmailFromToken();
         if (email == null) return NotFound();
 
-        var transactions = GetTransactionByEmail(_context.Transaction, email);
-        transactions = GetTransactionByYearMonth(transactions, year, month);
-        transactions = GetTransactionByCategory(transactions, categoryType);
+        var transactions = new TransactionFilter(_context.Transaction, _context.TransactionCategory)
+            .ByEmail(email).FromDate(year, month).ToDate(year, month).ByCategory(categoryType).Apply();
 
         return await transactions.SumAsync(transaction => transaction.Amount);
     }
@@ -81,10 +80,9 @@ public class TransactionsController : ControllerBase
 
         var email = await GetUserEmailFromToken();
         if (email == null) return NotFound();
-
-        var transactions = GetTransactionByEmail(_context.Transaction, email);
-        transactions = GetTransactionDuring(transactions, startYear, startMonth, endYear, endMonth);
-        transactions = GetTransactionByCategory(transactions, categoryType);
+        
+        var transactions = new TransactionFilter(_context.Transaction, _context.TransactionCategory)
+            .ByEmail(email).FromDate(startYear, startMonth).ToDate(endYear, endMonth).ByCategory(categoryType).Apply();
 
         var result = from transaction in transactions
             group transaction by new { transaction.Timestamp.Month, transaction.Timestamp.Year }
@@ -98,56 +96,7 @@ public class TransactionsController : ControllerBase
 
         return await result.ToListAsync();
     }
-
-    private static IQueryable<Transaction> GetTransactionByEmail(IQueryable<Transaction> transactions, string email)
-    {
-        return transactions.Where(item => item.Email == email);
-    }
-
-    private IQueryable<Transaction> GetTransactionByCategory(IQueryable<Transaction> transactions,
-        CategoryType? categoryType)
-    {
-        var categories = _context.TransactionCategory;
-        return from transaction in transactions
-            join category in categories on transaction.CategoryID equals category.ID
-            where categoryType == null || category.CategoryType == categoryType.Value
-            select transaction;
-    }
-
-    private IQueryable<Transaction> GetTransactionByYearMonth(IQueryable<Transaction> transactions, int year = -1,
-        int month = -1)
-    {
-        return GetTransactionDuring(transactions, year, month, year, month);
-    }
-
-    private IQueryable<Transaction> GetTransactionDuring(IQueryable<Transaction> transactions,
-        int startYear = -1, int startMonth = -1, int endYear = -1, int endMonth = -1)
-    {
-        if (startYear != -1)
-        {
-            transactions = transactions.Where(transaction => transaction.Timestamp.Year >= startYear);
-
-            if (startMonth != -1)
-            {
-                var startDate = new DateTime(startYear, startMonth, 1);
-                transactions = transactions.Where(transaction => transaction.Timestamp.CompareTo(startDate) >= 0);
-            }
-        }
-
-        if (endYear != -1)
-        {
-            transactions = transactions.Where(transaction => transaction.Timestamp.Year <= endYear);
-
-            if (endMonth != -1)
-            {
-                var endDate = new DateTime(endYear, endMonth, DateTime.DaysInMonth(endYear, endMonth));
-                transactions = transactions.Where(transaction => transaction.Timestamp.CompareTo(endDate) <= 0);
-            }
-        }
-
-        return transactions;
-    }
-
+    
     // GET: api/Transactions/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Transaction>> GetTransaction(long id)
