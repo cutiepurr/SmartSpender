@@ -25,11 +25,11 @@ public class AccountController : ControllerBase
 
     // GET: api/Account/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Account>> GetAccount(long id)
+    public async Task<ActionResult<Account>> GetAccount(string email)
     {
         if (_context.Account == null) return NotFound();
         
-        var account = await _context.Account.FindAsync(id);
+        var account = await _context.Account.FindAsync(email);
 
         if (account == null) return NotFound();
 
@@ -39,9 +39,9 @@ public class AccountController : ControllerBase
     // PUT: api/Account/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutAccount(long id, Account account)
+    public async Task<IActionResult> PutAccount(string email, Account account)
     {
-        if (id != account.Id) return BadRequest();
+        if (email != account.Email) return BadRequest();
 
         _context.Entry(account).State = EntityState.Modified;
 
@@ -51,7 +51,7 @@ public class AccountController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!AccountExists(id))
+            if (!AccountExists(email))
                 return NotFound();
             throw;
         }
@@ -65,21 +65,20 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<Account>> PostAccount(Account account)
     {
         if (_context.Account == null) return Problem("Entity set 'AppDbContext.Account'  is null.");
-        var existing = _context.Account.Any(item => item.Email == account.Email);
-        if (existing) return BadRequest();
+        if (AccountExists(account.Email)) return BadRequest();
         
         _context.Account.Add(account);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetAccount", new { id = account.Id }, account);
+        return CreatedAtAction("GetAccount", new { email = account.Email }, account);
     }
 
     // DELETE: api/Account/5
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAccount(long id)
+    public async Task<IActionResult> DeleteAccount(string email)
     {
         if (_context.Account == null) return NotFound();
-        var account = await _context.Account.FindAsync(id);
+        var account = await _context.Account.FindAsync(email);
         if (account == null) return NotFound();
 
         _context.Account.Remove(account);
@@ -88,8 +87,8 @@ public class AccountController : ControllerBase
         return NoContent();
     }
 
-    private bool AccountExists(long id)
+    private bool AccountExists(string email)
     {
-        return (_context.Account?.Any(e => e.Id == id)).GetValueOrDefault();
+        return (_context.Account?.Any(e => e.Email == email)).GetValueOrDefault();
     }
 }

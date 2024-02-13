@@ -27,6 +27,5 @@ namespace SmartSpender
                 return result;
             }
         }
-
     };
 }

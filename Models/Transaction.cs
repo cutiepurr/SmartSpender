@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmartSpender
 {
     public class Transaction
     {
-        public long ID { get; set; }
+        [Key] public Guid ID { get; set; } = Guid.NewGuid();
         
         [MaxLength(50)]
         public required string Email { get; set; }
@@ -16,6 +17,10 @@ namespace SmartSpender
 
         public double Amount { get; set; }
 
+        [ForeignKey(nameof(TransactionCategory))]
         public int CategoryID { get; set; } = DefaultCategory.Needs.IndexOf("Other needs");
+
+        public TransactionCategory Category { get; set; } =
+            DefaultCategory.Categories[DefaultCategory.Needs.IndexOf("Other needs")];
     }
 }

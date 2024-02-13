@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace SmartSpender
 {
     public enum CategoryType {
@@ -7,6 +9,7 @@ namespace SmartSpender
 
     public class TransactionCategory
     {
+        [Key]
         public int ID { get; set; }
         public string Name { get; set; } = "";
 

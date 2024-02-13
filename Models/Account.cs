@@ -5,14 +5,13 @@ namespace SmartSpender;
 
 public class Account
 {
-    public long Id { get; set; }
+    [Key]
+    [property: JsonPropertyName("email")]
+    public required string Email { get; set; }
     
     [property: JsonPropertyName("given_name")]
     public string GivenName { get; set; } = null!;
 
     [property: JsonPropertyName("family_name")]
     public string FamilyName { get; set; } = null!;
-
-    [property: JsonPropertyName("email")]
-    public required string Email { get; set; }
 }

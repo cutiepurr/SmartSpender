@@ -2,6 +2,8 @@ namespace SmartSpender.Controllers;
 
 public class TransactionFilter
 {
+    private readonly AppDbContext _context;
+    
     /// <summary>
     ///     Filter <paramref name="transactions" /> using the factory design pattern.
     /// </summary>
@@ -9,14 +11,14 @@ public class TransactionFilter
     ///     Use provided methods to filter the transaction, e.g. <see cref="ByEmail" /> filters the transaction
     ///     by the provided email. Use <see cref="Apply" /> afterwards to obtain the filtered result.
     /// </remarks>
-    public TransactionFilter(IQueryable<Transaction> transactions, IQueryable<TransactionCategory> categories)
+    public TransactionFilter(AppDbContext context)
     {
-        Transactions = transactions;
-        Categories = categories;
+        _context = context;
+        Transactions = context.Transaction;
     }
 
     private IQueryable<Transaction> Transactions { get; set; }
-    private IQueryable<TransactionCategory> Categories { get; }
+    private IQueryable<TransactionCategory> Categories => _context.TransactionCategory;
 
     public TransactionFilter ByEmail(string email)
     {
@@ -26,9 +28,14 @@ public class TransactionFilter
 
     public TransactionFilter ByCategory(CategoryType? categoryType)
     {
+        if (categoryType == null) return this;
+        
+        // Transactions = from transaction in Transactions
+        //     join category in Categories on transaction.CategoryID equals category.ID
+        //     where category.CategoryType == categoryType.Value
+        //     select transaction;
         Transactions = from transaction in Transactions
-            join category in Categories on transaction.CategoryID equals category.ID
-            where categoryType == null || category.CategoryType == categoryType.Value
+            where transaction.Category.CategoryType == categoryType.Value
             select transaction;
         return this;
     }

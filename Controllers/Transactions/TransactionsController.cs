@@ -29,8 +29,8 @@ public class TransactionsController : ControllerBase
         var email = await GetUserEmailFromToken();
         if (email == null) return NotFound();
 
-        var transactions = new TransactionFilter(_context.Transaction, _context.TransactionCategory)
-            .ByEmail(email).FromDate(year, month).ToDate(year, month).Apply();
+        var transactions = new TransactionFilter(_context).ByEmail(email)
+            .FromDate(year, month).ToDate(year, month).Apply();
 
         var paginatedTransactions = transactions
             .OrderByDescending(transaction => transaction.Timestamp)
@@ -49,8 +49,8 @@ public class TransactionsController : ControllerBase
         var email = await GetUserEmailFromToken();
         if (email == null) return NotFound();
 
-        var transactions = new TransactionFilter(_context.Transaction, _context.TransactionCategory)
-            .ByEmail(email).FromDate(year, month).ToDate(year, month).Apply();
+        var transactions = new TransactionFilter(_context).ByEmail(email)
+            .FromDate(year, month).ToDate(year, month).Apply();
 
         return await transactions.CountAsync();
     }
@@ -65,8 +65,8 @@ public class TransactionsController : ControllerBase
         var email = await GetUserEmailFromToken();
         if (email == null) return NotFound();
 
-        var transactions = new TransactionFilter(_context.Transaction, _context.TransactionCategory)
-            .ByEmail(email).FromDate(year, month).ToDate(year, month).ByCategory(categoryType).Apply();
+        var transactions = new TransactionFilter(_context).ByEmail(email).ByCategory(categoryType)
+            .FromDate(year, month).ToDate(year, month).Apply();
 
         return await transactions.SumAsync(transaction => transaction.Amount);
     }
@@ -80,9 +80,9 @@ public class TransactionsController : ControllerBase
 
         var email = await GetUserEmailFromToken();
         if (email == null) return NotFound();
-        
-        var transactions = new TransactionFilter(_context.Transaction, _context.TransactionCategory)
-            .ByEmail(email).FromDate(startYear, startMonth).ToDate(endYear, endMonth).ByCategory(categoryType).Apply();
+
+        var transactions = new TransactionFilter(_context).ByEmail(email).ByCategory(categoryType)
+            .FromDate(startYear, startMonth).ToDate(endYear, endMonth).Apply();
 
         var result = from transaction in transactions
             group transaction by new { transaction.Timestamp.Month, transaction.Timestamp.Year }
@@ -96,10 +96,10 @@ public class TransactionsController : ControllerBase
 
         return await result.ToListAsync();
     }
-    
+
     // GET: api/Transactions/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Transaction>> GetTransaction(long id)
+    public async Task<ActionResult<Transaction>> GetTransaction(Guid id)
     {
         if (_context.Transaction == null) return NotFound();
         var transaction = await _context.Transaction.FindAsync(id);
@@ -112,7 +112,7 @@ public class TransactionsController : ControllerBase
     // PUT: api/Transactions/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutTransaction(long id, Transaction transaction)
+    public async Task<IActionResult> PutTransaction(Guid id, Transaction transaction)
     {
         var email = await GetUserEmailFromToken();
         if (email == null) return NotFound();
@@ -128,8 +128,7 @@ public class TransactionsController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!TransactionExists(id))
-                return NotFound();
+            if (!TransactionExists(id)) return NotFound();
             throw;
         }
 
@@ -154,7 +153,7 @@ public class TransactionsController : ControllerBase
 
     // DELETE: api/Transactions/5
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteTransaction(long id)
+    public async Task<IActionResult> DeleteTransaction(Guid id)
     {
         if (_context.Transaction == null) return NotFound();
         var transaction = await _context.Transaction.FindAsync(id);
@@ -172,7 +171,7 @@ public class TransactionsController : ControllerBase
 
     // DELETE: api/Transactions
     [HttpDelete]
-    public async Task<IActionResult> DeleteTransactions(IEnumerable<long> idList)
+    public async Task<IActionResult> DeleteTransactions(IEnumerable<Guid> idList)
     {
         if (_context.Transaction == null) return NotFound();
         var email = await GetUserEmailFromToken();
@@ -189,13 +188,14 @@ public class TransactionsController : ControllerBase
         return NoContent();
     }
 
-    private bool TransactionExists(long id)
+    private bool TransactionExists(Guid id)
     {
         return (_context.Transaction?.Any(e => e.ID == id)).GetValueOrDefault();
     }
 
-    private static async Task<Account?> GetUser(string? token)
+    private async Task<Account?> GetUser()
     {
+        var token = await HttpContext.GetTokenAsync("access_token");
         if (token == null) return null;
 
         var client = new HttpClient();
@@ -209,8 +209,7 @@ public class TransactionsController : ControllerBase
         var email = HttpContext.Session.GetString("UserEmail");
         if (!string.IsNullOrEmpty(email)) return email;
 
-        var accessToken = await HttpContext.GetTokenAsync("access_token");
-        var user = await GetUser(accessToken);
+        var user = await GetUser();
         if (user == null) return null;
 
         HttpContext.Session.SetString("UserEmail", user.Email);

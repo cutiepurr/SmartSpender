@@ -64,7 +64,6 @@ const TransactionList: React.FC<props> = ({year, month, categories, onSelected, 
     TransactionApis.getTransactions(query, token, (data) => {
       if (data === null) return;
       setTransactions((transactions) => transactions.concat(data));
-      console.log(data)
     });
   }, [year, month, page, perLoad, token]);
 

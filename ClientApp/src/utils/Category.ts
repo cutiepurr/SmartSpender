@@ -1,6 +1,7 @@
 interface categoryItem {
   id: number;
-  name: string
+  name: string;
+  categoryType: number;
 }
 
 export {
