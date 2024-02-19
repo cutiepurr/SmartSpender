@@ -10,12 +10,12 @@ const formatTransactionApiToView = (transaction, categories) => {
   });
   
   let transactionCategory = categories.find(
-    (c) => c.id === transaction.categoryID
+    (c) => c.id === transaction.categoryId
   );
   let categoryName =
-    transaction.category === undefined || transaction.category.name === undefined
+    transactionCategory == undefined
       ? "Uncategorised"
-      : transaction.category.name;
+      : transactionCategory.name;
 
   let amount = formatMoneyAmount(transaction.amount);
 

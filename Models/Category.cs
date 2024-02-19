@@ -7,12 +7,13 @@ namespace SmartSpender
         Need
     };
 
-    public class TransactionCategory
+    public class Category
     {
         [Key]
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; } = "";
 
         public CategoryType CategoryType {get; set;} = CategoryType.Need;
+        
     }
 }

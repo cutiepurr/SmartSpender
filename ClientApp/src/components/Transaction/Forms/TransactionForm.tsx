@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import TransactionTable from "../TransactionTable";
 import {toDatetimeLocalInputDate} from "../../../utils/DateExtensions";
 import {validatedTransaction,} from "../../../utils/TransactionValidation";
-import {Formik, useField} from "formik";
+import {Field, Formik, useField} from "formik";
 import {apiToFormTransaction, ApiTransaction, formToApiTransaction, FormTransaction} from "../../../utils/Transaction";
 import {useAuth0} from "@auth0/auth0-react";
 import {categoryItem} from "@/utils/Category";
@@ -21,7 +21,7 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
     description: "",
     amount: undefined,
     amountSign: "-",
-    category: undefined,
+    categoryId: undefined,
     timestamp: toDatetimeLocalInputDate(new Date()),
   };
 
@@ -55,8 +55,7 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
     );
 
     const category = (
-      <FormSelect label="category" name="category">
-        <option value={undefined} disabled> Uncategorised</option>
+      <FormSelect label="categoryId" name="categoryId">
         {categories.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}
@@ -130,7 +129,7 @@ const FormSelect = ({label, ...props}) => {
         {...field}
         {...props}
         // @ts-ignore
-        invalid={meta.touched && meta.error}
+        // invalid={meta.touched && meta.error}
       ></select>
       {meta.touched && meta.error ? (
         <div style={{zIndex: 1}} className="error">
@@ -151,7 +150,7 @@ const FormInput = ({label, ...props}) => {
         {...field}
         {...props}
         // @ts-ignore
-        invalid={meta.touched && meta.error}
+        // invalid={meta.touched && meta.error}
       />
       {meta.touched && meta.error ? (
         <div style={{zIndex: 1}} className="error">

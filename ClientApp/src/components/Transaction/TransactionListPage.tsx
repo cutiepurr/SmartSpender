@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import AddTransaction from "./Forms/AddTransaction";
-import {Container} from "reactstrap";
 import {getNextMonth, getPreviousMonth} from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
 import CategoryApis from "../../api/CategoryApis";
@@ -18,7 +17,7 @@ const TransactionListPage = () => {
 
   // States
   const [token, setToken] = useState("");
-
+  
   const [categories, setCategories] = useState<Array<categoryItem>>([]);
 
   const [totalAmount, setTotalAmount] = useState(0);
@@ -29,6 +28,10 @@ const TransactionListPage = () => {
   useEffect(() => {
     CategoryApis.getCategories((data) => setCategories(data));
   }, []);
+
+  useEffect(() => {
+    console.log(categories)
+  }, [categories]);
 
   // Get access token
   useEffect(() => {

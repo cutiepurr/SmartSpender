@@ -18,7 +18,7 @@ public class TransactionFilter
     }
 
     private IQueryable<Transaction> Transactions { get; set; }
-    private IQueryable<TransactionCategory> Categories => _context.TransactionCategory;
+    private IQueryable<Category> Categories => _context.TransactionCategory;
 
     public TransactionFilter ByEmail(string email)
     {
@@ -30,12 +30,9 @@ public class TransactionFilter
     {
         if (categoryType == null) return this;
         
-        // Transactions = from transaction in Transactions
-        //     join category in Categories on transaction.CategoryID equals category.ID
-        //     where category.CategoryType == categoryType.Value
-        //     select transaction;
         Transactions = from transaction in Transactions
-            where transaction.Category.CategoryType == categoryType.Value
+            join category in Categories on transaction.CategoryId equals category.Id
+            where category.CategoryType == categoryType.Value
             select transaction;
         return this;
     }

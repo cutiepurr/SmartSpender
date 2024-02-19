@@ -17,7 +17,7 @@ const ThisMonthSnapshot = () => {
 
   useEffect(() => {
     getAccessTokenSilently().then(data => setToken(data));
-  }, []);
+  }, [getAccessTokenSilently]);
 
   useEffect(() => {
     if (token === "") return;
@@ -30,7 +30,7 @@ const ThisMonthSnapshot = () => {
     TransactionApis.getTransactionTotalAmount(query, token, (data) => setWantAmount(data));
     query.set("categoryType", 1);
     TransactionApis.getTransactionTotalAmount(query, token, (data) => setNeedAmount(data));
-  }, [token]);
+  }, [token, month, year]);
 
   const formatMoney = (amount) => {
     if (amount < 0) amount = -amount;

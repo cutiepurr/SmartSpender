@@ -6,7 +6,7 @@ interface FormTransaction {
     description: string;
     amount: number | undefined;
     amountSign: string;
-    category: number | undefined;
+    categoryId: string | undefined;
     timestamp: string; // for datetime-local input
 }
 
@@ -19,7 +19,7 @@ interface ApiTransaction {
     description: string;
     amount: number;
     timestamp: string;
-    categoryID: number | undefined;
+    categoryId: number | undefined;
     category?: categoryItem
 }
 
@@ -30,7 +30,7 @@ const apiToFormTransaction = (transaction: ApiTransaction) => {
         description: transaction.description,
         amount: Math.abs(transaction.amount),
         amountSign: transaction.amount >= 0 ? "+" : "-",
-        category: transaction.categoryID,
+        categoryId: transaction.categoryId?.toString(),
         timestamp: toDatetimeLocalInputDate(new Date(transaction.timestamp))
     }
     
@@ -47,7 +47,7 @@ const formToApiTransaction = (transaction: FormTransaction) => {
         description: transaction.description,
         amount: amount ?? 0,
         timestamp: new Date(transaction.timestamp).toLocaleString("sv").replace(" ", "T"),
-        categoryID: transaction.category,
+        categoryId: parseInt(transaction.categoryId ?? "0"),
     };
     
     console.log(apiTransaction.timestamp)

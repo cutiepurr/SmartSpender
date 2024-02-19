@@ -117,7 +117,7 @@ public class TransactionsController : ControllerBase
         var email = await GetUserEmailFromToken();
         if (email == null) return NotFound();
 
-        if (id != transaction.ID) return BadRequest();
+        if (id != transaction.Id) return BadRequest();
         if (transaction.Email != email) return Unauthorized();
 
         _context.Entry(transaction).State = EntityState.Modified;
@@ -148,7 +148,7 @@ public class TransactionsController : ControllerBase
         _context.Transaction.Add(transaction);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetTransaction", new { id = transaction.ID }, transaction);
+        return CreatedAtAction("GetTransaction", new { id = transaction.Id }, transaction);
     }
 
     // DELETE: api/Transactions/5
@@ -177,7 +177,7 @@ public class TransactionsController : ControllerBase
         var email = await GetUserEmailFromToken();
         if (email == null) return NotFound();
 
-        var transactions = _context.Transaction.Where(item => idList.Contains(item.ID));
+        var transactions = _context.Transaction.Where(item => idList.Contains(item.Id));
 
         if (transactions.IsNullOrEmpty()) return NotFound();
         if (transactions.Any(item => item.Email != email)) return Unauthorized();
@@ -190,7 +190,7 @@ public class TransactionsController : ControllerBase
 
     private bool TransactionExists(Guid id)
     {
-        return (_context.Transaction?.Any(e => e.ID == id)).GetValueOrDefault();
+        return (_context.Transaction?.Any(e => e.Id == id)).GetValueOrDefault();
     }
 
     private async Task<Account?> GetUser()

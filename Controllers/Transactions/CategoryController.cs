@@ -16,7 +16,7 @@ namespace SmartSpender.Controllers
 
         // GET: api/Category
         [HttpGet]
-        public ActionResult<IEnumerable<TransactionCategory>> GetTransactionCategory()
+        public ActionResult<IEnumerable<Category>> GetTransactionCategory()
         {
             if (_context.TransactionCategory.IsNullOrEmpty()) PostDefaultCategory();
             return DefaultCategory.Categories;
@@ -24,7 +24,7 @@ namespace SmartSpender.Controllers
 
         // GET: api/Category/5
         [HttpGet("{id}")]
-        public ActionResult<TransactionCategory> GetTransactionCategory(int id)
+        public ActionResult<Category> GetTransactionCategory(int id)
         {
             if (_context.TransactionCategory.IsNullOrEmpty()) PostDefaultCategory();
             return DefaultCategory.Categories[id];
@@ -33,21 +33,21 @@ namespace SmartSpender.Controllers
         // POST: api/Category
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        private async Task<ActionResult<TransactionCategory>> PostTransactionCategory(TransactionCategory transactionCategory)
+        private async Task<ActionResult<Category>> PostTransactionCategory(Category category)
         {
             if (_context.TransactionCategory == null)
             {
-                return Problem("Entity set 'AppDbContext.TransactionCategory'  is null.");
+                return Problem("Entity set 'AppDbContext.Category'  is null.");
             }
-            _context.TransactionCategory.Add(transactionCategory);
+            _context.TransactionCategory.Add(category);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTransactionCategory", new { id = transactionCategory.ID }, transactionCategory);
+            return CreatedAtAction("GetTransactionCategory", new { id = category.Id }, category);
         }
 
-        private ActionResult<IEnumerable<TransactionCategory>> PostDefaultCategory()
+        private ActionResult<IEnumerable<Category>> PostDefaultCategory()
         {
-            var categories = new List<TransactionCategory>();
+            var categories = new List<Category>();
             DefaultCategory.Categories.ForEach(async category =>
             {
                 var temp = await PostTransactionCategory(category);
