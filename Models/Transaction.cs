@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmartSpender
 {
-    public partial class Transaction
+    public class Transaction
     {
         [Key] public Guid Id { get; set; } = Guid.NewGuid();
         

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace SmartSpender.Controllers
@@ -16,17 +17,20 @@ namespace SmartSpender.Controllers
 
         // GET: api/Category
         [HttpGet]
-        public ActionResult<IEnumerable<Category>> GetTransactionCategory()
+        public async Task<ActionResult<IEnumerable<Category>>> GetTransactionCategory()
         {
-            if (_context.TransactionCategory.IsNullOrEmpty()) PostDefaultCategory();
-            return DefaultCategory.Categories;
+            if (_context.Category.IsNullOrEmpty()) await PostDefaultCategory();
+
+            if (_context.Category == null) return NotFound();
+            
+            return await _context.Category.ToListAsync();
         }
 
         // GET: api/Category/5
         [HttpGet("{id}")]
         public ActionResult<Category> GetTransactionCategory(int id)
         {
-            if (_context.TransactionCategory.IsNullOrEmpty()) PostDefaultCategory();
+            if (_context.Category.IsNullOrEmpty()) PostDefaultCategory();
             return DefaultCategory.Categories[id];
         }
 
@@ -35,24 +39,24 @@ namespace SmartSpender.Controllers
         [HttpPost]
         private async Task<ActionResult<Category>> PostTransactionCategory(Category category)
         {
-            if (_context.TransactionCategory == null)
+            if (_context.Category == null)
             {
                 return Problem("Entity set 'AppDbContext.Category'  is null.");
             }
-            _context.TransactionCategory.Add(category);
+            _context.Category.Add(category);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTransactionCategory", new { id = category.Id }, category);
+            return CreatedAtAction("GetTransactionCategory", new { id = category.CategoryId }, category);
         }
 
-        private ActionResult<IEnumerable<Category>> PostDefaultCategory()
+        private async Task<ActionResult<IEnumerable<Category>>> PostDefaultCategory()
         {
             var categories = new List<Category>();
-            DefaultCategory.Categories.ForEach(async category =>
+            foreach (var category in DefaultCategory.Categories)
             {
                 var temp = await PostTransactionCategory(category);
                 if (temp.Value != null) categories.Add(temp.Value);
-            });
+            }
             return categories;
         }
 
@@ -60,17 +64,17 @@ namespace SmartSpender.Controllers
         [HttpDelete("{id}")]
         private async Task<IActionResult> DeleteTransactionCategory(long id)
         {
-            if (_context.TransactionCategory == null)
+            if (_context.Category == null)
             {
                 return NotFound();
             }
-            var transactionCategory = await _context.TransactionCategory.FindAsync(id);
+            var transactionCategory = await _context.Category.FindAsync(id);
             if (transactionCategory == null)
             {
                 return NotFound();
             }
 
-            _context.TransactionCategory.Remove(transactionCategory);
+            _context.Category.Remove(transactionCategory);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -79,12 +83,12 @@ namespace SmartSpender.Controllers
         // DELETE: api/Category
         [HttpDelete]
         private async Task<IActionResult> DeleteAllCategories() {
-            if (_context.TransactionCategory == null)
+            if (_context.Category == null)
             {
                 return NotFound();
             }
 
-            _context.TransactionCategory.RemoveRange(_context.TransactionCategory);
+            _context.Category.RemoveRange(_context.Category);
             await _context.SaveChangesAsync();
 
             return NoContent();

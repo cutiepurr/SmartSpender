@@ -24,7 +24,7 @@ public class AccountController : ControllerBase
     }
 
     // GET: api/Account/5
-    [HttpGet("{id}")]
+    [HttpGet("{email}")]
     public async Task<ActionResult<Account>> GetAccount(string email)
     {
         if (_context.Account == null) return NotFound();
@@ -38,7 +38,7 @@ public class AccountController : ControllerBase
 
     // PUT: api/Account/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPut("{id}")]
+    [HttpPut("{email}")]
     public async Task<IActionResult> PutAccount(string email, Account account)
     {
         if (email != account.Email) return BadRequest();
@@ -74,7 +74,7 @@ public class AccountController : ControllerBase
     }
 
     // DELETE: api/Account/5
-    [HttpDelete("{id}")]
+    [HttpDelete("{email}")]
     public async Task<IActionResult> DeleteAccount(string email)
     {
         if (_context.Account == null) return NotFound();
