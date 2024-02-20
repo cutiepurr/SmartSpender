@@ -7,11 +7,11 @@ import SquareStickyLeftContainer from "../SquareStickyLeftContainer";
 import TransactionTable from "./TransactionTable";
 import {useAuth0} from "@auth0/auth0-react";
 import {ApiTransaction} from "../../utils/Transaction";
-import {categoryItem} from "../../utils/Category";
+import {CategoryItem} from "../../utils/Category";
 import TransactionApis from "../../api/TransactionApis";
 
 interface props {
-  categories: Array<categoryItem>;
+  categories: Array<CategoryItem>;
   year: any;
   month: any;
   onSelected: any;

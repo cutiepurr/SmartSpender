@@ -5,11 +5,11 @@ import {validatedTransaction,} from "../../../utils/TransactionValidation";
 import {Field, Formik, useField} from "formik";
 import {apiToFormTransaction, ApiTransaction, formToApiTransaction, FormTransaction} from "../../../utils/Transaction";
 import {useAuth0} from "@auth0/auth0-react";
-import {categoryItem} from "@/utils/Category";
+import {CategoryItem} from "@/utils/Category";
 
 interface props {
   transaction: ApiTransaction,
-  categories: Array<categoryItem>,
+  categories: Array<CategoryItem>,
   submitCallback: Function,
 }
 

@@ -1,5 +1,5 @@
 import { toDatetimeLocalInputDate } from "./DateExtensions";
-import {categoryItem} from "@/utils/Category";
+import {CategoryItem} from "@/utils/Category";
 interface FormTransaction {
     id?: number,
     email: string;
@@ -20,7 +20,7 @@ interface ApiTransaction {
     amount: number;
     timestamp: string;
     categoryId: number | undefined;
-    category?: categoryItem
+    category?: CategoryItem
 }
 
 const apiToFormTransaction = (transaction: ApiTransaction) => {

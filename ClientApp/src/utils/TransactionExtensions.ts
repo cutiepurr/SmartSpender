@@ -1,8 +1,8 @@
 import {formatMoneyAmount} from "./MoneyExtensions";
 import {ApiTransaction} from "@/utils/Transaction";
-import {categoryItem} from "@/utils/Category";
+import {CategoryItem} from "@/utils/Category";
 
-const formatTransactionApiToView = (transaction: ApiTransaction, categories: Array<categoryItem>) => {
+const formatTransactionApiToView = (transaction: ApiTransaction, categories: Array<CategoryItem>) => {
   if (transaction == null) return null;
 
   let transactionDate = new Date(transaction.timestamp).toLocaleString("en-AU", {

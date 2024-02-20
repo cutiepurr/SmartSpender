@@ -1,9 +1,9 @@
-interface categoryItem {
+interface CategoryItem {
   categoryId: number;
   name: string;
   categoryType: number;
 }
 
 export {
-  type categoryItem
+  type CategoryItem
 };

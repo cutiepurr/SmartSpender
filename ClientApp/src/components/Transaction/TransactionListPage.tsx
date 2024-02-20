@@ -8,7 +8,7 @@ import {formatMoneyAmount} from "../../utils/MoneyExtensions";
 import Ribbon from "./Ribbon";
 import SquareStickyLeftContainer from "../SquareStickyLeftContainer";
 import {useAuth0} from "@auth0/auth0-react";
-import {categoryItem} from "@/utils/Category";
+import {CategoryItem} from "@/utils/Category";
 import TransactionList from "../Transaction/TransactionList";
 
 const TransactionListPage = () => {
@@ -18,7 +18,7 @@ const TransactionListPage = () => {
   // States
   const [token, setToken] = useState("");
   
-  const [categories, setCategories] = useState<Array<categoryItem>>([]);
+  const [categories, setCategories] = useState<Array<CategoryItem>>([]);
 
   const [totalAmount, setTotalAmount] = useState(0);
   const [editMode, setEditMode] = useState(-1); // id of the transaction that is currently under edit mode

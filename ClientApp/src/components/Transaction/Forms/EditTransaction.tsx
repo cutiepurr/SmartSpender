@@ -3,11 +3,11 @@ import { TransactionForm } from "./TransactionForm";
 import TransactionApis from "../../../api/TransactionApis";
 import {useAuth0} from "@auth0/auth0-react";
 import {ApiTransaction} from "@/utils/Transaction";
-import {categoryItem} from "@/utils/Category";
+import {CategoryItem} from "@/utils/Category";
 
 interface props {
   transaction: ApiTransaction,
-  categories: Array<categoryItem>,
+  categories: Array<CategoryItem>,
 }
 const EditTransaction: React.FC<props> = ({ transaction, categories }) => {
   const { getAccessTokenSilently} = useAuth0();
