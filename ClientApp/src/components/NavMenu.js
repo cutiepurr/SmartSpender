@@ -50,6 +50,10 @@ const NavContent = (props) => {
       name: "Transactions",
       path: `/transactions/${today.getFullYear()}/${today.getMonth() + 1}`,
     },
+    {
+      name: "Manage Monthly Targets",
+      path: `/targets`,
+    },
   ];
 
   return (

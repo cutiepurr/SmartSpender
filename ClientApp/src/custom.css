@@ -2,10 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
-  text-decoration: none !important;
+@layer base {
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  h3 {
+    @apply text-lg;
+  }
+  a {
+    @apply text-blue-600;
+  }
 }
 
 * {
@@ -13,8 +22,8 @@ a {
 }
 
 html, body {
-  padding: 0px !important;
-  margin: 0px !important;
+  padding: 0 !important;
+  margin: 0 !important;
   overflow-x: hidden;
 }
 
