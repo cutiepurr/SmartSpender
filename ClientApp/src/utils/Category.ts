@@ -1,5 +1,5 @@
 interface categoryItem {
-  id: number;
+  categoryId: number;
   name: string;
   categoryType: number;
 }

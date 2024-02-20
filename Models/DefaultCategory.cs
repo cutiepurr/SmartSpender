@@ -19,7 +19,7 @@ namespace SmartSpender
                 for (int i = 0; i < categories.Count; i++)
                 {
                     result.Add(new Category(){
-                        Id = i+1,
+                        CategoryId = i+1,
                         Name = categories[i],
                         CategoryType = i < Needs.Count ? CategoryType.Need : CategoryType.Want
                     });

@@ -21,7 +21,7 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
     description: "",
     amount: undefined,
     amountSign: "-",
-    categoryId: undefined,
+    categoryId: "10",
     timestamp: toDatetimeLocalInputDate(new Date()),
   };
 
@@ -57,7 +57,7 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
     const category = (
       <FormSelect label="categoryId" name="categoryId">
         {categories.map((c) => (
-          <option key={c.id} value={c.id}>
+          <option key={c.categoryId} value={c.categoryId}>
             {c.name}
           </option>
         ))}

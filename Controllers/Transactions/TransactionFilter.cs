@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace SmartSpender.Controllers;
 
 public class TransactionFilter
@@ -18,7 +20,6 @@ public class TransactionFilter
     }
 
     private IQueryable<Transaction> Transactions { get; set; }
-    private IQueryable<Category> Categories => _context.TransactionCategory;
 
     public TransactionFilter ByEmail(string email)
     {
@@ -29,9 +30,8 @@ public class TransactionFilter
     public TransactionFilter ByCategory(CategoryType? categoryType)
     {
         if (categoryType == null) return this;
-        
         Transactions = from transaction in Transactions
-            join category in Categories on transaction.CategoryId equals category.Id
+            join category in _context.Category on transaction.CategoryId equals category.CategoryId
             where category.CategoryType == categoryType.Value
             select transaction;
         return this;

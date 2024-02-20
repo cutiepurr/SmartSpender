@@ -1,19 +1,18 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SmartSpender
+namespace SmartSpender;
+
+public enum CategoryType
 {
-    public enum CategoryType {
-        Want,
-        Need
-    };
+    Want,
+    Need
+}
 
-    public class Category
-    {
-        [Key]
-        public int Id { get; set; }
-        public string Name { get; set; } = "";
+public class Category
+{
+    [Key] public int CategoryId { get; set; }
 
-        public CategoryType CategoryType {get; set;} = CategoryType.Need;
-        
-    }
+    public string Name { get; set; } = "";
+
+    public CategoryType CategoryType { get; set; } = CategoryType.Need;
 }

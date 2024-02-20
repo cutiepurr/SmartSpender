@@ -11,8 +11,8 @@ const Auth0ProviderWithNavigation = ({ children }) => {
   const navigate = useNavigate();
   const onRedirectCallback = (appState, user) => {
     AccountApis.postAccount(JSON.stringify({
-      givenName: user.given_name,
-      familyName: user.family_name,
+      given_name: user.given_name,
+      family_name: user.family_name,
       email: user.email,
     }));
     navigate(appState?.returnTo || window.location.pathname);
