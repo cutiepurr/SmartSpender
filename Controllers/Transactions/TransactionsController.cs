@@ -16,7 +16,7 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
         int page = 0, int count = 50, int year = -1, int month = -1)
     {
         var email = await GetUserEmailFromToken();
-        if (email == null) return NotFound();
+        if (email == null) return BadRequest();
 
         var transactions = new TransactionFilter(context).ByEmail(email)
             .FromDate(year, month).ToDate(year, month).Apply();
@@ -34,7 +34,7 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
     public async Task<ActionResult<int>> GetCountTransaction(int year = -1, int month = -1)
     {
         var email = await GetUserEmailFromToken();
-        if (email == null) return NotFound();
+        if (email == null) return BadRequest();
 
         var transactions = new TransactionFilter(context).ByEmail(email)
             .FromDate(year, month).ToDate(year, month).Apply();
@@ -48,7 +48,7 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
         int month = -1)
     {
         var email = await GetUserEmailFromToken();
-        if (email == null) return NotFound();
+        if (email == null) return BadRequest();
 
         var transactions = new TransactionFilter(context).ByEmail(email).ByCategory(categoryType)
             .FromDate(year, month).ToDate(year, month).Apply();
@@ -62,7 +62,7 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
         CategoryType? categoryType = null, int startYear = -1, int startMonth = -1, int endYear = -1, int endMonth = -1)
     {
         var email = await GetUserEmailFromToken();
-        if (email == null) return NotFound();
+        if (email == null) return BadRequest();
 
         var transactions = new TransactionFilter(context).ByEmail(email).ByCategory(categoryType)
             .FromDate(startYear, startMonth).ToDate(endYear, endMonth).Apply();
@@ -84,9 +84,13 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
     [HttpGet("{id}")]
     public async Task<ActionResult<Transaction>> GetTransaction(Guid id)
     {
+        var email = await GetUserEmailFromToken();
+        if (email == null) return BadRequest();
+        
         var transaction = await context.Transaction.FindAsync(id);
 
         if (transaction == null) return NotFound();
+        if (transaction.Email != email) return Forbid();
 
         return transaction;
     }
@@ -97,10 +101,11 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
     public async Task<IActionResult> PutTransaction(Guid id, Transaction transaction)
     {
         var email = await GetUserEmailFromToken();
-        if (email == null) return NotFound();
+        if (email == null) return BadRequest();
 
         if (id != transaction.Id) return BadRequest();
-        if (transaction.Email != email) return Unauthorized();
+        
+        if (transaction.Email != email) return Forbid();
 
         context.Entry(transaction).State = EntityState.Modified;
 
@@ -123,8 +128,9 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
     public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
     {
         var email = await GetUserEmailFromToken();
-        if (email == null) return NotFound();
-        if (transaction.Email != email) return Unauthorized();
+        if (email == null) return BadRequest();
+        
+        if (transaction.Email != email) return Forbid();
 
         context.Transaction.Add(transaction);
         await context.SaveChangesAsync();
@@ -140,8 +146,9 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
         if (transaction == null) return NotFound();
 
         var email = await GetUserEmailFromToken();
-        if (email == null) return NotFound();
-        if (transaction.Email != email) return Unauthorized();
+        if (email == null) return BadRequest();
+        
+        if (transaction.Email != email) return Forbid();
 
         context.Transaction.Remove(transaction);
         await context.SaveChangesAsync();
@@ -154,12 +161,12 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
     public async Task<IActionResult> DeleteTransactions(IEnumerable<Guid> idList)
     {
         var email = await GetUserEmailFromToken();
-        if (email == null) return NotFound();
+        if (email == null) return BadRequest();
 
         var transactions = context.Transaction.Where(item => idList.Contains(item.Id));
 
         if (transactions.IsNullOrEmpty()) return NotFound();
-        if (transactions.Any(item => item.Email != email)) return Unauthorized();
+        if (transactions.Any(item => item.Email != email)) return Forbid();
 
         context.Transaction.RemoveRange(transactions);
         await context.SaveChangesAsync();
