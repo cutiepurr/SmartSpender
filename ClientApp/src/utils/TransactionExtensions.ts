@@ -1,6 +1,8 @@
 import {formatMoneyAmount} from "./MoneyExtensions";
+import {ApiTransaction} from "@/utils/Transaction";
+import {categoryItem} from "@/utils/Category";
 
-const formatTransactionApiToView = (transaction, categories) => {
+const formatTransactionApiToView = (transaction: ApiTransaction, categories: Array<categoryItem>) => {
   if (transaction == null) return null;
 
   let transactionDate = new Date(transaction.timestamp).toLocaleString("en-AU", {
@@ -8,14 +10,11 @@ const formatTransactionApiToView = (transaction, categories) => {
     timeStyle: "short",
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   });
-  
+
   let transactionCategory = categories.find(
-    (c) => c.id === transaction.categoryId
+    (c) => c.categoryId === transaction.categoryId
   );
-  let categoryName =
-    transactionCategory == undefined
-      ? "Uncategorised"
-      : transactionCategory.name;
+  let categoryName = transactionCategory === undefined ? "Uncategorised" : transactionCategory.name;
 
   let amount = formatMoneyAmount(transaction.amount);
 
