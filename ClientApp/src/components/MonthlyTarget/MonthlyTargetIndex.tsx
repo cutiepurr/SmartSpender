@@ -38,7 +38,7 @@ const MonthlyTargetIndex = () => {
           </thead>
           <tbody>
           {targets.map(target =>
-            <EditMonthlyTarget target={target} editId={editId} onEdited={() => setEditId(target.id ?? "")}/>)}
+            <EditMonthlyTarget key={target.id} target={target} editId={editId} onEdited={() => setEditId(target.id ?? "")}/>)}
           </tbody>
         </table>
       </div>
