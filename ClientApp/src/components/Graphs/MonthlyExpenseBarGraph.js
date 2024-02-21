@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from "react";
-import TransactionApis from "../../api/TransactionApis";
 import {Bar, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis,} from "recharts";
 import {getDateNextMonth} from "../../utils/DateExtensions";
 import {useAuth0} from "@auth0/auth0-react";
-import TargetApis from "../../api/TargetApis";
+import ApiFetcher from "../../api/ApiFetcher";
 
 const MonthlyExpenseBarGraph = (props) => {
   const {getAccessTokenSilently} = useAuth0();
@@ -14,47 +13,27 @@ const MonthlyExpenseBarGraph = (props) => {
   const [wantData, setWantData] = useState([]);
   const [needData, setNeedData] = useState([]);
   const [targets, setTargets] = useState([]);
-  const [endDate, setEndDate] = useState(
-    new Date(new Date().getFullYear(), new Date().getMonth())
-  );
-  const [startDate, setStartDate] = useState(
-    new Date(endDate.getFullYear() - 1, endDate.getMonth() - 1)
-  );
+  
+  const endDate = new Date(new Date().getFullYear(), new Date().getMonth());
+  const startDate = new Date(endDate.getFullYear() - 1, endDate.getMonth() - 1);
 
   // On state change
   useEffect(() => {
     getAccessTokenSilently().then(data => setToken(data));
-  }, []);
+  }, [getAccessTokenSilently]);
 
   useEffect(() => {
     if (token === "") return;
 
-    let transactionQuery = new URLSearchParams();
-    transactionQuery.set("startYear", startDate.getFullYear());
-    transactionQuery.set("startMonth", startDate.getMonth() + 1);
-    transactionQuery.set("endYear", endDate.getFullYear());
-    transactionQuery.set("endMonth", endDate.getMonth() + 1);
-
-    transactionQuery.set("categoryType", 0);
-    TransactionApis.getMonthlyTransactionsAmounts(transactionQuery, token, (data) => {
-      setWantData(data);
-    });
-
-    transactionQuery.set("categoryType", 1);
-    TransactionApis.getMonthlyTransactionsAmounts(transactionQuery, token, (data) => {
-      setNeedData(data);
-    });
-
-    let targetQuery = new URLSearchParams();
-    targetQuery.set("year", startDate.getFullYear());
-    targetQuery.set("month", startDate.getMonth() + 1);
-    TargetApis.getTargetsFrom(targetQuery, token, (data) => {
-      setTargets(data);
+    ApiFetcher.getRequest("/api/Graph/12month", token, data => {
+      setWantData(data.wants);
+      setNeedData(data.needs);
+      setTargets(data.targets);
     })
   }, [token]);
 
   useEffect(() => {
-    setGraphData(sanitizeData());
+    if (wantData !== undefined && needData !== undefined) setGraphData(sanitizeData());
   }, [wantData, needData]);
 
   const getTargetFromDate = (date) => {
@@ -82,8 +61,8 @@ const MonthlyExpenseBarGraph = (props) => {
     var curDate = startDate;
 
     while (
-      curDate.getMonth() != endDate.getMonth() ||
-      curDate.getFullYear() != endDate.getFullYear()
+      curDate.getMonth() !== endDate.getMonth() ||
+      curDate.getFullYear() !== endDate.getFullYear()
       ) {
       curDate = getDateNextMonth(curDate);
       sanitizedData.push({
@@ -92,11 +71,11 @@ const MonthlyExpenseBarGraph = (props) => {
           year: "2-digit",
         }),
         Wants:
-          wantDatamap[curDate] == undefined
+          wantDatamap[curDate] === undefined
             ? 0
             : Math.max(-wantDatamap[curDate], 0),
         Needs:
-          needDatamap[curDate] == undefined
+          needDatamap[curDate] === undefined
             ? 0
             : Math.max(-needDatamap[curDate], 0),
         Target: getTargetFromDate(curDate),

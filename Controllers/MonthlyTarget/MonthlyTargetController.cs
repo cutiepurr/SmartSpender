@@ -53,25 +53,6 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
 
         return monthlyTarget;
     }
-    
-    // GET: api/MonthlyTarget/from
-    [HttpGet("from")]
-    public async Task<ActionResult<IEnumerable<MonthlyTarget>>> GetMonthlyTargetsFrom(int year, int month)
-    {
-        var email = await GetUserEmailFromToken();
-        if (email == null) return BadRequest();
-
-        var targetDate = GetLastDate(year, month);
-        var targets = TargetsByEmail(email);
-
-        if (targets.IsNullOrEmpty()) return NotFound();
-
-        var monthlyTarget = targets
-            .Where(item => item.Until != null && item.Until.Value.CompareTo(targetDate) >= 0)
-            .OrderBy(item => item.Year).ThenBy(item => item.Month);
-
-        return await monthlyTarget.ToListAsync();
-    }
 
     // GET: api/MonthlyTarget/5
     [HttpGet("{id}")]
@@ -160,11 +141,6 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
     private bool MonthlyTargetExists(Guid id)
     {
         return context.MonthlyTarget.Any(e => e.Id == id);
-    }
-
-    private DateTime GetLastDate(DateTime input)
-    {
-        return new DateTime(input.Year, input.Month, DateTime.DaysInMonth(input.Year, input.Month), 23, 59, 59);
     }
 
     private DateTime GetLastDate(int year, int month)

@@ -56,30 +56,6 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
         return await transactions.SumAsync(transaction => transaction.Amount);
     }
 
-    // GET: api/Transactions/amount/during
-    [HttpGet("amount/during")]
-    public async Task<ActionResult<IEnumerable<object>>> GetAmountsFromMonthToMonth(
-        CategoryType? categoryType = null, int startYear = -1, int startMonth = -1, int endYear = -1, int endMonth = -1)
-    {
-        var email = await GetUserEmailFromToken();
-        if (email == null) return BadRequest();
-
-        var transactions = new TransactionFilter(context).ByEmail(email).ByCategory(categoryType)
-            .FromDate(startYear, startMonth).ToDate(endYear, endMonth).Apply();
-
-        var result = from transaction in transactions
-            group transaction by new { transaction.Timestamp.Month, transaction.Timestamp.Year }
-            into grouped
-            select new
-            {
-                grouped.Key.Month,
-                grouped.Key.Year,
-                Amount = grouped.Sum(i3 => i3.Amount)
-            };
-
-        return await result.ToListAsync();
-    }
-
     // GET: api/Transactions/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Transaction>> GetTransaction(Guid id)
