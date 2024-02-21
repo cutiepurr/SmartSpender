@@ -47,20 +47,20 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
   }, [transaction, categories]);
 
   const description = (
-    <input type="text" name="description" placeholder="Description"
+    <input type="text" name="description" placeholder="Description" className="w-full"
            onChange={formik.handleChange} value={formik.values.description}
       // validate={Validation.description}
     />
   );
 
   const timestamp = (
-    <input type="datetime-local" name="timestamp" onChange={formik.handleChange} value={formik.values.timestamp}
+    <input type="datetime-local" name="timestamp" onChange={formik.handleChange} value={formik.values.timestamp} className="w-full"
       // validate={Validation.date}
     />
   );
 
   const category = (
-    <select name="categoryId" onChange={formik.handleChange} value={formik.values.categoryId}>
+    <select name="categoryId" onChange={formik.handleChange} value={formik.values.categoryId} className="w-full">
       {categories.map((c) => (
         <option key={c.categoryId} value={c.categoryId}>
           {c.name}
@@ -70,16 +70,17 @@ const TransactionForm: React.FC<props> = ({transaction, categories, submitCallba
   );
 
   const amount = (
-    <div className="w-full flex flex-row">
+    <div className="w-full grid grid-cols-3">
       <select name="amountSign" onChange={formik.handleChange} value={formik.values.amountSign}>
         <option value={"-"}>-</option>
         <option value={"+"}>+</option>
       </select>
-      <div>$</div>
-      <input name="amount" placeholder="Amount" type="number" min="0.01" step="0.01"
-             onChange={formik.handleChange} value={formik.values.amount}
-        // validate={Validation.amount}
-      />
+      <div className="col-span-2 flex flex-row">
+        $<input name="amount" placeholder="Amount" type="number" min="0.01" step="0.01" className="w-full"
+               onChange={formik.handleChange} value={formik.values.amount}
+          // validate={Validation.amount}
+        />
+      </div>
     </div>
   );
 
