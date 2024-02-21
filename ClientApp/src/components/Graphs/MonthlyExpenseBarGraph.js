@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
 import TransactionApis from "../../api/TransactionApis";
-import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis,} from "recharts";
+import {Bar, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis,} from "recharts";
 import {getDateNextMonth} from "../../utils/DateExtensions";
 import {useAuth0} from "@auth0/auth0-react";
+import TargetApis from "../../api/TargetApis";
 
 const MonthlyExpenseBarGraph = () => {
   const {getAccessTokenSilently} = useAuth0();
@@ -12,6 +13,7 @@ const MonthlyExpenseBarGraph = () => {
   const [graphData, setGraphData] = useState([]);
   const [wantData, setWantData] = useState([]);
   const [needData, setNeedData] = useState([]);
+  const [targets, setTargets] = useState([]);
   const [endDate, setEndDate] = useState(
     new Date(new Date().getFullYear(), new Date().getMonth())
   );
@@ -27,26 +29,41 @@ const MonthlyExpenseBarGraph = () => {
   useEffect(() => {
     if (token === "") return;
 
-    var query = new URLSearchParams();
-    query.set("startYear", startDate.getFullYear());
-    query.set("startMonth", startDate.getMonth() + 1);
-    query.set("endYear", endDate.getFullYear());
-    query.set("endMonth", endDate.getMonth() + 1);
+    let transactionQuery = new URLSearchParams();
+    transactionQuery.set("startYear", startDate.getFullYear());
+    transactionQuery.set("startMonth", startDate.getMonth() + 1);
+    transactionQuery.set("endYear", endDate.getFullYear());
+    transactionQuery.set("endMonth", endDate.getMonth() + 1);
 
-    query.set("categoryType", 0);
-    TransactionApis.getMonthlyTransactionsAmounts(query, token, (data) => {
+    transactionQuery.set("categoryType", 0);
+    TransactionApis.getMonthlyTransactionsAmounts(transactionQuery, token, (data) => {
       setWantData(data);
     });
 
-    query.set("categoryType", 1);
-    TransactionApis.getMonthlyTransactionsAmounts(query, token, (data) => {
+    transactionQuery.set("categoryType", 1);
+    TransactionApis.getMonthlyTransactionsAmounts(transactionQuery, token, (data) => {
       setNeedData(data);
     });
+
+    let targetQuery = new URLSearchParams();
+    targetQuery.set("year", startDate.getFullYear());
+    targetQuery.set("month", startDate.getMonth() + 1);
+    TargetApis.getTargetsFrom(targetQuery, token, (data) => {
+      setTargets(data);
+    })
   }, [token]);
 
   useEffect(() => {
     setGraphData(sanitizeData());
   }, [wantData, needData]);
+
+  const getTargetFromDate = (date) => {
+    for (let target of targets) {
+      let targetDate = new Date(target.until);
+      if (targetDate > date) return target.amount;
+    }
+    return null;
+  }
 
   const sanitizeData = () => {
     let sanitizedData = [];
@@ -82,6 +99,7 @@ const MonthlyExpenseBarGraph = () => {
           needDatamap[curDate] == undefined
             ? 0
             : Math.max(-needDatamap[curDate], 0),
+        Target: getTargetFromDate(curDate),
       });
     }
 
@@ -90,9 +108,9 @@ const MonthlyExpenseBarGraph = () => {
 
   return (
     <div>
-      <h3>Monthly Spendings</h3>
+      <h3>Monthly Spending</h3>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={graphData}>
+        <ComposedChart data={graphData}>
           <CartesianGrid strokeDasharray="3 3"/>
           <XAxis dataKey="name" interval={1}/>
           <YAxis unit="$"/>
@@ -100,7 +118,8 @@ const MonthlyExpenseBarGraph = () => {
           <Legend/>
           <Bar dataKey="Wants" fill="#8884d8" stackId={1}/>
           <Bar dataKey="Needs" fill="#82ca9d" stackId={1}/>
-        </BarChart>
+          <Line dataKey="Target"/>
+        </ComposedChart>
       </ResponsiveContainer>
     </div>
   );
