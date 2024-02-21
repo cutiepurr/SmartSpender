@@ -3,6 +3,7 @@ import {MonthlyTarget} from "@/utils/MonthlyTarget";
 import {useAuth0} from "@auth0/auth0-react";
 import TargetApis from "../../api/TargetApis";
 import EditMonthlyTarget from "./EditMonthlyTarget";
+import AddMonthlyTarget from "./AddMonthlyTarget";
 
 const MonthlyTargetIndex = () => {
   const {getAccessTokenSilently} = useAuth0();
@@ -26,6 +27,7 @@ const MonthlyTargetIndex = () => {
 
   return (
     <>
+      <AddMonthlyTarget/>
       <div className="p-3">
         <h3>Monthly Targets</h3>
         <table className="table-auto border-collapse">
@@ -38,7 +40,7 @@ const MonthlyTargetIndex = () => {
           </thead>
           <tbody>
           {targets.map(target =>
-            <EditMonthlyTarget key={target.id} target={target} editId={editId} onEdited={() => setEditId(target.id ?? "")}/>)}
+            <EditMonthlyTarget key={target.id} target={target} editId={editId} onChanged={() => setEditId(target.id ?? "")}/>)}
           </tbody>
         </table>
       </div>

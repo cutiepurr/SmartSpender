@@ -4,13 +4,13 @@ import {useAuth0} from "@auth0/auth0-react";
 import {Field, Formik} from "formik";
 
 interface prop {
-  target: MonthlyTarget,
-  isEdited: boolean,
-  onEdited: Function,
+  target: MonthlyTarget | null,
+  isDisabled: boolean,
+  onChanged: Function,
   submitCallback: Function
 }
 
-const MonthlyTargetForm: React.FC<prop> = ({target, isEdited, onEdited, submitCallback}) => {
+const MonthlyTargetForm: React.FC<prop> = ({target, isDisabled, onChanged, submitCallback}) => {
   const {user} = useAuth0();
   const defaultTarget: MonthlyTarget = {
     id: undefined,
@@ -39,15 +39,15 @@ const MonthlyTargetForm: React.FC<prop> = ({target, isEdited, onEdited, submitCa
         <tr>
           <td className="border-b p-3">
             <Field name="month" min={1} max={12} type="number" className="w-13"
-                   disabled={isEdited}/>/
-            <Field name="year" type="number" className="w-20" disabled={isEdited}/>
+                   disabled={isDisabled}/>/
+            <Field name="year" type="number" className="w-20" disabled={isDisabled}/>
           </td>
-          <td className="border-b p-3">$<Field name="amount" type="number" disabled={isEdited}/>
+          <td className="border-b p-3">$<Field name="amount" type="number" disabled={isDisabled}/>
           </td>
           <td className="border-b p-3">
             {
-              isEdited
-                ? <button onClick={() => onEdited()}>Edit</button>
+              isDisabled
+                ? <button onClick={() => onChanged()}>Edit</button>
                 : <button type="button" onClick={() => handleSubmit()} disabled={isSubmitting}>Save</button>
             }
           </td>

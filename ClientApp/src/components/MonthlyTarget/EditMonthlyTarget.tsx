@@ -7,10 +7,10 @@ import {useAuth0} from "@auth0/auth0-react";
 interface editProp {
   target: MonthlyTarget,
   editId: string,
-  onEdited: Function
+  onChanged: Function
 }
 
-const EditMonthlyTarget: React.FC<editProp> = ({target, editId, onEdited}) => {
+const EditMonthlyTarget: React.FC<editProp> = ({target, editId, onChanged}) => {
   const { getAccessTokenSilently} = useAuth0();
   const [token, setToken] = useState("");
   
@@ -24,7 +24,7 @@ const EditMonthlyTarget: React.FC<editProp> = ({target, editId, onEdited}) => {
     })
   };
   
-  return <MonthlyTargetForm target={target} isEdited={editId !== target.id} onEdited={onEdited} submitCallback={onSubmit}/>
+  return <MonthlyTargetForm target={target} isDisabled={editId !== target.id} onChanged={onChanged} submitCallback={onSubmit}/>
 }
 
 export default EditMonthlyTarget;
