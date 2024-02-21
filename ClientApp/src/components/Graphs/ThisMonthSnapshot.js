@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import TransactionApis from "../../api/TransactionApis";
 import {Col, Row} from "reactstrap";
 import {useAuth0} from "@auth0/auth0-react";
+import TargetApis from "../../api/TargetApis";
 
 const ThisMonthSnapshot = () => {
   const today = new Date();
@@ -14,6 +15,7 @@ const ThisMonthSnapshot = () => {
 
   const [wantAmount, setWantAmount] = useState(0);
   const [needAmount, setNeedAmount] = useState(0);
+  const [target, setTarget] = useState(0);
 
   useEffect(() => {
     getAccessTokenSilently().then(data => setToken(data));
@@ -30,6 +32,7 @@ const ThisMonthSnapshot = () => {
       setWantAmount(data.wants);
       setNeedAmount(data.needs);
     });
+    TargetApis.getTargetFromDate(year, month, token, data => setTarget(data.amount));
   }, [token, month, year]);
 
   const formatMoney = (amount) => {
@@ -43,7 +46,9 @@ const ThisMonthSnapshot = () => {
       <div>This month's spending</div>
       <Col>
         <div>Total</div>
-        <div>{formatMoney(wantAmount + needAmount)}</div>
+        <div className={wantAmount + needAmount > target ? "text-red-600" : "text-green-600"}>
+          {formatMoney(wantAmount + needAmount)}
+        </div>
       </Col>
       <Col>
         <div>Wants</div>

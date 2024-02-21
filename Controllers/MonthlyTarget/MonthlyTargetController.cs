@@ -44,9 +44,9 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
 
         if (targets.IsNullOrEmpty()) return NotFound();
 
-        var monthlyTarget = await targets
-                                .Where(item => item.Until != null && item.Until.Value.CompareTo(targetDate) >= 0)
-                                .OrderBy(item => item.Year).ThenBy(item => item.Month).FirstOrDefaultAsync() ??
+        var monthlyTarget = (await targets.ToListAsync())
+                            .Where(item => item.Until != null && item.Until.Value.CompareTo(targetDate) >= 0)
+                            .OrderBy(item => item.Year).ThenBy(item => item.Month).FirstOrDefault() ??
                             await targets.FirstOrDefaultAsync(item => item.Until == null);
 
         if (monthlyTarget == null) return NotFound();

@@ -11,6 +11,15 @@ export default class TargetApis extends ApiFetcher {
   };
 
   /**
+   * GET targets
+   * @param {string} token
+   * @param {Function} callback Callback function upon successful request
+   */
+  static getTargetFromDate = (year, month, token, callback = null) => {
+    this.getRequest(`/api/MonthlyTarget/${year}/${month}`, token, callback);
+  };
+
+  /**
    * PUT target
    * @param {string} id
    * @param {Object} body
