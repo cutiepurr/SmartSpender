@@ -19,7 +19,7 @@ const Ribbon: React.FC<props> = ({ selectedItems, className }) => {
   };
 
   return (
-    <div className={`${className} p-3 border-bottom d-flex flex-row-reverse`}>
+    <div className={`${className} p-3 border-bottom d-flex flex-row-reverse border-b`}>
         <Button color="danger" onClick={deleteTransactions} className="ms-3">
           <i className="fa-solid fa-trash"></i> Delete
         </Button>

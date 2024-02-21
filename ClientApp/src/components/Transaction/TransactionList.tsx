@@ -91,12 +91,11 @@ const TransactionList: React.FC<props> = ({year, month, categories, onSelected, 
   const loadMoreTransactions = () => setPage((_) => _ = page + 1);
 
   if (count === 0) return <>
-    <TransactionListHeader/><NotFound/>
+    <NotFound/>
   </>
 
   return (
     <div>
-      <TransactionListHeader/>
       {transactionItems}
       {count > (page + 1) * perLoad ? (
         <Button onClick={loadMoreTransactions}>Load more</Button>
@@ -104,20 +103,5 @@ const TransactionList: React.FC<props> = ({year, month, categories, onSelected, 
     </div>
   );
 };
-
-const TransactionListHeader = () => (
-  <strong className="hidden md:block">
-    <SquareStickyLeftContainer/>
-    <TransactionTable
-      className="sticky top-0 border-b drop-shadow"
-      transaction={{
-        description: "Description",
-        timestamp: "Date",
-        amount: "Amount",
-        category: "Category",
-      }}
-    />
-  </strong>
-);
 
 export default TransactionList;

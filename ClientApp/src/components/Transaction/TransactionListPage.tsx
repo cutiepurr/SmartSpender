@@ -10,6 +10,7 @@ import SquareStickyLeftContainer from "../SquareStickyLeftContainer";
 import {useAuth0} from "@auth0/auth0-react";
 import {CategoryItem} from "@/utils/Category";
 import TransactionList from "../Transaction/TransactionList";
+import TransactionTable from "./TransactionTable";
 
 const TransactionListPage = () => {
   const {year, month} = useParams();
@@ -17,7 +18,7 @@ const TransactionListPage = () => {
 
   // States
   const [token, setToken] = useState("");
-  
+
   const [categories, setCategories] = useState<Array<CategoryItem>>([]);
 
   const [totalAmount, setTotalAmount] = useState(0);
@@ -28,10 +29,6 @@ const TransactionListPage = () => {
   useEffect(() => {
     CategoryApis.getCategories((data) => setCategories(data));
   }, []);
-
-  useEffect(() => {
-    console.log(categories)
-  }, [categories]);
 
   // Get access token
   useEffect(() => {
@@ -67,14 +64,13 @@ const TransactionListPage = () => {
   };
 
   return (
-    <div className="relative md:h-screen p-3">
+    <div className=" md:h-screen overflow-auto">
       {year === undefined && month === undefined ? (
         <h1>Transaction</h1>
       ) : (
         <TitleWithMonth year={year} month={month}/>
       )}
-      <Ribbon selectedItems={selectedItems}/>
-      <div className="relative w-full">
+      <div className="w-full">
         <div className="mx-auto">
           <div>
             <h4 className="m-2">Add Transaction</h4>
@@ -82,14 +78,17 @@ const TransactionListPage = () => {
             <AddTransaction categories={categories}/>
           </div>
           <div>
-            <h4 className="m-2">History</h4>
+            <div className="sticky top-0 z-10 bg-white">
+              <Ribbon selectedItems={selectedItems}/>
+              <TransactionTotalAmount amount={totalAmount}/>
+              <TransactionListHeader/>
+            </div>
             <TransactionList year={year} month={month} categories={categories} onSelected={onSelected}
                              editId={editMode}
                              onEdit={setEditMode}/>
           </div>
         </div>
       </div>
-      <TransactionTotalAmount amount={totalAmount}/>
     </div>
   );
 };
@@ -117,14 +116,28 @@ const TitleWithMonth = ({year, month}) => {
 
 const TransactionTotalAmount = ({amount}) => (
   <div
-    className="container bg-white border-t p-3 bottom-0 w-full lg:absolute fixed"
-    style={{zIndex: 3, height: 50}}
+    className="container text-2xl border-b p-3 w-full"
   >
     <h4>
       <div className="float-end">{formatMoneyAmount(amount)}</div>
       <div>Total</div>
     </h4>
   </div>
+);
+
+const TransactionListHeader = () => (
+  <strong className="hidden md:block">
+    <SquareStickyLeftContainer/>
+    <TransactionTable
+      className="sticky top-30 border-b drop-shadow"
+      transaction={{
+        description: "Description",
+        timestamp: "Date",
+        amount: "Amount",
+        category: "Category",
+      }}
+    />
+  </strong>
 );
 
 export default TransactionListPage;
