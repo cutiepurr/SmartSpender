@@ -26,8 +26,9 @@ const NavMenu = ({className}) => {
 
          {/*Offcanvas when the screen is smaller than lg */}
         <div style={{ display: show ? "block" : "none" }} className="block lg:hidden">
-          <div>
-            <NavContent className="bg-white"/>
+          <div className="z-40 fixed top-0 left-0 w-screen h-screen flex flex-row">
+            <NavContent className="bg-white" style={{ width: 250}} toggle={toggle}/>
+            <div className="bg-black/50 w-full h-full" onClick={toggle}></div>
           </div>
         </div>
         
@@ -38,7 +39,7 @@ const NavMenu = ({className}) => {
   );
 };
 
-const NavContent = (props) => {
+const NavContent = ({toggle = null, ...props}) => {
   const {isAuthenticated} = useAuth0();
   const today = new Date();
   const links = [
@@ -51,7 +52,7 @@ const NavContent = (props) => {
       path: `/transactions/${today.getFullYear()}/${today.getMonth() + 1}`,
     },
     {
-      name: "Manage Monthly Targets",
+      name: "Monthly Targets",
       path: `/targets`,
     },
   ];
@@ -59,6 +60,7 @@ const NavContent = (props) => {
   return (
 
     <div {...props} className={`${props.className} h-full p-3 relative`}>
+      { toggle !== null ? <i className="fa-solid fa-xmark float-end" onClick={toggle}></i> : null}
       <div className="pb-3">
         {
           isAuthenticated ?
