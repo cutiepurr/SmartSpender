@@ -1,6 +1,4 @@
 import React, {useState} from "react";
-import {Button, Offcanvas, OffcanvasBody, OffcanvasHeader,} from "reactstrap";
-import "./NavMenu.css";
 import LoginButton from "./Auth/LoginButton";
 import {useAuth0} from "@auth0/auth0-react";
 import LogoutButton from "./Auth/LogoutButton";
