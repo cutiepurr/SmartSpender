@@ -1,5 +1,16 @@
 import React, {useEffect, useState} from "react";
-import {Bar, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis,} from "recharts";
+import {
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  ResponsiveContainer,
+  Scatter,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import {getDateNextMonth} from "../../utils/DateExtensions";
 import {useAuth0} from "@auth0/auth0-react";
 import ApiFetcher from "../../api/ApiFetcher";
@@ -13,7 +24,7 @@ const MonthlyExpenseBarGraph = (props) => {
   const [wantData, setWantData] = useState([]);
   const [needData, setNeedData] = useState([]);
   const [targets, setTargets] = useState([]);
-  
+
   const endDate = new Date(new Date().getFullYear(), new Date().getMonth());
   const startDate = new Date(endDate.getFullYear() - 1, endDate.getMonth() - 1);
 
@@ -65,19 +76,20 @@ const MonthlyExpenseBarGraph = (props) => {
       curDate.getFullYear() !== endDate.getFullYear()
       ) {
       curDate = getDateNextMonth(curDate);
+      let wants = wantDatamap[curDate] === undefined
+        ? 0
+        : Math.max(-wantDatamap[curDate], 0)
+      let needs = needDatamap[curDate] === undefined
+        ? 0
+        : Math.max(-needDatamap[curDate], 0)
       sanitizedData.push({
         name: curDate.toLocaleDateString("en-GB", {
           month: "short",
           year: "2-digit",
         }),
-        Wants:
-          wantDatamap[curDate] === undefined
-            ? 0
-            : Math.max(-wantDatamap[curDate], 0),
-        Needs:
-          needDatamap[curDate] === undefined
-            ? 0
-            : Math.max(-needDatamap[curDate], 0),
+        Wants: wants,
+        Needs: needs,
+        Total: wants + needs,
         Target: getTargetFromDate(curDate),
       });
     }
@@ -92,11 +104,12 @@ const MonthlyExpenseBarGraph = (props) => {
         <ComposedChart data={graphData}>
           <CartesianGrid strokeDasharray="3 3"/>
           <XAxis dataKey="name" interval={1}/>
-          <YAxis unit="$"/>
+          <YAxis unit="$" padding={{top: 20}}/>
           <Tooltip formatter={(value, name, props) => [`$${value}`, name]}/>
           <Legend/>
           <Bar dataKey="Wants" fill="#8884d8" stackId={1}/>
           <Bar dataKey="Needs" fill="#82ca9d" stackId={1}/>
+          <Scatter dataKey="Total" fill="#6b6f80" legendType="none" shape={<></>}/>
           <Line dataKey="Target"/>
         </ComposedChart>
       </ResponsiveContainer>
