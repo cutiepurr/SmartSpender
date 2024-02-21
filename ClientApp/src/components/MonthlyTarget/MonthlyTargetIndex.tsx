@@ -22,10 +22,12 @@ const MonthlyTargetIndex = () => {
     setEditId("");
     TargetApis.getTargets(token, data => {
       if (data === null) return;
+      data.sort((target1: MonthlyTarget, target2: MonthlyTarget) => 
+        new Date(target1.until ?? "") < new Date(target2.until ?? "") ? 1 : -1);
       setTargets(data);
     });
   }
-  
+
   useEffect(getTargets, [token]);
 
   return (

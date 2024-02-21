@@ -18,7 +18,7 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
         if (email == null) return BadRequest();
 
         var targets = TargetsByEmail(email);
-        return await targets.OrderBy(item => item.Year).ThenBy(item => item.Month).ToListAsync();
+        return await targets.ToListAsync();
     }
 
     // GET: api/MonthlyTarget/latest
