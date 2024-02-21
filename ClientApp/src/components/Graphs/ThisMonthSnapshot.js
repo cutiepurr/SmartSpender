@@ -46,7 +46,7 @@ const ThisMonthSnapshot = () => {
       <div className="grid grid-cols-2 text-2xl">
         <div className="row-span-2 p-4">
           <div>{today.toLocaleDateString("en-gb", {month: "long", year: "numeric"})} spending</div>
-          <div className={`text-5xl ${wantAmount + needAmount > target ? "text-red-600" : "text-green-600"}`}>
+          <div className={`text-5xl ${wantAmount + needAmount < -target ? "text-red-600" : "text-green-600"}`}>
             {formatMoney(wantAmount + needAmount)}
           </div>
         </div>

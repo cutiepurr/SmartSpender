@@ -4,7 +4,7 @@ import ApiFetcher from "../../api/ApiFetcher";
 import {Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip} from "recharts";
 
 const ThisMonthCategoryPie = () => {
-  const COLORS = ['#0088FE', '#00C49F'];
+  const COLORS = ['#0088FE', '#f23f4b'];
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth() + 1;
@@ -54,8 +54,8 @@ const ThisMonthCategoryPie = () => {
   };
 
   return (
-    <ResponsiveContainer width={400} height={400} className="m-auto">
-      <PieChart width={400} height={400}>
+    <ResponsiveContainer width={700} height={400} className="m-auto">
+      <PieChart width={500} height={400}>
         <Tooltip formatter={(value, name, props) => [`$${value}`, name]}/>
         <Legend align="right" verticalAlign="middle" layout="vertical"/>
         <Pie data={innerGraphData} dataKey="amount" cx="50%" cy="50%" outerRadius={80} fill="#8884d8" startAngle={90}
@@ -65,10 +65,10 @@ const ThisMonthCategoryPie = () => {
           ))}
         </Pie>
         <Pie data={outerGraphData} dataKey="amount" cx="50%" cy="50%" innerRadius={90} outerRadius={95} fill="#82ca9d"
-             label startAngle={90} endAngle={450}>
-          {outerGraphData?.map((entry, index) => (
+             label={({value, name}) => `${name} - $${value}`} startAngle={90} endAngle={450}>
+          {outerGraphData?.map((entry, index) =>
             <Cell key={`cell-${index}`} fill={COLORS[index]}/>
-          ))}
+          )}
         </Pie>
 
       </PieChart>
