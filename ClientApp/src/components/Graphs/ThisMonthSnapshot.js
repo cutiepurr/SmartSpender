@@ -2,9 +2,8 @@ import React, {useEffect, useState} from "react";
 import TransactionApis from "../../api/TransactionApis";
 import {useAuth0} from "@auth0/auth0-react";
 import TargetApis from "../../api/TargetApis";
-import ThisMonthCategoryPie from "./ThisMonthCategoryPie";
 
-const ThisMonthSnapshot = () => {
+const ThisMonthSnapshot = ({...props}) => {
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth() + 1;
@@ -42,9 +41,9 @@ const ThisMonthSnapshot = () => {
   };
 
   return (
-    <div className="p-3 m-3 border rounded shadow">
-      <div className="grid grid-cols-2 text-2xl">
-        <div className="row-span-2 p-4">
+    <div {...props}>
+      <div className="text-2xl">
+        <div className="">
           <div>{today.toLocaleDateString("en-gb", {month: "long", year: "numeric"})} spending</div>
           <div className={`text-5xl ${wantAmount + needAmount < -target ? "text-red-600" : "text-green-600"}`}>
             {formatMoney(wantAmount + needAmount)}
@@ -61,7 +60,6 @@ const ThisMonthSnapshot = () => {
           </div>
         </div>
       </div>
-      <ThisMonthCategoryPie/>
     </div>
   );
 };
