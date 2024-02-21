@@ -1,7 +1,8 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {MonthlyTarget} from "@/utils/MonthlyTarget";
 import {useAuth0} from "@auth0/auth0-react";
 import TargetApis from "../../api/TargetApis";
+import EditMonthlyTarget from "./EditMonthlyTarget";
 
 const MonthlyTargetIndex = () => {
   const {getAccessTokenSilently} = useAuth0();
@@ -36,24 +37,8 @@ const MonthlyTargetIndex = () => {
           </tr>
           </thead>
           <tbody>
-          {targets.map(target => {
-            const isEdited = editId != target.id;
-            return <tr key={target.id}>
-              <td className="border-b p-3">
-                <input type="number" value={target.month} className="w-10" disabled={isEdited}/>/
-                <input type="number" value={target.year} className="w-20" disabled={isEdited}/>
-              </td>
-              <td className="border-b p-3">$<input type="number" value={target.amount} disabled={isEdited}/></td>
-              <td className="border-b p-3">
-                {
-                  isEdited
-                    ? <button onClick={() => setEditId(target.id ?? "")}>Edit</button>
-                    : <button>Save</button>
-                }
-              </td>
-            </tr>
-              ;
-          })}
+          {targets.map(target =>
+            <EditMonthlyTarget target={target} editId={editId} onEdited={() => setEditId(target.id ?? "")}/>)}
           </tbody>
         </table>
       </div>
