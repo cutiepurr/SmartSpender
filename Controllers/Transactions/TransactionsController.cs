@@ -65,6 +65,32 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
             Total = wants + needs
         };
     }
+    
+    // GET: api/Transactions/amount/category
+    [HttpGet("amount/category")]
+    public async Task<ActionResult<List<object>>> GetTotalAmountByCategory(int year = -1, int month = -1)
+    {
+        var email = await GetUserEmailFromToken();
+        if (email == null) return BadRequest();
+
+        var transactions = new TransactionFilter(context).ByEmail(email)
+            .FromDate(year, month).ToDate(year, month).Apply();
+
+        var result = new List<object>();
+        foreach (var category in await context.Category.ToListAsync())
+        {
+            var amount = await transactions.Where(item => item.CategoryId == category.CategoryId)
+                .SumAsync(item => item.Amount);
+            result.Add(new
+            {
+                Amount = amount,
+                Category = category
+            });
+        }
+
+        return result;
+    }
+    
 
     // GET: api/Transactions/5
     [HttpGet("{id}")]

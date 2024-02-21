@@ -1,9 +1,18 @@
 class ApiFetcher {
-  static getRequest = (url, token = null, callback = null) => {
+  /**
+   * 
+   * @param url
+   * @param {string} token
+   * @param callback
+   */
+  static getRequest = (url, token, callback = null) => {
+    let headers;
+    if (token !== "") headers = {
+      Authorization: `Bearer ${token}`,
+    }
+    
     fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
+      headers: headers
     })
       .then((response) => response.json())
       .then((data) => {
