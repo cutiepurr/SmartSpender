@@ -25,7 +25,7 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
             .OrderByDescending(transaction => transaction.Timestamp)
             .Skip(page * count).Take(count);
 
-        if (!paginatedTransactions.Any()) return NotFound();
+        if (!paginatedTransactions.Any()) return NoContent();
         return await paginatedTransactions.ToListAsync();
     }
 

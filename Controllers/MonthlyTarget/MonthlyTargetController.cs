@@ -84,7 +84,10 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
 
         var targets = TargetsByEmail(email);
         if (targets.Where(item => item.Id != id)
-            .Any(item => item.Year == monthlyTarget.Year && item.Month == monthlyTarget.Month)) return BadRequest();
+            .Any(item => item.Year == monthlyTarget.Year && item.Month == monthlyTarget.Month))
+        {
+            return BadRequest("Timestamp already exists");
+        }
 
         context.Entry(monthlyTarget).State = EntityState.Modified;
 
