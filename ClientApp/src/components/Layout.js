@@ -9,7 +9,7 @@ export class Layout extends Component {
     return (
       <div className="flex flex-col lg:flex-row lg:h-screen">
           <NavMenu className="basis-1/5 bg-slate-50" />
-          <Container tag="main" className="basis-4/5">{this.props.children}</Container>
+          <Container tag="main" className="basis-4/5 mx-auto">{this.props.children}</Container>
       </div>
     );
   }

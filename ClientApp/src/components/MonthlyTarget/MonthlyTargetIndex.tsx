@@ -26,11 +26,12 @@ const MonthlyTargetIndex = () => {
   }, [token]);
 
   return (
-    <>
-      <AddMonthlyTarget/>
+    <div className="m-3">
+      <h3 className="text-center">New Monthly Target</h3>
+      <AddMonthlyTarget className="mx-auto"/>
       <div className="p-3">
-        <h3>Monthly Targets</h3>
-        <table className="table-auto border-collapse">
+        <h3 className="text-center">Monthly Targets</h3>
+        <table className="table-auto border-collapse mx-auto">
           <thead>
           <tr>
             <th className="border-b text-left p-3">Until</th>
@@ -40,11 +41,12 @@ const MonthlyTargetIndex = () => {
           </thead>
           <tbody>
           {targets.map(target =>
-            <EditMonthlyTarget key={target.id} target={target} editId={editId} onChanged={() => setEditId(target.id ?? "")}/>)}
+            <EditMonthlyTarget key={target.id} target={target} editId={editId}
+                               onChanged={() => setEditId(target.id ?? "")}/>)}
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 };
 
