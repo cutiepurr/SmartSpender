@@ -5,7 +5,7 @@ import {getDateNextMonth} from "../../utils/DateExtensions";
 import {useAuth0} from "@auth0/auth0-react";
 import TargetApis from "../../api/TargetApis";
 
-const MonthlyExpenseBarGraph = () => {
+const MonthlyExpenseBarGraph = (props) => {
   const {getAccessTokenSilently} = useAuth0();
 
   // States
@@ -107,8 +107,8 @@ const MonthlyExpenseBarGraph = () => {
   };
 
   return (
-    <div>
-      <h3>Monthly Spending</h3>
+    <div {...props}>
+      <h3>Last 12 months' spending</h3>
       <ResponsiveContainer width="100%" height={300}>
         <ComposedChart data={graphData}>
           <CartesianGrid strokeDasharray="3 3"/>

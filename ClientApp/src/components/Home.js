@@ -11,7 +11,7 @@ const Home = () => {
         isAuthenticated ?
           <>
             <ThisMonthSnapshot/>
-            <MonthlyExpenseBarGraph/>
+            <MonthlyExpenseBarGraph className="p-3"/>
           </>
           : null
       }
