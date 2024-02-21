@@ -2,7 +2,7 @@ import {toast} from "react-hot-toast";
 
 class ApiFetcher {
   /**
-   * 
+   *
    * @param url
    * @param {string} token
    * @param callback
@@ -12,7 +12,7 @@ class ApiFetcher {
     if (token !== "") headers = {
       Authorization: `Bearer ${token}`,
     }
-    
+
     fetch(url, {
       headers: headers
     })
@@ -33,7 +33,14 @@ class ApiFetcher {
     }).then((response) => {
       if (response.ok && callback !== null) callback();
       else {
-        toast.error("Request failed");
+        response.text().then(text => {
+          try {
+            let json = JSON.parse(text);
+            toast.error(`${json.status} ${json.title}`);
+          } catch (e) {
+            toast.error(text);
+          }
+        })
       }
     });
   };
@@ -48,7 +55,16 @@ class ApiFetcher {
       },
     }).then((response) => {
       if (response.ok && callback !== null) callback();
-      else toast.error("Request failed");
+      else {
+        response.text().then(text => {
+          try {
+            let json = JSON.parse(text);
+            toast.error(`${json.status} ${json.title}`);
+          } catch (e) {
+            toast.error(text);
+          }
+        })
+      }
     });
   };
 
@@ -63,7 +79,16 @@ class ApiFetcher {
     }).then((response) => {
       console.log(response);
       if (response.ok && callback !== null) callback();
-      else alert("Cannot delete");
+      else {
+        response.text().then(text => {
+          try {
+            let json = JSON.parse(text);
+            toast.error(`${json.status} ${json.title}`);
+          } catch (e) {
+            toast.error(text);
+          }
+        })
+      }
     });
   };
 }
