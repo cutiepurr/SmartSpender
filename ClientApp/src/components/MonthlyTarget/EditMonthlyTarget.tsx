@@ -23,7 +23,7 @@ const EditMonthlyTarget: React.FC<editProp> = ({target, editId, onChanged, reque
   const onSubmit = (data: MonthlyTarget) => {
     TargetApis.putTarget(data.id ?? "", data, token, () => {
       requestCallback();
-      toast("Edit monthly target successfully!");
+      toast.success("Edit monthly target successfully!");
     })
   };
   

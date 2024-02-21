@@ -1,3 +1,5 @@
+import {toast} from "react-hot-toast";
+
 class ApiFetcher {
   /**
    * 
@@ -30,7 +32,9 @@ class ApiFetcher {
       },
     }).then((response) => {
       if (response.ok && callback !== null) callback();
-      else alert("Cannot add");
+      else {
+        toast.error("Request failed");
+      }
     });
   };
 
@@ -44,7 +48,7 @@ class ApiFetcher {
       },
     }).then((response) => {
       if (response.ok && callback !== null) callback();
-      else alert("Cannot edit");
+      else toast.error("Request failed");
     });
   };
 

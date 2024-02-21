@@ -23,7 +23,7 @@ const EditTransaction: React.FC<props> = ({ transaction, categories, onChanged }
     if (inputTransaction == null) return;
 
     TransactionApis.putTransaction(inputTransaction, token, () => {
-      toast("Edit transaction successfully!");
+      toast.success("Edit transaction successfully!");
       let newDate = new Date(inputTransaction.timestamp);
       let oldDate = new Date(transaction.timestamp);
       if (newDate.getFullYear() !== oldDate.getFullYear() || newDate.getMonth() !== oldDate.getMonth()) {

@@ -16,7 +16,7 @@ const AddMonthlyTarget = ({requestCallback, ...props}) => {
   const onSubmit = (data: MonthlyTarget) => {
     TargetApis.postTarget(data, token, () => {
       requestCallback();
-      toast("Create monthly target successfully!");
+      toast.success("Create monthly target successfully!");
     })
   };
 
