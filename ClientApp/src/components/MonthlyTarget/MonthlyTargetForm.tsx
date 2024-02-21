@@ -5,13 +5,12 @@ import {Field, Formik} from "formik";
 
 interface prop {
   target: MonthlyTarget,
-  editId: string,
+  isEdited: boolean,
   onEdited: Function,
   submitCallback: Function
 }
 
-const MonthlyTargetForm: React.FC<prop> = ({target, editId, onEdited, submitCallback}) => {
-  const isEdited = editId != target.id;
+const MonthlyTargetForm: React.FC<prop> = ({target, isEdited, onEdited, submitCallback}) => {
   const {user} = useAuth0();
   const defaultTarget: MonthlyTarget = {
     id: undefined,

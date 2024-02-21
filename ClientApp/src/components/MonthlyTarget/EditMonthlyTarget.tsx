@@ -24,7 +24,7 @@ const EditMonthlyTarget: React.FC<editProp> = ({target, editId, onEdited}) => {
     })
   };
   
-  return <MonthlyTargetForm target={target} editId={editId} onEdited={onEdited} submitCallback={onSubmit}/>
+  return <MonthlyTargetForm target={target} isEdited={editId !== target.id} onEdited={onEdited} submitCallback={onSubmit}/>
 }
 
 export default EditMonthlyTarget;
