@@ -5,7 +5,7 @@ import TargetApis from "../../api/TargetApis";
 import {useAuth0} from "@auth0/auth0-react";
 
 const AddMonthlyTarget = () => {
-  const { getAccessTokenSilently} = useAuth0();
+  const {getAccessTokenSilently} = useAuth0();
   const [token, setToken] = useState("");
 
   useEffect(() => {
@@ -18,7 +18,13 @@ const AddMonthlyTarget = () => {
     })
   };
 
-  return <MonthlyTargetForm target={null} isDisabled={false} onChanged={() => {}} submitCallback={onSubmit}/>
+  return (
+    <table>
+      <tbody>
+        <MonthlyTargetForm target={null} isDisabled={false} onChanged={() => {}} submitCallback={onSubmit}/>
+      </tbody>
+    </table>
+  );
 }
 
 export default AddMonthlyTarget;

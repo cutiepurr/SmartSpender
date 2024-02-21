@@ -41,7 +41,7 @@ const ThisMonthSnapshot = () => {
   };
 
   return (
-    <div className="p-3 m-3 border shadow">
+    <div className="p-3 m-3 border rounded shadow">
       <div className="text-xl">This month's spending</div>
       <div className="grid grid-cols-2 text-2xl">
         <div className="row-span-2 p-4">
