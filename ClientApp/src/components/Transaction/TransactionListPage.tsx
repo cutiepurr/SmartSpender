@@ -49,7 +49,7 @@ const TransactionListPage = () => {
     }
 
     TransactionApis.getTransactionTotalAmount(query, token, (data) =>
-      setTotalAmount(data)
+      setTotalAmount(data.total)
     );
   }, [year, month, token]);
 

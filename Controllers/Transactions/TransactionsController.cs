@@ -44,16 +44,26 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
 
     // GET: api/Transactions/amount
     [HttpGet("amount")]
-    public async Task<ActionResult<double>> GetTotalAmount(CategoryType? categoryType = null, int year = -1,
-        int month = -1)
+    public async Task<ActionResult<object>> GetTotalAmount(int year = -1, int month = -1)
     {
         var email = await GetUserEmailFromToken();
         if (email == null) return BadRequest();
 
-        var transactions = new TransactionFilter(context).ByEmail(email).ByCategory(categoryType)
+        var wantTransactions = new TransactionFilter(context).ByEmail(email).ByCategory(CategoryType.Want)
             .FromDate(year, month).ToDate(year, month).Apply();
 
-        return await transactions.SumAsync(transaction => transaction.Amount);
+        var needTransaction = new TransactionFilter(context).ByEmail(email).ByCategory(CategoryType.Need)
+            .FromDate(year, month).ToDate(year, month).Apply();
+
+        var wants = await wantTransactions.SumAsync(transaction => transaction.Amount);
+        var needs = await needTransaction.SumAsync(transaction => transaction.Amount);
+
+        return new
+        {
+            Wants = wants,
+            Needs = needs,
+            Total = wants + needs
+        };
     }
 
     // GET: api/Transactions/5
@@ -62,7 +72,7 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
     {
         var email = await GetUserEmailFromToken();
         if (email == null) return BadRequest();
-        
+
         var transaction = await context.Transaction.FindAsync(id);
 
         if (transaction == null) return NotFound();
@@ -80,7 +90,7 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
         if (email == null) return BadRequest();
 
         if (id != transaction.Id) return BadRequest();
-        
+
         if (transaction.Email != email) return Forbid();
 
         context.Entry(transaction).State = EntityState.Modified;
@@ -105,7 +115,7 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
     {
         var email = await GetUserEmailFromToken();
         if (email == null) return BadRequest();
-        
+
         if (transaction.Email != email) return Forbid();
 
         context.Transaction.Add(transaction);
@@ -123,7 +133,7 @@ public class TransactionsController(AppDbContext context) : AuthorizedController
 
         var email = await GetUserEmailFromToken();
         if (email == null) return BadRequest();
-        
+
         if (transaction.Email != email) return Forbid();
 
         context.Transaction.Remove(transaction);

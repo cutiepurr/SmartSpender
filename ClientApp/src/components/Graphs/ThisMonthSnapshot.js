@@ -6,7 +6,7 @@ import {useAuth0} from "@auth0/auth0-react";
 const ThisMonthSnapshot = () => {
   const today = new Date();
   const year = today.getFullYear();
-  const month = today.getMonth()+1;
+  const month = today.getMonth() + 1;
   const {getAccessTokenSilently} = useAuth0();
 
   // States
@@ -21,15 +21,15 @@ const ThisMonthSnapshot = () => {
 
   useEffect(() => {
     if (token === "") return;
-    
+
     let query = new URLSearchParams();
     query.set("year", year);
     query.set("month", month);
 
-    query.set("categoryType", 0);
-    TransactionApis.getTransactionTotalAmount(query, token, (data) => setWantAmount(data));
-    query.set("categoryType", 1);
-    TransactionApis.getTransactionTotalAmount(query, token, (data) => setNeedAmount(data));
+    TransactionApis.getTransactionTotalAmount(query, token, data => {
+      setWantAmount(data.wants);
+      setNeedAmount(data.needs);
+    });
   }, [token, month, year]);
 
   const formatMoney = (amount) => {
