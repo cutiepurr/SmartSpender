@@ -3,8 +3,9 @@ import React, {useEffect, useState} from "react";
 import MonthlyTargetForm from "./MonthlyTargetForm";
 import TargetApis from "../../api/TargetApis";
 import {useAuth0} from "@auth0/auth0-react";
+import {toast} from "react-hot-toast";
 
-const AddMonthlyTarget = ({...props}) => {
+const AddMonthlyTarget = ({requestCallback, ...props}) => {
   const {getAccessTokenSilently} = useAuth0();
   const [token, setToken] = useState("");
 
@@ -14,7 +15,8 @@ const AddMonthlyTarget = ({...props}) => {
 
   const onSubmit = (data: MonthlyTarget) => {
     TargetApis.postTarget(data, token, () => {
-      window.location.reload();
+      requestCallback();
+      toast("Create monthly target successfully!");
     })
   };
 

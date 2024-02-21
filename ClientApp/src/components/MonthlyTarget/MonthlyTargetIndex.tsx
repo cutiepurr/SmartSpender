@@ -16,19 +16,22 @@ const MonthlyTargetIndex = () => {
     getAccessTokenSilently().then(data => setToken(data));
   }, [getAccessTokenSilently]);
 
-  useEffect(() => {
+  const getTargets = () => {
     if (token === "") return;
 
+    setEditId("");
     TargetApis.getTargets(token, data => {
       if (data === null) return;
       setTargets(data);
     });
-  }, [token]);
+  }
+  
+  useEffect(getTargets, [token]);
 
   return (
     <div className="m-3">
       <h3 className="text-center">New Monthly Target</h3>
-      <AddMonthlyTarget className="mx-auto"/>
+      <AddMonthlyTarget className="mx-auto" requestCallback={getTargets}/>
       <div className="p-3">
         <h3 className="text-center">Monthly Targets</h3>
         <table className="table-auto border-collapse mx-auto">
@@ -41,7 +44,7 @@ const MonthlyTargetIndex = () => {
           </thead>
           <tbody>
           {targets.map(target =>
-            <EditMonthlyTarget key={target.id} target={target} editId={editId}
+            <EditMonthlyTarget key={target.id} target={target} editId={editId} requestCallback={getTargets}
                                onChanged={() => setEditId(target.id ?? "")}/>)}
           </tbody>
         </table>

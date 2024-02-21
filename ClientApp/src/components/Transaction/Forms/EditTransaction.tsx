@@ -4,6 +4,7 @@ import TransactionApis from "../../../api/TransactionApis";
 import {useAuth0} from "@auth0/auth0-react";
 import {ApiTransaction} from "@/utils/Transaction";
 import {CategoryItem} from "@/utils/Category";
+import {toast} from "react-hot-toast";
 
 interface props {
   transaction: ApiTransaction,
@@ -22,9 +23,10 @@ const EditTransaction: React.FC<props> = ({ transaction, categories, onChanged }
     if (inputTransaction == null) return;
 
     TransactionApis.putTransaction(inputTransaction, token, () => {
+      toast("Edit transaction successfully!");
       let newDate = new Date(inputTransaction.timestamp);
       let oldDate = new Date(transaction.timestamp);
-      if (newDate.getFullYear() !== oldDate.getFullYear() && newDate.getMonth() !== oldDate.getMonth()) {
+      if (newDate.getFullYear() !== oldDate.getFullYear() || newDate.getMonth() !== oldDate.getMonth()) {
         window.location.href = `/transactions/${newDate.getFullYear()}/${newDate.getMonth() + 1}`;
       } else {
         onChanged();

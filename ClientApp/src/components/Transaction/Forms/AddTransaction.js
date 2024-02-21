@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import TransactionApis from "../../../api/TransactionApis";
 import { TransactionForm } from "./TransactionForm.tsx";
 import {useAuth0} from "@auth0/auth0-react";
+import {toast} from "react-hot-toast";
 
 const AddTransaction = ({ categories }) => {
   const { getAccessTokenSilently, user } = useAuth0();
@@ -16,6 +17,7 @@ const AddTransaction = ({ categories }) => {
     inputTransaction.email = user.email;
 
     TransactionApis.postTransaction(inputTransaction, token, () => {
+      toast("Create transaction successfully");
       let date = new Date(inputTransaction.timestamp);
       window.location.href = `/transactions/${date.getFullYear()}/${date.getMonth()+1}`;
     });
