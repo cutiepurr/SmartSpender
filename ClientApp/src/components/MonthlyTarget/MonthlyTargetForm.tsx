@@ -7,9 +7,10 @@ interface prop {
   target: MonthlyTarget,
   editId: string,
   onEdited: Function,
+  submitCallback: Function
 }
 
-const MonthlyTargetForm: React.FC<prop> = ({target, editId, onEdited}) => {
+const MonthlyTargetForm: React.FC<prop> = ({target, editId, onEdited, submitCallback}) => {
   const isEdited = editId != target.id;
   const {user} = useAuth0();
   const defaultTarget: MonthlyTarget = {
@@ -32,7 +33,7 @@ const MonthlyTargetForm: React.FC<prop> = ({target, editId, onEdited}) => {
       enableReinitialize initialValues={formData}
       onSubmit={(values, {setSubmitting}) => {
         setSubmitting(false);
-        console.log(values);
+        submitCallback(values);
       }}
     >
       {({handleSubmit, isSubmitting}) =>
