@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import TransactionApis from "../../api/TransactionApis";
-import {Col, Row} from "reactstrap";
 import {useAuth0} from "@auth0/auth0-react";
 import TargetApis from "../../api/TargetApis";
 
@@ -42,23 +41,27 @@ const ThisMonthSnapshot = () => {
   };
 
   return (
-    <Row tag="h3" className="p-3 m-3 border shadow">
-      <div>This month's spending</div>
-      <Col>
-        <div>Total</div>
-        <div className={wantAmount + needAmount > target ? "text-red-600" : "text-green-600"}>
-          {formatMoney(wantAmount + needAmount)}
+    <div className="p-3 m-3 border shadow">
+      <div className="text-xl">This month's spending</div>
+      <div className="grid grid-cols-2 text-2xl">
+        <div className="row-span-2 p-4">
+          <div>Total</div>
+          <div className={`text-5xl ${wantAmount + needAmount > target ? "text-red-600" : "text-green-600"}`}>
+            {formatMoney(wantAmount + needAmount)}
+          </div>
         </div>
-      </Col>
-      <Col>
-        <div>Wants</div>
-        <div>{formatMoney(wantAmount)}</div>
-      </Col>
-      <Col>
-        <div>Needs</div>
-        <div>{formatMoney(needAmount)}</div>
-      </Col>
-    </Row>
+        <div>
+          <div>
+            <div>Wants</div>
+            <div>{formatMoney(wantAmount)}</div>
+          </div>
+          <div>
+            <div>Needs</div>
+            <div>{formatMoney(needAmount)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
