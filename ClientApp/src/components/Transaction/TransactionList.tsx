@@ -49,8 +49,7 @@ const TransactionList: React.FC<props> = ({year, month, categories, onSelected, 
     TransactionApis.getTransactionCounts(query, token, (data) => setCount(data));
   }, [year, month, token]);
 
-  // GET all transactions
-  useEffect(() => {
+  const getAllTransactions = () => {
     if (token === "") return;
 
     let query = new URLSearchParams();
@@ -63,9 +62,12 @@ const TransactionList: React.FC<props> = ({year, month, categories, onSelected, 
 
     TransactionApis.getTransactions(query, token, (data) => {
       if (data === null) return;
-      setTransactions((transactions) => transactions.concat(data));
+      setTransactions(data);
     });
-  }, [year, month, page, perLoad, token]);
+  }
+
+  // GET all transactions
+  useEffect(getAllTransactions, [year, month, page, perLoad, token]);
 
   const transactionItems = transactions.map((transaction) => {
     let transactionViewObject = formatTransactionApiToView(transaction, categories);
@@ -82,7 +84,10 @@ const TransactionList: React.FC<props> = ({year, month, categories, onSelected, 
             onClick={() => onEdit(transaction.id ?? -1)}
           />
         ) : (
-          <EditTransaction transaction={transaction} categories={categories}/>
+          <EditTransaction transaction={transaction} categories={categories} onChanged={() => {
+            onEdit(-1);
+            getAllTransactions();
+          }}/>
         )}
       </div>
     );
@@ -98,7 +103,7 @@ const TransactionList: React.FC<props> = ({year, month, categories, onSelected, 
     <div>
       {transactionItems}
       {count > (page + 1) * perLoad ? (
-        <Button onClick={loadMoreTransactions}>Load more</Button>
+        <Button onClick={loadMoreTransactions}>Next</Button>
       ) : null}
     </div>
   );

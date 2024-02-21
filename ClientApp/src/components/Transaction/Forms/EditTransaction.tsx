@@ -8,8 +8,9 @@ import {CategoryItem} from "@/utils/Category";
 interface props {
   transaction: ApiTransaction,
   categories: Array<CategoryItem>,
+  onChanged: Function,
 }
-const EditTransaction: React.FC<props> = ({ transaction, categories }) => {
+const EditTransaction: React.FC<props> = ({ transaction, categories, onChanged }) => {
   const { getAccessTokenSilently} = useAuth0();
   const [token, setToken] = useState("");
 
@@ -21,7 +22,13 @@ const EditTransaction: React.FC<props> = ({ transaction, categories }) => {
     if (inputTransaction == null) return;
 
     TransactionApis.putTransaction(inputTransaction, token, () => {
-      window.location.reload();
+      let newDate = new Date(inputTransaction.timestamp);
+      let oldDate = new Date(transaction.timestamp);
+      if (newDate.getFullYear() !== oldDate.getFullYear() && newDate.getMonth() !== oldDate.getMonth()) {
+        window.location.href = `/transactions/${newDate.getFullYear()}/${newDate.getMonth() + 1}`;
+      } else {
+        onChanged();
+      }
     });
   };
 

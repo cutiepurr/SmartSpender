@@ -16,7 +16,8 @@ const AddTransaction = ({ categories }) => {
     inputTransaction.email = user.email;
 
     TransactionApis.postTransaction(inputTransaction, token, () => {
-      window.location.reload();
+      let date = new Date(inputTransaction.timestamp);
+      window.location.href = `/transactions/${date.getFullYear()}/${date.getMonth()+1}`;
     });
   };
 
