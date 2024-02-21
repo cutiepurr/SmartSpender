@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import LoginButton from "./Auth/LoginButton";
 import {useAuth0} from "@auth0/auth0-react";
 import LogoutButton from "./Auth/LogoutButton";
+import {Link} from "react-router-dom";
 
 const NavMenu = ({className}) => {
   const [show, setShow] = useState(false);
@@ -15,10 +16,10 @@ const NavMenu = ({className}) => {
             <i className="fa-solid fa-bars"></i>
           </button>
           <div>
-            <a href="/" className="nav-link">
+            <Link to="/" className="nav-link">
               <img className="float-start" src="/favicon/piggy-bank.png" alt="logo" style={{ maxHeight: 40 }} />
               <h1>Smart<br/>Spender</h1>
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -65,9 +66,9 @@ const NavContent = ({toggle = null, ...props}) => {
             <>
               {links.map((link, index) => (
                 <div key={index} className="py-1">
-                  <a href={link.path} className="p-1 block">
+                  <Link to={link.path} className="p-1 block">
                     {link.name}
-                  </a>
+                  </Link>
                 </div>
               ))}
             </> : null

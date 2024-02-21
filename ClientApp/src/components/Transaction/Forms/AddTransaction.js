@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from "react";
 import TransactionApis from "../../../api/TransactionApis";
-import { TransactionForm } from "./TransactionForm.tsx";
+import {TransactionForm} from "./TransactionForm.tsx";
 import {useAuth0} from "@auth0/auth0-react";
 import {toast} from "react-hot-toast";
+import {useNavigate} from "react-router-dom";
 
-const AddTransaction = ({ categories }) => {
-  const { getAccessTokenSilently, user } = useAuth0();
+const AddTransaction = ({categories}) => {
+  const {getAccessTokenSilently, user} = useAuth0();
   const [token, setToken] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     getAccessTokenSilently().then(data => setToken(data));
@@ -19,7 +21,7 @@ const AddTransaction = ({ categories }) => {
     TransactionApis.postTransaction(inputTransaction, token, () => {
       toast.success("Create transaction successfully");
       let date = new Date(inputTransaction.timestamp);
-      window.location.href = `/transactions/${date.getFullYear()}/${date.getMonth()+1}`;
+      navigate(`/transactions/${date.getFullYear()}/${date.getMonth() + 1}`);
     });
   };
 

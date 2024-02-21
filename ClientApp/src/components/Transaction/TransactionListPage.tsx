@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import AddTransaction from "./Forms/AddTransaction";
 import {getNextMonth, getPreviousMonth} from "../../utils/DateExtensions";
 import TransactionApis from "../../api/TransactionApis";
@@ -102,14 +102,14 @@ const TitleWithMonth = ({year, month}) => {
 
   return (
     <div className="grid grid-cols-3 text-center">
-      <div><a href={prevMonthLink}><i className="fa-solid fa-chevron-left"></i></a></div>
+      <div><Link to={prevMonthLink}><i className="fa-solid fa-chevron-left"></i></Link></div>
       <div>
         <h1>
           {new Date(year, month - 1)
             .toLocaleDateString("en-GB", {month: "long", year: "numeric",})}
         </h1>
       </div>
-      <div><a href={nextMonthLink}><i className="fa-solid fa-chevron-right"></i></a></div>
+      <div><Link to={nextMonthLink}><i className="fa-solid fa-chevron-right"></i></Link></div>
     </div>
   );
 };

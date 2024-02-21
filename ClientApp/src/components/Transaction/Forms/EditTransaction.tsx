@@ -1,19 +1,22 @@
 import React, {useEffect, useState} from "react";
-import { TransactionForm } from "./TransactionForm";
+import {TransactionForm} from "./TransactionForm";
 import TransactionApis from "../../../api/TransactionApis";
 import {useAuth0} from "@auth0/auth0-react";
 import {ApiTransaction} from "@/utils/Transaction";
 import {CategoryItem} from "@/utils/Category";
 import {toast} from "react-hot-toast";
+import {useNavigate} from "react-router-dom";
 
 interface props {
   transaction: ApiTransaction,
   categories: Array<CategoryItem>,
   onChanged: Function,
 }
-const EditTransaction: React.FC<props> = ({ transaction, categories, onChanged }) => {
-  const { getAccessTokenSilently} = useAuth0();
+
+const EditTransaction: React.FC<props> = ({transaction, categories, onChanged}) => {
+  const {getAccessTokenSilently} = useAuth0();
   const [token, setToken] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     getAccessTokenSilently().then(data => setToken(data));
@@ -27,7 +30,7 @@ const EditTransaction: React.FC<props> = ({ transaction, categories, onChanged }
       let newDate = new Date(inputTransaction.timestamp);
       let oldDate = new Date(transaction.timestamp);
       if (newDate.getFullYear() !== oldDate.getFullYear() || newDate.getMonth() !== oldDate.getMonth()) {
-        window.location.href = `/transactions/${newDate.getFullYear()}/${newDate.getMonth() + 1}`;
+        navigate(`/transactions/${newDate.getFullYear()}/${newDate.getMonth() + 1}`);
       } else {
         onChanged();
       }
