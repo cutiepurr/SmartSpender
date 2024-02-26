@@ -5,10 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace SmartSpender.Controllers;
 
-[Authorize]
 [Route("api/[controller]")]
-[ApiController]
-public class GraphController(AppDbContext context) : AuthorizedControllerBase
+public class GraphController(AppDbContext context) : AuthorizedApiControllerBase
 {
     // GET: api/Graph/12month
     [HttpGet("12month")]

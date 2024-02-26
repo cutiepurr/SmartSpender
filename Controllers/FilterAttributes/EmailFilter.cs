@@ -9,11 +9,16 @@ public class EmailFilter : Attribute, IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        var controller = context.Controller as AuthorizedControllerBase;
+        var controller = context.Controller as AuthorizedApiControllerBase;
         var email = await GetUserEmailFromToken(context);
 
-        if (email == null) context.Result = new BadRequestObjectResult("Not authenticated");
-        else if (controller != null) controller.Email = email;
+        if (email == null)
+        {
+            context.Result = new BadRequestObjectResult("Not authenticated");
+            return;
+        }
+
+        if (controller != null) controller.Email = email;
 
         await next();
     }
