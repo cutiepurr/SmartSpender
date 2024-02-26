@@ -8,20 +8,20 @@ namespace SmartSpender.Controllers;
 [Route("api/[controller]")]
 public class MonthlyTargetController(AppDbContext context) : AuthorizedApiControllerBase
 {
+    private IQueryable<MonthlyTarget> Targets => context.MonthlyTarget.Where(item => item.Email == Email);
+    
     // GET: api/MonthlyTarget
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MonthlyTarget>>> GetMonthlyTarget()
     {
-        var targets = TargetsByEmail(Email);
-        return await targets.ToListAsync();
+        return await Targets.ToListAsync();
     }
 
     // GET: api/MonthlyTarget/latest
     [HttpGet("latest")]
     public async Task<ActionResult<MonthlyTarget>> GetLatestMonthlyTarget()
     {
-        var targets = TargetsByEmail(Email);
-        return (await targets.OrderBy(item => item.Year).ThenBy(item => item.Month).LastOrDefaultAsync())!;
+        return (await Targets.OrderBy(item => item.Year).ThenBy(item => item.Month).LastOrDefaultAsync())!;
     }
 
     // GET: api/MonthlyTarget/{year}/{month}
@@ -29,14 +29,13 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedApiContro
     public async Task<ActionResult<MonthlyTarget>> GetMonthlyTarget(int year, int month)
     {
         var targetDate = GetLastDate(year, month);
-        var targets = TargetsByEmail(Email);
 
-        if (targets.IsNullOrEmpty()) return NotFound();
+        if (Targets.IsNullOrEmpty()) return NotFound();
 
-        var monthlyTarget = (await targets.ToListAsync())
+        var monthlyTarget = (await Targets.ToListAsync())
                             .Where(item => item.Until != null && item.Until.Value.CompareTo(targetDate) >= 0)
                             .OrderBy(item => item.Year).ThenBy(item => item.Month).FirstOrDefault() ??
-                            await targets.FirstOrDefaultAsync(item => item.Until == null);
+                            await Targets.FirstOrDefaultAsync(item => item.Until == null);
 
         if (monthlyTarget == null) return NotFound();
 
@@ -65,8 +64,7 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedApiContro
 
         if (monthlyTarget.Email != Email) return Forbid();
 
-        var targets = TargetsByEmail(Email);
-        if (targets.Where(item => item.Id != id)
+        if (Targets.Where(item => item.Id != id)
             .Any(item => item.Year == monthlyTarget.Year && item.Month == monthlyTarget.Month))
         {
             return BadRequest("Timestamp already exists");
@@ -96,8 +94,7 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedApiContro
     {
         if (monthlyTarget.Email != Email) return Forbid();
 
-        var targets = TargetsByEmail(Email);
-        if (targets.Any(item => item.Year == monthlyTarget.Year && item.Month == monthlyTarget.Month))
+        if (Targets.Any(item => item.Year == monthlyTarget.Year && item.Month == monthlyTarget.Month))
         {
             return BadRequest("Timestamp already exists");
         }
@@ -133,10 +130,5 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedApiContro
     private DateTime GetLastDate(int year, int month)
     {
         return new DateTime(year, month, DateTime.DaysInMonth(year, month), 23, 59, 59);
-    }
-
-    private IQueryable<MonthlyTarget> TargetsByEmail(string email)
-    {
-        return context.MonthlyTarget.Where(item => item.Email == email);
     }
 }
