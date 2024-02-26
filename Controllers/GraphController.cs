@@ -26,10 +26,7 @@ public class GraphController(AppDbContext context) : AuthorizedControllerBase
     private async Task<IEnumerable<object>> GetAmountsFromMonthToMonth(
         CategoryType? categoryType = null, int startYear = -1, int startMonth = -1, int endYear = -1, int endMonth = -1)
     {
-        var email = await GetUserEmailFromToken();
-        if (email == null) return null!;
-
-        var transactions = new TransactionFilter(context).ByEmail(email).ByCategory(categoryType)
+        var transactions = new TransactionFilter(context).ByEmail(Email).ByCategory(categoryType)
             .FromDate(startYear, startMonth).ToDate(endYear, endMonth).Apply();
 
         var result = from transaction in transactions
@@ -47,11 +44,8 @@ public class GraphController(AppDbContext context) : AuthorizedControllerBase
 
     private async Task<IEnumerable<MonthlyTarget>> GetMonthlyTargetsFrom(int year, int month)
     {
-        var email = await GetUserEmailFromToken();
-        if (email == null) return null!;
-
         var targetDate = GetLastDate(year, month);
-        var targets = TargetsByEmail(email);
+        var targets = TargetsByEmail(Email);
 
         if (targets.IsNullOrEmpty()) return targets;
 

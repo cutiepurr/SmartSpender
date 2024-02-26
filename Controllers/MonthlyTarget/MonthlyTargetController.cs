@@ -14,10 +14,7 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MonthlyTarget>>> GetMonthlyTarget()
     {
-        var email = await GetUserEmailFromToken();
-        if (email == null) return BadRequest();
-
-        var targets = TargetsByEmail(email);
+        var targets = TargetsByEmail(Email);
         return await targets.ToListAsync();
     }
 
@@ -25,10 +22,7 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
     [HttpGet("latest")]
     public async Task<ActionResult<MonthlyTarget>> GetLatestMonthlyTarget()
     {
-        var email = await GetUserEmailFromToken();
-        if (email == null) return BadRequest();
-
-        var targets = TargetsByEmail(email);
+        var targets = TargetsByEmail(Email);
         return (await targets.OrderBy(item => item.Year).ThenBy(item => item.Month).LastOrDefaultAsync())!;
     }
 
@@ -36,11 +30,8 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
     [HttpGet("{year}/{month}")]
     public async Task<ActionResult<MonthlyTarget>> GetMonthlyTarget(int year, int month)
     {
-        var email = await GetUserEmailFromToken();
-        if (email == null) return BadRequest();
-
         var targetDate = GetLastDate(year, month);
-        var targets = TargetsByEmail(email);
+        var targets = TargetsByEmail(Email);
 
         if (targets.IsNullOrEmpty()) return NotFound();
 
@@ -58,14 +49,11 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
     [HttpGet("{id}")]
     public async Task<ActionResult<MonthlyTarget>> GetMonthlyTarget(Guid id)
     {
-        var email = await GetUserEmailFromToken();
-        if (email == null) return BadRequest();
-
         var monthlyTarget = await context.MonthlyTarget.FindAsync(id);
 
         if (monthlyTarget == null) return NotFound();
 
-        if (monthlyTarget.Email != email) return Forbid();
+        if (monthlyTarget.Email != Email) return Forbid();
 
         return monthlyTarget;
     }
@@ -77,17 +65,16 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
     {
         if (id != monthlyTarget.Id) return BadRequest();
 
-        var email = await GetUserEmailFromToken();
-        if (email == null) return BadRequest();
+        if (monthlyTarget.Email != Email) return Forbid();
 
-        if (monthlyTarget.Email != email) return Forbid();
-
-        var targets = TargetsByEmail(email);
+        var targets = TargetsByEmail(Email);
         if (targets.Where(item => item.Id != id)
             .Any(item => item.Year == monthlyTarget.Year && item.Month == monthlyTarget.Month))
         {
             return BadRequest("Timestamp already exists");
         }
+
+        if (monthlyTarget.Amount < 0) return BadRequest("Target amount must be positive");
 
         context.Entry(monthlyTarget).State = EntityState.Modified;
 
@@ -109,16 +96,15 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
     [HttpPost]
     public async Task<ActionResult<MonthlyTarget>> PostMonthlyTarget(MonthlyTarget monthlyTarget)
     {
-        var email = await GetUserEmailFromToken();
-        if (email == null) return BadRequest();
+        if (monthlyTarget.Email != Email) return Forbid();
 
-        if (monthlyTarget.Email != email) return Forbid();
-
-        var targets = TargetsByEmail(email);
+        var targets = TargetsByEmail(Email);
         if (targets.Any(item => item.Year == monthlyTarget.Year && item.Month == monthlyTarget.Month))
         {
             return BadRequest("Timestamp already exists");
         }
+        
+        if (monthlyTarget.Amount < 0) return BadRequest("Target amount must be positive");
 
         context.MonthlyTarget.Add(monthlyTarget);
         await context.SaveChangesAsync();
@@ -130,13 +116,10 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedControlle
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteMonthlyTarget(Guid id)
     {
-        var email = await GetUserEmailFromToken();
-        if (email == null) return BadRequest();
-
         var monthlyTarget = await context.MonthlyTarget.FindAsync(id);
         if (monthlyTarget == null) return NotFound();
 
-        if (monthlyTarget.Email != email) return Forbid();
+        if (monthlyTarget.Email != Email) return Forbid();
 
         context.MonthlyTarget.Remove(monthlyTarget);
         await context.SaveChangesAsync();
