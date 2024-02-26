@@ -79,25 +79,23 @@ const TransactionList: React.FC<props> = ({year, month, categories, onSelected, 
         </SquareStickyLeftContainer>
         {editId !== transaction.id ? (
           <TransactionTable
-            className="transaction-line"
-            transaction={transactionViewObject}
-            onClick={() => onEdit(transaction.id ?? -1)}
-          />
+            className="hover:bg-slate-50 hover:cursor-pointer"
+            transaction={transactionViewObject} onClick={() => onEdit(transaction.id ?? -1)}/>
         ) : (
-          <EditTransaction transaction={transaction} categories={categories} onChanged={() => {
-            onEdit(-1);
-            getAllTransactions();
-          }}/>
+          <EditTransaction
+            transaction={transaction} categories={categories}
+            onChanged={() => {
+              onEdit(-1);
+              getAllTransactions()
+            }}/>
         )}
       </div>
     );
   });
 
-  const loadMoreTransactions = () => setPage((_) => _ = page + 1);
+  const loadMoreTransactions = () => setPage(_ => _ = page + 1);
 
-  if (count === 0) return <>
-    <NotFound/>
-  </>
+  if (count === 0) return <NotFound/>;
 
   return (
     <div>

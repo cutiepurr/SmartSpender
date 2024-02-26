@@ -45,11 +45,6 @@ code {
   border-color: #1861ac;
 }
 
-.transaction-line:hover {
-  background-color: rgb(241, 241, 241);
-  border-radius: 10px;
-}
-
 .sticky-left {
   position: sticky;
   left: 0;
