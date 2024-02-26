@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SmartSpender.Extensions;
 
 namespace SmartSpender.Controllers;
 
@@ -28,7 +29,7 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedApiContro
     [HttpGet("{year}/{month}")]
     public async Task<ActionResult<MonthlyTarget>> GetMonthlyTarget(int year, int month)
     {
-        var targetDate = GetLastDate(year, month);
+        var targetDate = DateTimeExtensions.GetLastDateOfMonth(year, month);
 
         if (Targets.IsNullOrEmpty()) return NotFound();
 
@@ -125,10 +126,5 @@ public class MonthlyTargetController(AppDbContext context) : AuthorizedApiContro
     private bool MonthlyTargetExists(Guid id)
     {
         return context.MonthlyTarget.Any(e => e.Id == id);
-    }
-
-    private DateTime GetLastDate(int year, int month)
-    {
-        return new DateTime(year, month, DateTime.DaysInMonth(year, month), 23, 59, 59);
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SmartSpender.Extensions;
 
 namespace SmartSpender.Controllers;
 
@@ -42,8 +43,8 @@ public class GraphController(AppDbContext context) : AuthorizedApiControllerBase
 
     private async Task<IEnumerable<MonthlyTarget>> GetMonthlyTargetsFrom(int year, int month)
     {
-        var targetDate = GetLastDate(year, month);
-        var targets = TargetsByEmail(Email);
+        var targetDate = DateTimeExtensions.GetLastDateOfMonth(year, month);
+        var targets = context.MonthlyTarget.Where(item => item.Email == Email);
 
         if (targets.IsNullOrEmpty()) return targets;
 
@@ -52,15 +53,5 @@ public class GraphController(AppDbContext context) : AuthorizedApiControllerBase
             .OrderBy(item => item.Year).ThenBy(item => item.Month);
 
         return monthlyTarget.ToList();
-    }
-
-    private DateTime GetLastDate(int year, int month)
-    {
-        return new DateTime(year, month, DateTime.DaysInMonth(year, month), 23, 59, 59);
-    }
-
-    private IQueryable<MonthlyTarget> TargetsByEmail(string email)
-    {
-        return context.MonthlyTarget.Where(item => item.Email == email);
     }
 }
