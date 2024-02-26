@@ -5,31 +5,20 @@ namespace SmartSpender.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AccountController : ControllerBase
+public class AccountController(AppDbContext context) : ControllerBase
 {
-    private readonly AppDbContext _context;
-
-    public AccountController(AppDbContext context)
-    {
-        _context = context;
-    }
-
     // GET: api/Account
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Account>>> GetAccount()
     {
-        if (_context.Account == null) return NotFound();
-        
-        return await _context.Account.ToListAsync();
+        return await context.Account.ToListAsync();
     }
 
     // GET: api/Account/5
     [HttpGet("{email}")]
     public async Task<ActionResult<Account>> GetAccount(string email)
     {
-        if (_context.Account == null) return NotFound();
-        
-        var account = await _context.Account.FindAsync(email);
+        var account = await context.Account.FindAsync(email);
 
         if (account == null) return NotFound();
 
@@ -43,11 +32,11 @@ public class AccountController : ControllerBase
     {
         if (email != account.Email) return BadRequest();
 
-        _context.Entry(account).State = EntityState.Modified;
+        context.Entry(account).State = EntityState.Modified;
 
         try
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -64,11 +53,10 @@ public class AccountController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Account>> PostAccount(Account account)
     {
-        if (_context.Account == null) return Problem("Entity set 'AppDbContext.Account'  is null.");
         if (AccountExists(account.Email)) return BadRequest();
         
-        _context.Account.Add(account);
-        await _context.SaveChangesAsync();
+        context.Account.Add(account);
+        await context.SaveChangesAsync();
 
         return CreatedAtAction("GetAccount", new { email = account.Email }, account);
     }
@@ -77,18 +65,17 @@ public class AccountController : ControllerBase
     [HttpDelete("{email}")]
     public async Task<IActionResult> DeleteAccount(string email)
     {
-        if (_context.Account == null) return NotFound();
-        var account = await _context.Account.FindAsync(email);
+        var account = await context.Account.FindAsync(email);
         if (account == null) return NotFound();
 
-        _context.Account.Remove(account);
-        await _context.SaveChangesAsync();
+        context.Account.Remove(account);
+        await context.SaveChangesAsync();
 
         return NoContent();
     }
 
     private bool AccountExists(string email)
     {
-        return (_context.Account?.Any(e => e.Email == email)).GetValueOrDefault();
+        return (context.Account?.Any(e => e.Email == email)).GetValueOrDefault();
     }
 }
